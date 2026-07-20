@@ -2,7 +2,6 @@
 
 import os
 import sys
-import py_compile
 from pathlib import Path
 from typing import Any, Dict
 
@@ -23,11 +22,7 @@ def test_rdf_generation() -> None:
 
     assert pdf_path.exists(), f"No se encontró el archivo de prueba en {pdf_path}"
 
-    print("=== PASO 1: Validando compilación con py_compile ===")
-    py_compile.compile(str(proyecto_raiz / "scripts" / "ddu_to_rdf.py"), doraise=True)
-    print("Compilación EXITOSA para scripts/ddu_to_rdf.py")
-
-    print("\n=== PASO 2: Parseando PDF ===")
+    print("=== PASO 1: Parseando PDF ===")
     print(f"Parseando PDF: {pdf_path.name}")
     parser = DDUParser(pdf_path)
     datos = parser.parse_pdf()
@@ -39,7 +34,7 @@ def test_rdf_generation() -> None:
     print(f"  Materia: {datos.get('materia')[:80]}...")
     print(f"  Cantidad de secciones: {len(datos.get('secciones', []))}")
 
-    print("\n=== PASO 3: Generando RDF (Turtle) ===")
+    print("\n=== PASO 2: Generando RDF (Turtle) ===")
     generador = DDUToRDF()
     rdf_str = generador.generar_rdf(datos)
 
@@ -61,7 +56,7 @@ def test_rdf_generation() -> None:
     print(f"\nArchivo RDF guardado en: {out_rdf_path}")
 
     # Validar que los prefijos y elementos estén presentes
-    print("\n=== PASO 4: Validando contenido del RDF ===")
+    print("\n=== PASO 3: Validando contenido del RDF ===")
     prefijos = [
         "rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
         "rdfs: <http://www.w3.org/2000/01/rdf-schema#>",

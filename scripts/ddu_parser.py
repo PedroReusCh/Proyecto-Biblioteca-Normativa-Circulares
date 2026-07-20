@@ -39,8 +39,12 @@ class DDUParser:
                 with open(ruta_json, "r", encoding="utf-8") as f:
                     data: Dict[str, Dict[str, Any]] = json.load(f)
                     return data
-            except Exception:
-                return {}
+            except json.JSONDecodeError as e:
+                print(f"ERROR: El archivo JSON de fallbacks está corrupto o mal formado: {e}")
+                raise e
+            except Exception as e:
+                print(f"ERROR: No se pudo leer el archivo de fallbacks: {e}")
+                raise e
         return {}
 
     def extract_raw_text(self) -> str:
