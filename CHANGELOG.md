@@ -14,12 +14,13 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
   * [`README.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/README.md): Detalla la organización, arquitectura y suite de pruebas del proyecto.
   * [`GEMINI.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/GEMINI.md): Define instrucciones específicas y reglas de aislamiento operativo para la IA.
   * [`CHANGELOG.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/CHANGELOG.md): Control e histórico estructurado de modificaciones del software.
-  * [`.gitignore`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/.gitignore): Configuración para omitir archivos temporales de test, compilación, entornos virtuales de Python, y exclusión general de archivos `.csv`, Excel y `.pdf` (con excepciones para proteger los recursos oficiales del proyecto).
+  * [`.gitignore`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/.gitignore): Configuración para omitir archivos temporales de test, compilación, entornos virtuales de Python, y exclusión total y absoluta de archivos `.csv`, Excel y `.pdf`.
 *   **Inicialización y Publicación**:
-    *   Inicialización del repositorio Git local indexando de forma limpia todos los recursos del proyecto.
+    *   Inicialización del repositorio Git local de forma limpia (excluyendo datos estructurados pesados y PDFs).
     *   Creación y publicación del repositorio público en GitHub: [Proyecto-Biblioteca-Normativa-Circulares](https://github.com/PedroReusCh/Proyecto-Biblioteca-Normativa-Circulares).
 ### Changed
 
+*   **Exclusión Total de Datos y Documentos**: Se actualizaron las políticas en [`.gitignore`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/.gitignore) y se eliminaron del control de versiones todos los archivos Excel, PDF y CSV, manteniéndolos únicamente de forma local en el espacio de trabajo.
 *   **Idioma Obligatorio en GEMINI.md**: Se actualizó [`GEMINI.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/GEMINI.md) para exigir que toda comunicación y commits sean exclusivamente en español.
 * **Adaptación de Rutas de Pruebas**: Se modificaron las rutas internas en los siguientes archivos de la suite `test/` para consumir los recursos directamente del directorio local [`bcn - documentación`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n) en lugar de depender de rutas o carpetas externas (`docs`):
   * [`test/test_csv_integrity.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_csv_integrity.py)
