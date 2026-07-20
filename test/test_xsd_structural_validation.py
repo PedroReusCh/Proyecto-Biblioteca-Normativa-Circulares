@@ -121,7 +121,7 @@ def resolver_atributos_complextype_anonimo(
     return attrs
 
 
-def main() -> None:
+def test_xsd_structural_validation() -> None:
     proyecto_raiz = Path(__file__).resolve().parents[1]
     xsd_path = proyecto_raiz / "bcn - documentación" / "Esquema Akoma-Ntoso BCN.xsd"
     if not xsd_path.exists():
@@ -134,12 +134,8 @@ def main() -> None:
 
     print("Iniciando Validacion Estructural Formal: CSV vs XSD (con Resolucion de Herencia)...")
 
-    if not xsd_path.exists():
-        print(f"ERROR: Archivo XSD no encontrado en {xsd_path}")
-        sys.exit(1)
-    if not csv_dicc_path.exists():
-        print(f"ERROR: CSV de Diccionario de Datos no encontrado en {csv_dicc_path}")
-        sys.exit(1)
+    assert xsd_path.exists(), f"Archivo XSD no encontrado en {xsd_path}"
+    assert csv_dicc_path.exists(), f"CSV de Diccionario de Datos no encontrado en {csv_dicc_path}"
 
     # 1. Parsear el XSD original
     tree = ET.parse(xsd_path)
@@ -257,13 +253,9 @@ def main() -> None:
     print(f"  Discrepancias de Tipo: {discrepancias_tipo}")
     print(f"  Discrepancias de Atributos: {discrepancias_attrs}")
 
-    if discrepancias_tipo == 0 and discrepancias_attrs == 0:
-        print("\n  [EXITO] Los archivos CSV cumplen formalmente al 100% con la estructura del XSD.")
-        sys.exit(0)
-    else:
-        print("\n  [FALLO] Existen discrepancias de estructura o atributos entre los CSV y el XSD.")
-        sys.exit(1)
+    assert discrepancias_tipo == 0, f"Existen {discrepancias_tipo} discrepancias de tipo entre los CSV y el XSD."
+    assert discrepancias_attrs == 0, f"Existen {discrepancias_attrs} discrepancias de atributos entre los CSV y el XSD."
 
 
 if __name__ == "__main__":
-    main()
+    test_xsd_structural_validation()

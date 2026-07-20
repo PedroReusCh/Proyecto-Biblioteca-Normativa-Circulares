@@ -46,7 +46,7 @@ def validar_csv(file_path: Path, expected_cols: int) -> bool:
         return False
 
 
-def main() -> None:
+def test_csv_integrity() -> None:
     proyecto_raiz = Path(__file__).resolve().parents[1]
     
     # Buscar en 'bcn - documentación' de forma compatible
@@ -67,11 +67,9 @@ def main() -> None:
     print(f"  Diccionario de Datos: {'PASO' if success_dicc else 'FALLO'}")
     print(f"  Secuencia de Plantilla: {'PASO' if success_sec else 'FALLO'}")
     
-    if not (success_dicc and success_sec):
-        sys.exit(1)
-    else:
-        sys.exit(0)
+    assert success_dicc, "Diccionario de Datos CSV no es válido."
+    assert success_sec, "Secuencia de Plantilla CSV no es válida."
 
 
 if __name__ == "__main__":
-    main()
+    test_csv_integrity()
