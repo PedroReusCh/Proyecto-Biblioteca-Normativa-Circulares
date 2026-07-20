@@ -28,7 +28,10 @@ El objetivo principal es tomar circulares DDU (División de Desarrollo Urbano de
 
 * Al generar identificadores normalizados para URIs, se debe seguir estrictamente la función `normalizar_uri` implementada en [`scripts/ddu_parser.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_parser.py), la cual contempla remoción de diacríticos y singularización de sustantivos.
 
-### 4. Trazabilidad y Evidencia
+### 4. Idioma Obligatorio (Interacciones y Commits)
+*   **Idioma Único**: Toda la comunicación, explicaciones, preguntas y respuestas con el usuario deben generarse exclusivamente en **español**.
+*   **Mensajes de Commit**: Todos los mensajes de confirmación (commits) generados para Git por la IA deben redactarse exclusivamente en **español** (por ejemplo, `doc: actualizar documentación` en lugar de `docs: update documentation`).
 
-* Antes de cerrar cualquier tarea técnica, reporta el comando exacto ejecutado en la consola y la salida del test como evidencia empírica de funcionamiento.
-* Cualquier modificación debe quedar debidamente descrita en el archivo [`CHANGELOG.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/CHANGELOG.md).
+### 5. Trazabilidad y Evidencia
+*   Antes de cerrar cualquier tarea técnica, reporta el comando exacto ejecutado en la consola y la salida del test como evidencia empírica de funcionamiento.
+*   Cualquier modificación debe quedar debidamente descrita en el archivo [`CHANGELOG.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/CHANGELOG.md).

@@ -18,9 +18,9 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 *   **Inicialización y Publicación**:
     *   Inicialización del repositorio Git local indexando de forma limpia todos los recursos del proyecto.
     *   Creación y publicación del repositorio público en GitHub: [Proyecto-Biblioteca-Normativa-Circulares](https://github.com/PedroReusCh/Proyecto-Biblioteca-Normativa-Circulares).
-
 ### Changed
 
+*   **Idioma Obligatorio en GEMINI.md**: Se actualizó [`GEMINI.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/GEMINI.md) para exigir que toda comunicación y commits sean exclusivamente en español.
 * **Adaptación de Rutas de Pruebas**: Se modificaron las rutas internas en los siguientes archivos de la suite `test/` para consumir los recursos directamente del directorio local [`bcn - documentación`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n) en lugar de depender de rutas o carpetas externas (`docs`):
   * [`test/test_csv_integrity.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_csv_integrity.py)
   * [`test/test_xsd_structural_validation.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_xsd_structural_validation.py)
