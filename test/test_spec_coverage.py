@@ -7,27 +7,24 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 
-def main() -> None:
+def test_spec_coverage() -> None:
     proyecto_raiz = Path(__file__).resolve().parents[1]
     xsd_path = proyecto_raiz / "bcn - documentación" / "Esquema Akoma-Ntoso BCN.xsd"
     if not xsd_path.exists():
         xsd_path = proyecto_raiz / "bcn - documentacion" / "Esquema Akoma-Ntoso BCN.xsd"
         
-    spec_path = proyecto_raiz / "docs" / "superpowers" / "specs" / "2026-07-17-xsd-estructura-bcn.md"
-    
     doc_dir = proyecto_raiz / "bcn - documentación"
     if not doc_dir.exists():
         doc_dir = proyecto_raiz / "bcn - documentacion"
+        
+    spec_path = doc_dir / "especificacion_cobertura.md"
     csv_dicc_path = doc_dir / "diccionario_dato_akoma_ntoso.csv"
 
     print("Ejecutando Test de Cobertura Estructural (XSD vs Spec vs CSV)...")
 
-    if not xsd_path.exists():
-        print(f"ERROR: Archivo XSD no encontrado en {xsd_path}")
-        sys.exit(1)
-    if not csv_dicc_path.exists():
-        print(f"ERROR: CSV de Diccionario de Datos no encontrado en {csv_dicc_path}")
-        sys.exit(1)
+    assert xsd_path.exists(), f"ERROR: Archivo XSD no encontrado en {xsd_path}"
+    assert csv_dicc_path.exists(), f"ERROR: CSV de Diccionario de Datos no encontrado en {csv_dicc_path}"
+    assert spec_path.exists(), f"ERROR: Archivo de especificación de cobertura no encontrado en {spec_path}"
 
     # 1. Parsear el XSD original
     tree = ET.parse(xsd_path)
@@ -44,15 +41,9 @@ def main() -> None:
 
     print(f"  [XSD] Total elementos declarados en el esquema (incluyendo xsd:schema): {len(elementos_xsd)}")
 
-    # 2. Leer el Spec de documentacion (opcional)
-    spec_content = ""
-    if spec_path.exists():
-        with open(spec_path, "r", encoding="utf-8") as f:
-            spec_content = f.read()
-    else:
-        print(f"  [AVISO] Archivo de especificación {spec_path.name} no encontrado localmente. Omitiendo validación de spec y simulando cobertura.")
-        # Simulamos cobertura del Spec uniendo todos los elementos XSD en el contenido
-        spec_content = " ".join(elementos_xsd)
+    # 2. Leer el Spec de documentacion local real (sin simulaciones)
+    with open(spec_path, "r", encoding="utf-8") as f:
+        spec_content = f.read()
 
     # 3. Leer el CSV de Diccionario de Datos
     elementos_csv: set[str] = set()
@@ -87,13 +78,10 @@ def main() -> None:
     if not cobertura_csv_ok:
         print(f"    Faltan en el CSV ({len(elementos_no_mapeados_csv)}): {sorted(list(elementos_no_mapeados_csv))}")
 
-    if cobertura_spec_ok and cobertura_csv_ok:
-        print("\n  [EXITO] Cobertura estructural perfecta del 100% verificada.")
-        sys.exit(0)
-    else:
-        print("\n  [FALLO] Existen elementos del XSD que no estan completamente documentados o mapeados.")
-        sys.exit(1)
+    assert cobertura_spec_ok, f"Existen elementos del XSD no documentados en el spec: {elementos_no_mencionados_spec}"
+    assert cobertura_csv_ok, f"Existen elementos del XSD no mapeados en el CSV: {elementos_no_mapeados_csv}"
+    print("\n  [EXITO] Cobertura estructural perfecta del 100% verificada.")
 
 
 if __name__ == "__main__":
-    main()
+    test_spec_coverage()
