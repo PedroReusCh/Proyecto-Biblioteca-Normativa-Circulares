@@ -21,13 +21,13 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ### Changed
 
-*   **Tipado Estricto y Cobertura Obligatoria**: Se actualizaron las políticas en [`GEMINI.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/GEMINI.md) exigiendo que todo el código cumpla con el estándar strict de tipado (anotaciones explícitas de tipo) y que la cobertura structural y de pruebas sea siempre del 100%.
-*   **Exclusión Total de Datos y Documentos**: Se actualizaron las políticas en [`.gitignore`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/.gitignore) y se eliminaron del control de versiones todos los archivos Excel, PDF y CSV, manteniéndolos únicamente de forma local en el espacio de trabajo.
-*   **Idioma Obligatorio en GEMINI.md**: Se actualizó [`GEMINI.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/GEMINI.md) para exigir que toda comunicación y commits sean exclusivamente en español.
-*   **Adaptación de Rutas de Pruebas**: Se modificaron las rutas internas en los siguientes archivos de la suite `test/` para consumir los recursos directamente del directorio local [`bcn - documentación`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n) en lugar de depender de rutas o carpetas externas (`docs`):
-    *   [`test/test_csv_integrity.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_csv_integrity.py)
-    *   [`test/test_xsd_structural_validation.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_xsd_structural_validation.py)
-    *   [`test/test_spec_coverage.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_spec_coverage.py)
+* **Tipado Estricto y Cobertura Obligatoria**: Se actualizaron las políticas en [`GEMINI.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/GEMINI.md) exigiendo que todo el código cumpla con el estándar strict de tipado (anotaciones explícitas de tipo) y que la cobertura structural y de pruebas sea siempre del 100%.
+* **Exclusión Total de Datos y Documentos**: Se actualizaron las políticas en [`.gitignore`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/.gitignore) y se eliminaron del control de versiones todos los archivos Excel, PDF y CSV, manteniéndolos únicamente de forma local en el espacio de trabajo.
+* **Idioma Obligatorio en GEMINI.md**: Se actualizó [`GEMINI.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/GEMINI.md) para exigir que toda comunicación y commits sean exclusivamente en español.
+* **Adaptación de Rutas de Pruebas**: Se modificaron las rutas internas en los siguientes archivos de la suite `test/` para consumir los recursos directamente del directorio local [`bcn - documentación`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n) en lugar de depender de rutas o carpetas externas (`docs`):
+  * [`test/test_csv_integrity.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_csv_integrity.py)
+  * [`test/test_xsd_structural_validation.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_xsd_structural_validation.py)
+  * [`test/test_spec_coverage.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_spec_coverage.py)
 * **Aislamiento de Cobertura de Spec**: Se ajustó la lógica en [`test/test_spec_coverage.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_spec_coverage.py) para que, en caso de no encontrarse el spec markdown externo localmente, se simule la cobertura y no se bloquee el paso de las pruebas autónomas en el entorno de desarrollo actual.
 
 ### Verified
