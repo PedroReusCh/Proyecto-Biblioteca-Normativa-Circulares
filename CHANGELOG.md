@@ -15,6 +15,9 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
   * [`GEMINI.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/GEMINI.md): Define instrucciones específicas y reglas de aislamiento operativo para la IA.
   * [`CHANGELOG.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/CHANGELOG.md): Control e histórico estructurado de modificaciones del software.
   * [`.gitignore`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/.gitignore): Configuración para omitir archivos temporales de test, compilación, entornos virtuales de Python, y exclusión general de archivos `.csv`, Excel y `.pdf` (con excepciones para proteger los recursos oficiales del proyecto).
+*   **Inicialización y Publicación**:
+    *   Inicialización del repositorio Git local indexando de forma limpia todos los recursos del proyecto.
+    *   Creación y publicación del repositorio público en GitHub: [Proyecto-Biblioteca-Normativa-Circulares](https://github.com/PedroReusCh/Proyecto-Biblioteca-Normativa-Circulares).
 
 ### Changed
 
