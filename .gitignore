@@ -39,17 +39,11 @@ venv.bak/
 tmp/
 
 # --- Datos y Documentos de Desarrollo Locales ---
-# Excluir documentos y hojas de cálculo generales para evitar subidas accidentales
+# Excluir de forma total y absoluta del control de versiones
 *.csv
 *.xlsx
 *.xls
 *.pdf
-
-# Permitir explícitamente los archivos oficiales de documentación y circulares del repositorio
-!/bcn - documentación/**/*.csv
-!/bcn - documentación/**/*.xlsx
-!/bcn - documentación/**/*.xls
-!/circulares/**/*.pdf
 
 # --- Editores y Entornos de Desarrollo (IDEs) ---
 .vscode/
