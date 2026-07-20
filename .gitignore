@@ -55,6 +55,9 @@ tmp/
 *.swp
 *~
 
+# --- Herramientas de IA y Antigravity ---
+.superpowers/
+
 # --- Sistema Operativo y Office ---
 Thumbs.db
 ehthumbs.db
