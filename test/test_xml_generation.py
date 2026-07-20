@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
-# Agregar scripts al path de importaciones
+# Definir rutas y agregar scripts al path de importaciones
 proyecto_raiz = Path(__file__).resolve().parents[1]
 scripts_dir = proyecto_raiz / "scripts"
 if str(scripts_dir) not in sys.path:
@@ -15,14 +15,12 @@ from ddu_parser import DDUParser
 from ddu_to_xml import DDUToXML
 
 
-def main() -> None:
+def test_xml_generation() -> None:
     # Definir rutas
     proyecto_raiz = Path(__file__).resolve().parents[1]
     pdf_path = proyecto_raiz / "circulares" / "DDU 533.pdf"
     
-    if not pdf_path.exists():
-        print(f"ERROR: No se encontró el archivo de prueba en {pdf_path}")
-        return
+    assert pdf_path.exists(), f"ERROR: No se encontró el archivo de prueba en {pdf_path}"
 
     print(f"Parseando PDF: {pdf_path.name}")
     parser = DDUParser(pdf_path)
@@ -44,12 +42,8 @@ def main() -> None:
     print("XML generado con éxito.")
 
     # 2. Verificar que sea XML bien formado
-    try:
-        root = ET.fromstring(xml_str)
-        print("Verificación de sintaxis XML: BIEN FORMADO (ElementTree parseó con éxito).")
-    except Exception as e:
-        print(f"ERROR DE SINTAXIS XML: {e}")
-        return
+    root = ET.fromstring(xml_str)
+    print("Verificación de sintaxis XML: BIEN FORMADO (ElementTree parseó con éxito).")
 
     # 3. Validar estructuralmente elementos clave
     print("\nValidación estructural:")
@@ -76,10 +70,15 @@ def main() -> None:
     doc_date = preface.find(".//{http://www.akomantoso.org/2.0}docDate")
     doc_title = preface.find(".//{http://www.akomantoso.org/2.0}docTitle")
     
-    print(f"  docType: {doc_type.text if doc_type is not None else 'Falta'}")
-    print(f"  docNumber: {doc_number.text if doc_number is not None else 'Falta'}")
-    print(f"  docDate: {doc_date.text if doc_date is not None else 'Falta'} (date={doc_date.attrib.get('date') if doc_date is not None else ''})")
-    print(f"  docTitle: {doc_title.text[:50] if doc_title is not None and doc_title.text else 'Falta'}...")
+    assert doc_type is not None, "Falta el elemento docType"
+    assert doc_number is not None, "Falta el elemento docNumber"
+    assert doc_date is not None, "Falta el elemento docDate"
+    assert doc_title is not None, "Falta el elemento docTitle"
+    
+    print(f"  docType: {doc_type.text}")
+    print(f"  docNumber: {doc_number.text}")
+    print(f"  docDate: {doc_date.text} (date={doc_date.attrib.get('date')})")
+    print(f"  docTitle: {doc_title.text[:50]}...")
     
     # 5. Buscar tags <ref> (citas enlazadas)
     ref_elements = root.findall(".//{http://www.akomantoso.org/2.0}ref")
@@ -96,4 +95,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    test_xml_generation()

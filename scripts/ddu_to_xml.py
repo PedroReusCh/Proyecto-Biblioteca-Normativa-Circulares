@@ -8,6 +8,8 @@ from datetime import date
 import re
 from typing import Any, Dict, List
 
+from ddu_types import DatosCircularDDU, SeccionDDU
+
 
 class _XMLBuilder:
     """Clase helper para construir XML con indentación controlada de forma limpia."""
@@ -57,7 +59,7 @@ class DDUToXML:
                  .replace(">", "&gt;")
                  .replace('"', "&quot;")
                  .replace("'", "&apos;")
-        )
+         )
 
     def _formatear_fecha_legible(self, fecha_iso: str) -> str:
         """Formatea una fecha ISO (YYYY-MM-DD) a formato legible en español.
@@ -138,11 +140,11 @@ class DDUToXML:
 
         return patron_citas.sub(reemplazar_cita, texto)
 
-    def generar_xml(self, datos: Dict[str, Any]) -> str:
+    def generar_xml(self, datos: DatosCircularDDU) -> str:
         """Genera un documento XML Akoma Ntso v2.0 BCN a partir de los datos estructurados.
 
         Args:
-            datos: Diccionario con los datos estructurados de la circular.
+            datos: Datos estructurados de la circular.
 
         Returns:
             String con el documento XML Akoma Ntso formateado de forma limpia.
@@ -150,7 +152,7 @@ class DDUToXML:
         numero: str = str(datos.get("numero", "")).strip()
         fecha: str = str(datos.get("fecha", "")).strip()
         materia: str = str(datos.get("materia", "")).strip()
-        secciones: List[Dict[str, Any]] = datos.get("secciones", [])
+        secciones: List[SeccionDDU] = datos.get("secciones", [])
 
         fecha_generacion: str = date.today().isoformat()
         fecha_legible: str = self._formatear_fecha_legible(fecha)
@@ -214,7 +216,7 @@ class DDUToXML:
         builder.indent()
         builder.add('<TLCOrganization id="redactor" href="http://datos.bcn.cl/recurso/cl/organismo/biblioteca-del-congreso-nacional" showAs="Biblioteca del Congreso Nacional"/>')
         builder.add('<TLCOrganization id="minvu" href="http://datos.bcn.cl/recurso/cl/organismo/ministerio-de-vivienda-y-urbanismo" showAs="Ministerio de Vivienda y Urbanismo"/>')
-        builder.add('<TLCOrganization id="minvu-ddu" href="http://datos.bcn.cl/recurso/cl/organismo/ministerio-de-vivienda-y-urbanismo/division-de-desarrollo-urbano" showAs="División de Desarrollo Urbano"/>')
+        builder.add('<TLCOrganization id="minvu-ddu" href="http://datos.bcn.cl/recurso/cl/organismo/ministerio-de-vivienda-y-urbanismo/division-de-desarrollo-urbano" showAs="División de Desarrollo Urbanismo"/>')
         builder.add('<TLCPerson id="jefe-division-desarrollo-urbano" href="http://datos.bcn.cl/recurso/cl/persona/jefe-division-desarrollo-urbano" showAs="Jefe División de Desarrollo Urbano"/>')
         builder.add('<TLCRole id="autor" href="http://datos.bcn.cl/recurso/cl/rol/autor" showAs="Autor"/>')
         builder.add('<TLCRole id="editor" href="http://datos.bcn.cl/recurso/cl/rol/editor" showAs="Editor"/>')

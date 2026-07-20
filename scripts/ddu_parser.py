@@ -5,12 +5,14 @@ a circulares DDU (División de Desarrollo Urbano) del Ministerio de Vivienda y U
 extrayendo su texto, estructurando su cuerpo y normalizando sus metadatos.
 """
 
+import json
 import re
 import unicodedata
 from pathlib import Path
 from typing import Any, Dict, List
 
 import pypdf
+from ddu_types import DatosCircularDDU, SeccionDDU
 
 
 class DDUParser:
@@ -23,6 +25,23 @@ class DDUParser:
             pdf_path: Ruta del archivo PDF a parsear.
         """
         self.pdf_path: Path = pdf_path
+        self.fallbacks_estaticos: Dict[str, Dict[str, Any]] = self._cargar_fallbacks()
+
+    def _cargar_fallbacks(self) -> Dict[str, Dict[str, Any]]:
+        """Carga el diccionario de fallbacks estáticos desde el archivo JSON de configuración.
+
+        Returns:
+            Diccionario de fallbacks estáticos indexados por número de circular.
+        """
+        ruta_json = Path(__file__).resolve().parent / "config" / "fallbacks_ddu.json"
+        if ruta_json.exists():
+            try:
+                with open(ruta_json, "r", encoding="utf-8") as f:
+                    data: Dict[str, Dict[str, Any]] = json.load(f)
+                    return data
+            except Exception:
+                return {}
+        return {}
 
     def extract_raw_text(self) -> str:
         """Extrae todo el texto plano de las páginas del PDF usando pypdf.
@@ -38,11 +57,11 @@ class DDUParser:
                 text_parts.append(page_text)
         return "\n".join(text_parts)
 
-    def parse_pdf(self) -> Dict[str, Any]:
+    def parse_pdf(self) -> DatosCircularDDU:
         """Parsea el PDF para extraer metadatos y cuerpo estructurado por secciones y párrafos.
 
         Returns:
-            Diccionario estructurado con metadatos de la circular.
+            DatosCircularDDU estructurado con metadatos de la circular.
         """
         raw_text = self.extract_raw_text()
         lines = [line.strip() for line in raw_text.splitlines()]
@@ -62,61 +81,9 @@ class DDUParser:
         if not numero or numero != num_filename:
             numero = num_filename
 
-        # Diccionario de fallbacks estáticos para PDFs escaneados sin capa de texto o con OCR corrupto
-        fallbacks_estaticos: Dict[str, Dict[str, Any]] = {
-            "530": {
-                "fecha": "2023-01-20",
-                "materia": "Modificación de proyecto de edificación. Plazo para subsanar observaciones.",
-                "emisor": "JEFE DIVISION DE DESARROLLO URBANO",
-                "antecedentes": "Consultas formuladas sobre la aplicación del artículo 5.1.18 de la OGUC.",
-                "secciones": [
-                    {
-                        "titulo": "I. ANTECEDENTES",
-                        "parrafos": ["1. Consultas sobre la aplicación del artículo 5.1.18 de la OGUC."]
-                    }
-                ]
-            },
-            "531": {
-                "fecha": "2023-02-17",
-                "materia": "Artículos 5.1.17. y 5.1.18. de la Ordenanza General de Urbanismo y Construcciones. Modificación de proyecto. Complementa circular Ord. N° 0535 de fecha 26 de diciembre de 2016. (DDU 328)",
-                "emisor": "JEFE DIVISION DE DESARROLLO URBANO",
-                "antecedentes": "De conformidad con lo dispuesto en el artículo 4° del D.F.L. N° 458, de 1975 Ley General de Urbanismo y Construcciones (LGUC).",
-                "secciones": [
-                    {
-                        "titulo": "I. ANTECEDENTES",
-                        "parrafos": ["1. De conformidad con lo dispuesto en el artículo 4° del D.F.L. N° 458, de 1975 Ley General de Urbanismo y Construcciones (LGUC)."]
-                    }
-                ]
-            },
-            "536": {
-                "fecha": "2023-03-08",
-                "materia": "Límite de aplicación de normas urbanísticas en subdivisiones prediales y loteos.",
-                "emisor": "JEFE DIVISION DE DESARROLLO URBANO",
-                "antecedentes": "Consultas sobre aplicación del artículo 55 de la Ley General de Urbanismo y Construcciones.",
-                "secciones": [
-                    {
-                        "titulo": "I. ANTECEDENTES",
-                        "parrafos": ["1. Consultas sobre aplicación del artículo 55 de la LGUC."]
-                    }
-                ]
-            },
-            "537": {
-                "fecha": "2023-03-10",
-                "materia": "Elaboración de los Estudios de Riesgo para los Instrumentos de Planificación Territorial, de acuerdo a lo dispuesto en la Ley N° 21.364 y en el Decreto N° 86 de 2023 de Ministerio del Interior y Seguridad Pública. Complementa Circular Instructiva DDU 510.",
-                "emisor": "JEFE DIVISION DE DESARROLLO URBANO",
-                "antecedentes": "De conformidad con lo dispuesto en el artículo 4° de la Ley General de Urbanismo y Construcciones (LGUC).",
-                "secciones": [
-                    {
-                        "titulo": "I. ANTECEDENTES",
-                        "parrafos": ["1. De conformidad con lo dispuesto en el artículo 4° de la LGUC."]
-                    }
-                ]
-            }
-        }
-
         # Si el texto está prácticamente vacío, cargamos los metadatos de fallback y retornamos de inmediato
-        if len(raw_text.strip()) < 50 and numero in fallbacks_estaticos:
-            fb = fallbacks_estaticos[numero]
+        if len(raw_text.strip()) < 50 and numero in self.fallbacks_estaticos:
+            fb = self.fallbacks_estaticos[numero]
             return {
                 "numero": numero,
                 "fecha": fb["fecha"],
@@ -190,8 +157,8 @@ class DDUParser:
                     fecha = f"{yyyy:04d}-{mm}-{dd:02d}"
                     break
 
-        if not fecha and numero in fallbacks_estaticos:
-            fecha = fallbacks_estaticos[numero]["fecha"]
+        if not fecha and numero in self.fallbacks_estaticos:
+            fecha = self.fallbacks_estaticos[numero]["fecha"]
 
         # 3. Extraer emisor
         emisor = ""
@@ -237,8 +204,8 @@ class DDUParser:
 
         materia = re.sub(r"\s+", " ", materia).strip()
 
-        if not materia and numero in fallbacks_estaticos:
-            materia = fallbacks_estaticos[numero]["materia"]
+        if not materia and numero in self.fallbacks_estaticos:
+            materia = self.fallbacks_estaticos[numero]["materia"]
 
         # 5. Extraer antecedentes
         antecedentes = ""
@@ -268,12 +235,12 @@ class DDUParser:
 
         antecedentes = re.sub(r"\s+", " ", antecedentes).strip()
 
-        if not antecedentes and numero in fallbacks_estaticos:
-            antecedentes = fallbacks_estaticos[numero]["antecedentes"]
+        if not antecedentes and numero in self.fallbacks_estaticos:
+            antecedentes = self.fallbacks_estaticos[numero]["antecedentes"]
 
         # 6. Dividir en secciones y párrafos
-        secciones: List[Dict[str, Any]] = []
-        seccion_actual: Dict[str, Any] = {"titulo": "ENCABEZADO", "parrafos": []}
+        secciones: List[SeccionDDU] = []
+        seccion_actual: SeccionDDU = {"titulo": "ENCABEZADO", "parrafos": []}
         parrafo_actual = ""
 
         for line in lines:
@@ -324,8 +291,8 @@ class DDUParser:
             secciones.append(seccion_actual)
 
         # Sobreescribir selectivamente metadatos de fallback conocidos para circulares específicas
-        if numero in fallbacks_estaticos:
-            fb = fallbacks_estaticos[numero]
+        if numero in self.fallbacks_estaticos:
+            fb = self.fallbacks_estaticos[numero]
             # Si es la 531 o si la fecha quedó vacía o corrupta, forzamos la de fallback
             if numero == "531" or not fecha or fecha == "2016-12-26":
                 fecha = fb["fecha"]
