@@ -1,0 +1,72 @@
+# ==========================================
+# GITIGNORE - Proyecto Biblioteca Normativa
+# ==========================================
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# --- Entornos Virtuales (Virtual Environments) ---
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# --- Directorio Temporal de Salida de Pruebas ---
+tmp/
+
+# --- Datos y Documentos de Desarrollo Locales ---
+# Excluir documentos y hojas de cálculo generales para evitar subidas accidentales
+*.csv
+*.xlsx
+*.xls
+*.pdf
+
+# Permitir explícitamente los archivos oficiales de documentación y circulares del repositorio
+!/bcn - documentación/**/*.csv
+!/bcn - documentación/**/*.xlsx
+!/bcn - documentación/**/*.xls
+!/circulares/**/*.pdf
+
+# --- Editores y Entornos de Desarrollo (IDEs) ---
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*~
+
+# --- Sistema Operativo y Office ---
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+~$*
+~$*.xlsx
+~$*.xls
+~$*.docx

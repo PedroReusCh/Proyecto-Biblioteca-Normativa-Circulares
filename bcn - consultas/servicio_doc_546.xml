@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc name="circular"
+  xmlns="http://www.akomantoso.org/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.akomantoso.org/2.0 Esquema%20Akoma-Ntoso%20BCN.xsd">
+<meta>
+  <identification source="#redactor">
+    <FRBRWork>
+      <FRBRthis value="http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2026-05-29/546/main"/>
+      <FRBRuri value="http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2026-05-29/546"/>
+      <FRBRdate date="2026-05-29" name="fecha-publicacion"/>
+      <FRBRauthor href="#minvu-ddu" as="#autor"/>
+      <FRBRcountry value="cl"/>
+    </FRBRWork>
+    <FRBRExpression>
+      <FRBRthis value="http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2026-05-29/546/espanol/main"/>
+      <FRBRuri value="http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2026-05-29/546/espanol"/>
+      <FRBRdate date="2026-05-29" name="fecha-publicacion"/>
+      <FRBRauthor href="#minvu-ddu" as="#autor"/>
+      <FRBRlanguage language="es"/>
+    </FRBRExpression>
+    <FRBRManifestation>
+      <FRBRthis value="http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2026-05-29/546/espanol/datos.xml"/>
+      <FRBRuri value="http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2026-05-29/546/espanol/datos.xml"/>
+      <FRBRdate date="2026-07-17" name="fecha-generacion"/>
+      <FRBRauthor href="#redactor" as="#editor"/>
+      <FRBRformat value="xml"/>
+    </FRBRManifestation>
+  </identification>
+  <references source="#redactor">
+    <TLCOrganization id="redactor" href="http://datos.bcn.cl/recurso/cl/organismo/biblioteca-del-congreso-nacional" showAs="Biblioteca del Congreso Nacional"/>
+    <TLCOrganization id="minvu" href="http://datos.bcn.cl/recurso/cl/organismo/ministerio-de-vivienda-y-urbanismo" showAs="Ministerio de Vivienda y Urbanismo"/>
+    <TLCOrganization id="minvu-ddu" href="http://datos.bcn.cl/recurso/cl/organismo/ministerio-de-vivienda-y-urbanismo/division-de-desarrollo-urbano" showAs="División de Desarrollo Urbano"/>
+    <TLCPerson id="jefe-division-desarrollo-urbano" href="http://datos.bcn.cl/recurso/cl/persona/jefe-division-desarrollo-urbano" showAs="Jefe División de Desarrollo Urbano"/>
+    <TLCRole id="autor" href="http://datos.bcn.cl/recurso/cl/rol/autor" showAs="Autor"/>
+    <TLCRole id="editor" href="http://datos.bcn.cl/recurso/cl/rol/editor" showAs="Editor"/>
+  </references>
+</meta>
+<preface>
+  <p><docType>CIRCULAR</docType></p>
+  <p><docNumber>DDU 546</docNumber></p>
+  <p><docDate date="2026-05-29">29 de mayo de 2026</docDate></p>
+  <p><docTitle>Aplicación del artículo 5.1.2. numeral 2</docTitle></p>
+</preface>
+<mainBody>
+  <section id="sec_1">
+    <heading>ENCABEZADO</heading>
+    <paragraph id="par_1_1">
+      <content>
+        <p>M1nisterfodc . V1vtend.a Y , &apos;l Urbanhmo , .. 1 - •·: ·,- •• 1 &apos; Gob11&apos;rnO do Ch1I• ; TRABAJANDO PARA USTED A SEGÚN DISTRIBUCIÓN. DDU 546 CIRCULAR ORO. Nº _r_...;:•:..--3_ 1_....;;8;__ __ -&apos;/ MAT.: Aplicación del <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-5.1.2">artículo 5.1.2</ref>. numeral 2 de la <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47">Ordenanza General de Urbanismo y Construcciones</ref>; pérgolas. Complementa Circular Ord. Nº 265, de fecha 24 de abril de 2026, DDU 542. PERMISOS, APROBACIONES Y RECEPCIONES; EDIFICACIÓN. SANTIAGO, 2 9 MAYO 2026 DE JEFE DIVISIÓN DE DESARROLLO URBANO. l. De conformidad a lo dispuesto en el artículo 4° de la <ref href="http://datos.bcn.cl/recurso/cl/dfl/ministerio-de-vivienda-y-urbanismo/1976-04-13/458">Ley General de Urbanismo y Construcciones</ref> (<ref href="http://datos.bcn.cl/recurso/cl/dfl/ministerio-de-vivienda-y-urbanismo/1976-04-13/458">LGUC</ref>) que establece que al Ministerio de Vivienda y Urbanismo corresponderá, a través de la División de Desarrollo Urbano , interpretar las disposiciones de la mencionada Ley y su Ordenanza General, así como impartir las instrucciones que sean necesarias para su aplicación mediante circulares, y considerando además diversas consultas que se han recibido en esta División, se ha estimado necesario emitir la presente Circular con el objeto de impartir instrucciones sobre la aplicación de lo dispuesto en el numeral 2 del <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-5.1.2">artículo 5.1.2. de la Ordenanza General de Urbanismo y Construcciones</ref> (<ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47">OGUC</ref>), y, en particular, sobre si las pérgolas &quot;autosoportantes&quot; requieren habilitación previa por parte de la Dirección de Obras Municipales (DOM) para su instalación, ya sea mediante permiso de edificación o mediante declaración jurada de inicio de obras .</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_2">
+      <num>2.</num>
+      <content>
+        <p>En primer lugar, debe advertirse que la determinación del marco normativo aplicable a un proyecto o a obras específicas exige una ponderación de las circunstancias de hecho que, de manera fundada y caso a caso, corresponde verificar a la Administración activa, en este caso, a la DOM y/o a la Secretaría Regional Ministerial de Vivienda y Urbanismo respectiva .</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_3">
+      <num>3.</num>
+      <content>
+        <p>A continuación, de conformid ad con el inciso primero del <ref href="http://datos.bcn.cl/recurso/cl/dfl/ministerio-de-vivienda-y-urbanismo/1976-04-13/458/seccion/articulo-116">artículo 116 de la LGUC</ref>, la construcción, reconstrucción, reparación, alteración, ampliación y demolición de edificios y obras de urbanización de cualquier naturaleza, sean urbanas o rurales, requerirán permiso de la Dirección de Obras Municipales a solicitud del propietario. Con todo -añade el artículo 116-, la Ordenanza General señalará las excepciones que no requieren permiso de la Dirección de Obras Municipales y aquellas en que se habilita su ejecución mediante el uso de otras técnicas, las que en ningún caso podrán =-===== ====== GOBIERNO DE CHILE ====== =====~ Ministeri o de Vivienda y Urbanismo - Alameda 924 - Santiago - Chile Página 1 de 3 implicar una carga administrativa mayor para el propietario que la obtención de los permisos a que se refiere dicho inciso. Por su parte, el inciso cuarto del mismo artículo dispone que no requer irán permiso, entre otras, las obras urbanas o rurales de carácter ligero o provisorio, en la forma que determine la Ordenanza General.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_4">
+      <num>4.</num>
+      <content>
+        <p>En este contexto, el <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-5.1.2">artículo 5.1.2</ref>. Nº2 de la <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47">OGUC</ref> dispone que el permiso no será necesario cuando se trate, entre otras situaciones, de elementos exteriores sobrepuestos que no requieran cimie ntos. Sobre dicho precepto, esta División se pronunció en la Circular Ord. Nº1074 de fecha 27 de diciembre de 12.2007, DDU­ ESPECÍFICA Nº97 /2007 1 .</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_5">
+      <num>5.</num>
+      <content>
+        <p>Por otra parte, para determinar si una obra requiere permiso de edificación , también es relevante establecer si ella computa superficie edificada. Para estos efectos, debe distinguirse si esta superficie está techada y lateralmente cerrada o abierta conforme señalan los numerales 1 y 2 del <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-5.1.11">artículo 5.1.11. de la OGUC</ref>, con las consideraciones adicionales que ambos numerales señalan. En lo pertinente, en el punto 7 de la Circular Ord. N°300, de fecha 14 de agosto de 2002, DDU 110, se indicó que, para el cálculo de la superficie edificada en cada piso, no se contabilizarán las superficies abiertas cuya cubierta esté en volado por dos o más lados convergentes, las jardineras exteriores y los espacios cubiertos y abiertos del primer piso que sean de uso común .</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_6">
+      <num>6.</num>
+      <content>
+        <p>Teniendo en consideración lo expuesto y, además, que el vocablo &quot;pérgola&quot; no ha sido definido en la <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47">OGUC</ref>, para determinar si dicho elemento se encuentra comprendido en el supuesto previsto en el <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-5.1.2">artículo 5.1.2</ref>. Nº2 de la <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47">OGUC</ref>, esta División estima que debe verificarse lo siguiente: a) Que la pérgola consista en un elemento -es decir que no tenga el carácter de construcción 2- y que además sea exterior a una edificación. b) Que se trate de una pérgola sobrepuesta que no cuente con cimientos, lo cual no impide que estos elementos puedan considerar mecanismos de anclaje al terreno que prescindan de fundaciones. En consecuencia, si la pérgola requiere cimientos para anclarse al terreno será necesario contar, según sea el caso, con permiso de edificación respectivo o con habilitación previa mediante la presentación y archivo de una declaración jurada de inicio de obras (esto último cuando corresponda a una edificación con destino complementario al área verde 3 que considera, entre otros, sombreaderos y pérgolas en el supuesto &quot;edificaciones&quot;).</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_7">
+      <num>7.</num>
+      <content>
+        <p>Por lo tanto, las pérgolas que cumplan con lo descrito en el punto anterior -que sean elementos exteriores sobrepuestos que no requieran cimientos-, incluso cuando consideren cubiertas livianas, no requerirán de permisos de edificación o habilitación mediante declaración jurada y, por ende, no generan superficie edificada de conformidad con el <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-5.1.11">artículo 5.1.11. de la OGUC</ref>. 1 En dicha circular se indica que el citado <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-5.1.2">artículo 5.1.2</ref>, que define los casos para los cuales no será necesario el permiso de edificación, en su Nº 2 se refiere a elementos exteriores sobrepuestos complementarios a una edificación, como pueden ser terrazas, parrones, glorietas, u otros, pero no a recintos que tengan el carácte r de local habitable, como es el caso para los &apos;con tain ers&apos;. Además, deja constancia que este tema ha sido tratado en el dictamen Nº29101 de 2006 de la Contraloría General de la República. 2 En el <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-1.1.2">artículo 1.1.2. de la OGUC</ref> se define &quot;Construcción&quot; como &quot;obras de edificación o de urbanización&quot;. 3 En el <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-1.1.2">artículo 1.1.2. de la OGUC</ref> se define &quot; Edificaciones con destinos complementarios al área verde&apos;&apos; como &quot;construcciones complementarias a la recreación, tales como sombreaderos, pérgolas, mirado res, juegos infantiles, servicios higiénicos, pañoles para herramientas, y obras de paisajismo, así como otro tipo de construcciones de carácter transitorio, tales como quioscos&quot;. Por su parte, en el literal b) del artícu lo 1.6.3. de la <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47">OGUC</ref> se dispone que se habilitará la ejecución de obras mediante la presentación y archivo en la DOM de una declaración jurada de Inicio de obras cuando se trate de edificaciones con destinos complementarios al área verde contempladas en los artículos 2.1.30. y 2.1.31. de la <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47">OGUC</ref>, tales como sombreaderos, pérgolas, servicios higiénicos o pañoles para herramientas, siempre que no correspondan a edificaciones destinadas a equipamiento, o aquellas señaladas en el numeral 11 del <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-5.1.2">artículo 5.1.2</ref>. del mismo reglamento. --========== GOBIERNO DE CHILE ====== ====~ Ministerio de Vivienda y Urbanismo - Alameda 924 - Santiago - Chile Página 2 de 3</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_8">
+      <num>8.</num>
+      <content>
+        <p>Con todo, debe advertirse que la circunstancia de no ser exigible la obtención de un permiso de edificación o la habilitación previa mediante la presentación y archivo de una declaración jurada de inicio de obras, es una materia distinta al destino que se dé a las pérgolas, el cual deberá ajustarse a lo dispuesto en el inciso cuarto del <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-1.4.1">artículo 1.4.1</ref>. y en el <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-2.5.8">artículo 2.5.8</ref> . de la <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47">OGUC</ref>, según corresponda. En otras palabras, la instalación de estos elementos no habilita, por sí misma, un determinado destino o una actividad. Saluda atentamente a Ud., N DIEGO ZQUIERDO HEVIA D VISIÓN DE DESARROLLO URBANO IS RIO DE VIVIENDA Y URBANISMO tl &apos; . RA/4l ¡ ~ /O M RIBuc)óN: Sr. Ministro de Vivienda y Urbanismo ,2. Sra. Subsecretaria de Vivienda y Urbanismo</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_9">
+      <num>3.</num>
+      <content>
+        <p>Sra. Contralora General de la República</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_10">
+      <num>4.</num>
+      <content>
+        <p>Sres. Gobernadores Regionales, todas las regiones.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_11">
+      <num>5.</num>
+      <content>
+        <p>Biblioteca del Congreso Nacional.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_12">
+      <num>6.</num>
+      <content>
+        <p>Sres. Jefes de División MINVU.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_13">
+      <num>7.</num>
+      <content>
+        <p>Contra loría I nterna MINVU.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_14">
+      <num>8.</num>
+      <content>
+        <p>Sres. Secretarios Regionales Ministeriales MINVU.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_15">
+      <num>9.</num>
+      <content>
+        <p>Sres. Directores Regionales SERVIU.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_16">
+      <num>10.</num>
+      <content>
+        <p>Sres. Directores de Obras Municipales (a/c SEREMI MINVU).</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_17">
+      <num>11.</num>
+      <content>
+        <p>Sres. Asesores Urbanistas (a/c SEREMI MINVU).</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_18">
+      <num>12.</num>
+      <content>
+        <p>Sres. Secretarios Comunales de Planificación y Coordinación (a/c SEREMI MINVU).</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_19">
+      <num>13.</num>
+      <content>
+        <p>Depto. de Ordenamiento Territor ial y Medio Ambiente (GORE Metropolitano)</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_20">
+      <num>14.</num>
+      <content>
+        <p>Sres. Jefes Depto. D.D.U.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_21">
+      <num>15.</num>
+      <content>
+        <p>Sres. Jefes Depto. D.D.U.I. SEREMI MINVU Regionales</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_22">
+      <num>16.</num>
+      <content>
+        <p>Sr. Jefe de la Oficina de Autorizac iones Sectoriales e Inversión del Ministerio de Economía, Fomento y Turismo. 17 . Asociación Chilena de Municipalidades (AChM)</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_23">
+      <num>18.</num>
+      <content>
+        <p>Asociación de Municipalidades de Chile (AMUCH)</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_24">
+      <num>19.</num>
+      <content>
+        <p>Colegio de Arquitectos de Chile.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_25">
+      <num>20.</num>
+      <content>
+        <p>Instituto de la Construcción.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_26">
+      <num>21.</num>
+      <content>
+        <p>Cámara Chilena de la Construcción.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_27">
+      <num>22.</num>
+      <content>
+        <p>Asociación de Oficinas de Arquitectos de Chile (AOA)</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_28">
+      <num>23.</num>
+      <content>
+        <p>Asociación Nacional de Revisores Independientes (ANRI)</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_29">
+      <num>24.</num>
+      <content>
+        <p>Asociación Chilena de Revisores Independientes (ARICH)</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_30">
+      <num>25.</num>
+      <content>
+        <p>Asociación de Desarrolladores Inmobiliarios (ADI)</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_31">
+      <num>26.</num>
+      <content>
+        <p>Consejo Nacional de Desarrollo Territo rial.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_32">
+      <num>27.</num>
+      <content>
+        <p>Sr. Secretario Ejecutivo Consejo de Monumentos Nacionales</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_33">
+      <num>28.</num>
+      <content>
+        <p>Centro de Documentación (CEDOC) MINVU</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_34">
+      <num>29.</num>
+      <content>
+        <p>OIRS</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_35">
+      <num>30.</num>
+      <content>
+        <p>Jefe SIAC</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_36">
+      <num>31.</num>
+      <content>
+        <p>Archivo DDU</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_37">
+      <num>32.</num>
+      <content>
+        <p>Oficina de Partes DDU</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_38">
+      <num>33.</num>
+      <content>
+        <p>Oficina de Partes MINVU Ley 20.285 =::::= ========= GOBIERNO DE CHILE ====== ==-== = :-= Ministerio de Vivienda y Urbanismo - Alameda 924 - Santiago - Chile Página 3 de 3</p>
+      </content>
+    </paragraph>
+  </section>
+</mainBody>
+</doc>

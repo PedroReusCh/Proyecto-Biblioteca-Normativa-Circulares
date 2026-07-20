@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc name="circular"
+  xmlns="http://www.akomantoso.org/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.akomantoso.org/2.0 Esquema%20Akoma-Ntoso%20BCN.xsd">
+<meta>
+  <identification source="#redactor">
+    <FRBRWork>
+      <FRBRthis value="http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2026-02-27/533/main"/>
+      <FRBRuri value="http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2026-02-27/533"/>
+      <FRBRdate date="2026-02-27" name="fecha-publicacion"/>
+      <FRBRauthor href="#minvu-ddu" as="#autor"/>
+      <FRBRcountry value="cl"/>
+    </FRBRWork>
+    <FRBRExpression>
+      <FRBRthis value="http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2026-02-27/533/espanol/main"/>
+      <FRBRuri value="http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2026-02-27/533/espanol"/>
+      <FRBRdate date="2026-02-27" name="fecha-publicacion"/>
+      <FRBRauthor href="#minvu-ddu" as="#autor"/>
+      <FRBRlanguage language="es"/>
+    </FRBRExpression>
+    <FRBRManifestation>
+      <FRBRthis value="http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2026-02-27/533/espanol/datos.xml"/>
+      <FRBRuri value="http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2026-02-27/533/espanol/datos.xml"/>
+      <FRBRdate date="2026-07-17" name="fecha-generacion"/>
+      <FRBRauthor href="#redactor" as="#editor"/>
+      <FRBRformat value="xml"/>
+    </FRBRManifestation>
+  </identification>
+  <references source="#redactor">
+    <TLCOrganization id="redactor" href="http://datos.bcn.cl/recurso/cl/organismo/biblioteca-del-congreso-nacional" showAs="Biblioteca del Congreso Nacional"/>
+    <TLCOrganization id="minvu" href="http://datos.bcn.cl/recurso/cl/organismo/ministerio-de-vivienda-y-urbanismo" showAs="Ministerio de Vivienda y Urbanismo"/>
+    <TLCOrganization id="minvu-ddu" href="http://datos.bcn.cl/recurso/cl/organismo/ministerio-de-vivienda-y-urbanismo/division-de-desarrollo-urbano" showAs="División de Desarrollo Urbano"/>
+    <TLCPerson id="jefe-division-desarrollo-urbano" href="http://datos.bcn.cl/recurso/cl/persona/jefe-division-desarrollo-urbano" showAs="Jefe División de Desarrollo Urbano"/>
+    <TLCRole id="autor" href="http://datos.bcn.cl/recurso/cl/rol/autor" showAs="Autor"/>
+    <TLCRole id="editor" href="http://datos.bcn.cl/recurso/cl/rol/editor" showAs="Editor"/>
+  </references>
+</meta>
+<preface>
+  <p><docType>CIRCULAR</docType></p>
+  <p><docNumber>DDU 533</docNumber></p>
+  <p><docDate date="2026-02-27">27 de febrero de 2026</docDate></p>
+  <p><docTitle>Prórroga extraordinaria por dieciocho (18) meses adicionales</docTitle></p>
+</preface>
+<mainBody>
+  <section id="sec_1">
+    <heading>ENCABEZADO</heading>
+    <paragraph id="par_1_1">
+      <content>
+        <p>A SEGÚN DISTRIBUCIÓN. DDU 533 CIRCULAR ORD. Nº _ _ l_· _1 _2 _ _,/ ANT .: 1) Decreto Supremo Nº33 (V. y U.) de 2024, que agregó un artículo transitorio a la <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47">OGUC</ref>, en materia de caducidad de permisos de construcción. 2) <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-1.4.17">Artículo 1.4.17</ref> . de la <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47">OGUC</ref>. 3) <ref href="http://datos.bcn.cl/recurso/cl/dfl/ministerio-de-vivienda-y-urbanismo/1976-04-13/458/seccion/articulo-120">Artículo 120 de la LGUC</ref>. MAT.: Prórroga extraordinaria por dieciocho (18) meses adicionales de permisos de construcción vigentes y sin inicio de obras a la fecha de entrada en vigencia del D.S. Nº33 (V. y U.) de 2024. Instruye criterios para su cómputo y aplicación uniforme . PERMISOS, VIGENCIA, RECEPCIONES. SANTIAGO, 2 7 FEB 2026 DE JEFE DIVISIÓN DE DESARROLLO URBANO.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_2">
+      <num>1.</num>
+      <content>
+        <p>De conformidad con lo previsto en el artículo 4° de la <ref href="http://datos.bcn.cl/recurso/cl/dfl/ministerio-de-vivienda-y-urbanismo/1976-04-13/458">Ley General de Urbanismo y Construcciones</ref> (<ref href="http://datos.bcn.cl/recurso/cl/dfl/ministerio-de-vivienda-y-urbanismo/1976-04-13/458">LGUC</ref>), corresponde a esta División interpretar las disposiciones de la dicha Ley y su Ordenanza General mediante circulares que quedarán a disposición de cualquier interesado, y en atención a diversas consultas recibidas relativas a la extensión extraordinaria de vigencia de permisos de construcción establecida por el D.S. Nº33 (V. y U.) de 2024 (en adelante DS 33), se imparten las siguientes instrucciones para uniformar su aplicación.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_3">
+      <num>2.</num>
+      <content>
+        <p>MARCO NORMATIVO: DS 33. El DS 33, publicado en el Diario Oficial el 30.09.2024, agregó a la <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47">Ordenanza General de Urbanismo y Construcciones</ref> (<ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47">OGUC</ref>) un artículo transitorio, estableciendo expresamente que: &quot;Se entenderán prorrogados por dieciocho meses adicionales , aquellos permisos de construcción que, encontrándose vigentes a la fecha de entrada en vigencia de esta norma , no han iniciado las obras correspondientes .&quot; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!. Ministerio de Vivienda y Urban ismo - Alameda 924 - Santiago - Chile Página 1 de 3 Asimismo, el decreto dispone que: &quot; El presente decreto supremo entrará en vigencia en la fecha de publicación en el Diario Oficial. &quot; Para la correcta aplicación de la regla precedente, debe tenerse presente que la <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47">OGUC</ref> regula la caducidad de los permisos de construcción en el <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-1.4.17">artículo 1.4.17</ref> ., el que dispone -en lo pertinente- que el permiso caducará automáticamente a los tres años de concedido si no se hubieren iniciado las obras correspondientes o si estas hubieren permanecido paralizadas durante el mismo lapso, precisando, además, que una obra se entenderá iniciada una vez realizados los trazados y comenzadas las excavaciones contempladas en los planos del proyecto.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_4">
+      <num>3.</num>
+      <content>
+        <p>ÁMBITO DE APLICACIÓN DE LA PRÓRROGA (REQUISITOS COPULATIVOS). La prórroga extraordinaria de dieciocho (18) meses adicionales resulta aplicable únicamente a aquellos permisos de construcción que cumplan copulativamente las siguientes condiciones: a) Que se encuentren vigentes a la fecha de entrada en vigencia del OS 33, esto es, a la fecha de su publicación en el Diario Oficial; y, b) Que, a dicha fecha, no hayan iniciado las obras correspondientes , conforme al criterio de &quot;inicio de obra&quot; descrito en el <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-1.4.17">artículo 1.4.17. de la OGUC</ref>. En consecuencia, la prórroga no es aplicable a permisos que no se encontraban vigentes a la fecha indicada o que, encontrándose vigentes, hayan iniciado las obras, por no cumplirse los requisitos exigidos por la norma transitoria.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_5">
+      <num>4.</num>
+      <content>
+        <p>CRITERIO DE CÓMPUTO: &quot;DIECIOCHO MESES ADICIONALES&quot; COMO PLAZO QUE SE AGREGA AL REMANENTE VIGENTE. La expresión &quot;prorrogados por dieciocho meses adicionales &quot; debe entenderse , para efectos de su aplicación , como una extensión que se agrega al plazo de vigencia que reste al permiso a la fecha de entrada en vigencia del OS 33, siempre que se cumplan los requisitos del numeral 3 precedente. Para que el cómputo opere , debe considerarse que la fecha de expiración original del permiso (determinada por el régimen general aplicable) debe extenderse en dieciocho (18) meses. En consecuencia, el tiempo remanente de vigencia que restaba al permiso a la fecha de entrada en vigencia del OS 33 debe incrementarse en dieciocho (18) meses. Ejemplos ilustrativo s: i) Si al 30 de septiembre de 2024 a un permiso le restaban dos (2) años de vigencia (porque ya transcurrió un año desde que fue concedido), deberá entenderse que a dicho permiso le restan dos (2) años más dieciocho (18) mese s; ii) Si al 30 de septiembre de 2024 a un permiso le restaba un (1) día de vigencia , deberá entenderse que dicho permiso extendió su vigencia por dieciocho (18) meses adicionales , más un día. !!!!!!!!!!!!!!!!!!!!!!!!!!!!&apos;!!!!!!!!&apos;!!!!!!!!!!!!!. Ministerio de Vivienda y Urbanismo - Alameda 924 - Sant iago - Chile Página 2 de 3 Por último, la prórroga se estableció por la aplicación de la norma transitoria (&quot;se entenderán prorrogados &quot;), sin que sea necesario una solicitud formal por parte del interesado para su ocurrencia. Saluda atentamente a Ud., BUCIÓN: l. Sr. Ministro de Vivienda y Urbanismo</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_6">
+      <num>2.</num>
+      <content>
+        <p>Sra. Subsecretaria de Vivienda y Urbanismo</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_7">
+      <num>3.</num>
+      <content>
+        <p>Sra. Contralora General de la República</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_8">
+      <num>4.</num>
+      <content>
+        <p>Sres. Gobernadores Regionales, todas las regiones.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_9">
+      <num>5.</num>
+      <content>
+        <p>Ministerio del Medio Ambiente.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_10">
+      <num>6.</num>
+      <content>
+        <p>Biblioteca del Congreso Nacional.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_11">
+      <num>7.</num>
+      <content>
+        <p>Sres. Jefes de División MINVU.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_12">
+      <num>8.</num>
+      <content>
+        <p>Contraloría Interna MINVU.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_13">
+      <num>9.</num>
+      <content>
+        <p>Sres. Secretarios Regionales Ministeriales MINVU.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_14">
+      <num>10.</num>
+      <content>
+        <p>Sres. Directo res Regionales SERVIU.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_15">
+      <num>11.</num>
+      <content>
+        <p>Sres. Directores de Obras Municipales (a/c SEREMI MINVU).</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_16">
+      <num>12.</num>
+      <content>
+        <p>Sres. Asesores Urbanistas (a/c SEREMI MINVU).</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_17">
+      <num>13.</num>
+      <content>
+        <p>Sres. Secretarios Comunales de Planificación y Coordinación (a/c SEREMI MINVU).</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_18">
+      <num>14.</num>
+      <content>
+        <p>Depto. de Ordenamiento Territorial y Medio Ambiente (GORE Metropolitano)</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_19">
+      <num>15.</num>
+      <content>
+        <p>Sres. Jefes Depto. O.O.U.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_20">
+      <num>16.</num>
+      <content>
+        <p>Sres. Jefes Depto. D.D.U.I. SEREMI MINVU Regionales</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_21">
+      <num>17.</num>
+      <content>
+        <p>Colegio de Arquitectos de Chile.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_22">
+      <num>18.</num>
+      <content>
+        <p>Instituto de la Construcción.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_23">
+      <num>19.</num>
+      <content>
+        <p>Cámara Chilena de la Construcción.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_24">
+      <num>20.</num>
+      <content>
+        <p>Asociación de Oficinas de Arquitectos de Chile (AOA)</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_25">
+      <num>21.</num>
+      <content>
+        <p>Asociación Nacional de Revisores Independien tes (ANRI)</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_26">
+      <num>22.</num>
+      <content>
+        <p>Asociación Chilena de Municipalidades (AChM)</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_27">
+      <num>23.</num>
+      <content>
+        <p>Asociación de Municipalidades de Chile (AMUCH)</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_28">
+      <num>24.</num>
+      <content>
+        <p>Asociación de Desarrolladores I nmobiliarios (ADI)</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_29">
+      <num>25.</num>
+      <content>
+        <p>Consejo Nacional de Desarrollo Terr itorial.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_30">
+      <num>26.</num>
+      <content>
+        <p>Sr. Secretario Ejecutivo Consejo de Monumentos Nacionales</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_31">
+      <num>27.</num>
+      <content>
+        <p>Centro de Documentación (CEDOC) MINVU</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_32">
+      <num>28.</num>
+      <content>
+        <p>OIRS</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_33">
+      <num>29.</num>
+      <content>
+        <p>Jefe SIAC</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_34">
+      <num>30.</num>
+      <content>
+        <p>Archivo DDU</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_35">
+      <num>31.</num>
+      <content>
+        <p>Oficina de Partes DDU</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_36">
+      <num>32.</num>
+      <content>
+        <p>Oficina de Partes MINVU Ley 20.285 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!. Ministerio de Vivienda y Urbanismo - Alameda 924 - Santiago - Chile Página 3 de 3</p>
+      </content>
+    </paragraph>
+  </section>
+</mainBody>
+</doc>

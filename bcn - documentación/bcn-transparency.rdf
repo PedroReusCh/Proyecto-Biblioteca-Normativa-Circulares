@@ -1,0 +1,978 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:bcnbio="http://datos.bcn.cl/ontologies/bcn-biographies#" xmlns:bcncon="http://datos.bcn.cl/ontologies/bcn-congress#" xmlns:bcngeo="http://datos.bcn.cl/ontologies/bcn-geographics#" xmlns:bcntransparency="http://datos.bcn.cl/ontologies/bcn-transparency#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:org="http://www.w3.org/ns/org#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:time="http://www.w3.org/2006/time#">
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#LibraryCommission">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#Class"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">ComisionDeBiblioteca</rdfs:label>
+        <rdfs:comment xml:lang="es">La comision del congreso encargada de la biblioteca, formada por el presidente de la camara de diputados, el presidente del senado y la directora de la biblioteca.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-biographies#PresidentOfDeputy">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#Class"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">PresidenteDeLaCamaraDeDiputados</rdfs:label>
+        <rdfs:comment xml:lang="es">Un diputado que ademas es presidente de la camara.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-biographies#PresidentOfSenate">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#Class"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">PresidenteDelSenado</rdfs:label>
+        <rdfs:comment xml:lang="es">Un semador qeu ademas es presidente del senado.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#constitutedBy">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#LibraryCommission"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="es">constituidaPor</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-biographies#PresidentOfDeputy"/>
+        </rdfs:range>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-biographies#PresidentOfSenate"/>
+        </rdfs:range>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Functionary"/>
+        </rdfs:range>
+        <rdfs:comment xml:lang="es">Permite definir los elementos que componen a la comision de biblioteca.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#Role">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#Class"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">Rol</rdfs:label>
+        <rdfs:comment xml:lang="es">El rol que puede tomar una persona.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasDepartment">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">tieneDepartamento</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Department"/>
+        </rdfs:range>
+        <owl:inverseOf>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#departmentOf"/>
+        </owl:inverseOf>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Direction"/>
+        </rdfs:domain>
+        <rdfs:subPropertyOf>
+            <rdf:Description rdf:about="http://www.w3.org/ns/org#hasUnit"/>
+        </rdfs:subPropertyOf>
+        <rdfs:comment xml:lang="es">Indica que una unidad organizativa tiene departamentos.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Department">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#Class"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">Departamento</rdfs:label>
+        <rdfs:subClassOf>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#SubOrganization"/>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="es">Define un departamento (unidad organica) dentro de la BCN, es de mayor jerarquia que un area y depende de la direccion.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Area">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#Class"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">Area</rdfs:label>
+        <rdfs:subClassOf>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#SubOrganization"/>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="es">Describe un area (unidad organica) de la BCN, es de menor jerarquia que un departamento.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/ns/org#OrganizationalUnit">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#Class"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">UnidadOrganizacional</rdfs:label>
+        <rdfs:subClassOf>
+            <rdf:Description rdf:about="http://www.w3.org/ns/org#Organization"/>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="es">Unidad organica que depende de otra.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#SubOrganization">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#Class"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">SubOrganismo</rdfs:label>
+        <rdfs:subClassOf>
+            <rdf:Description rdf:about="http://www.w3.org/ns/org#OrganizationalUnit"/>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="es">Corresponde a una super clase que determina la estructura de una unidad organica.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#departmentOf">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">departamentoDe</rdfs:label>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Department"/>
+        </rdfs:domain>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Direction"/>
+        </rdfs:range>
+        <owl:inverseOf>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasDepartment"/>
+        </owl:inverseOf>
+        <rdfs:subPropertyOf>
+            <rdf:Description rdf:about="http://www.w3.org/ns/org#unitOf"/>
+        </rdfs:subPropertyOf>
+        <rdfs:comment xml:lang="es">Indica que una unidad de tipo departamento pertenece a una unidad organizativa superior.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#areaOf">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Area"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="es">areaDe</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Department"/>
+        </rdfs:range>
+        <rdfs:subPropertyOf>
+            <rdf:Description rdf:about="http://www.w3.org/ns/org#unitOf"/>
+        </rdfs:subPropertyOf>
+        <rdfs:comment xml:lang="es">Permite definir que un area es parte de otra unidad organizacional de mayor jerarquia.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasArea">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Department"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="es">tieneArea</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Area"/>
+        </rdfs:range>
+        <owl:inverseOf>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#areaOf"/>
+        </owl:inverseOf>
+        <rdfs:subPropertyOf>
+            <rdf:Description rdf:about="http://www.w3.org/ns/org#hasUnit"/>
+        </rdfs:subPropertyOf>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#SubHead"/>
+        </rdfs:domain>
+        <rdfs:comment xml:lang="es">Indica que una unidad organizativa tiene un area.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Functionary">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#Class"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">Funcionario</rdfs:label>
+        <rdfs:subClassOf>
+            <rdf:Description rdf:about="http://xmlns.com/foaf/0.1/Person"/>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="es">Una persona que ademas es funcionario de la BCN.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#hasRole">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Functionary"/>
+        </rdfs:domain>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#Role"/>
+        </rdfs:range>
+        <rdfs:label xml:lang="es">tieneRol</rdfs:label>
+        <rdfs:comment xml:lang="es">Permite vincular a una persona con un rol.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Direction">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#Class"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">Direccion</rdfs:label>
+        <rdfs:subClassOf>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#SubOrganization"/>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="es">Define la unidad organica interna de mayor jerarquia de la BCN</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/ns/org#purpose">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">tieneObjetivo</rdfs:label>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#SubOrganization"/>
+        </rdfs:domain>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+        </rdfs:range>
+        <rdfs:comment xml:lang="es">Indica el objetivo o prop�sito de algo.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasClients">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">tieneClientes</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://www.w3.org/ns/org#Organization"/>
+        </rdfs:range>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#SubOrganization"/>
+        </rdfs:domain>
+        <rdfs:comment xml:lang="es">Indica que una unidad organizativa tiene clientes.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/ns/org#Organization">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#Class"/>
+        </rdf:type>
+        <rdfs:comment xml:lang="es">Una unidad organica de mas alto nivel.</rdfs:comment>
+        <rdfs:label xml:lang="es">Organizacion</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasOffer">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#SubOrganization"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="es">tieneOferta</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+        </rdfs:range>
+        <rdfs:comment xml:lang="es">Indica la oferta de productos o servicios que da un organismo.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Position">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#Class"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">Cargo</rdfs:label>
+        <rdfs:comment xml:lang="es">Define el cargo que un funcionario puede tener por un periodo de tiempo.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasPositionPeriod">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Functionary"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="es">tieneCargoEnPeriodo</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#PositionPeriod"/>
+        </rdfs:range>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#HonorariumPeriod"/>
+        </rdfs:range>
+        <owl:inverseOf>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasFunctionary"/>
+        </owl:inverseOf>
+        <rdfs:comment xml:lang="es">Indica el o los periodos en determinados cargos que puede tener un funcionario.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#PositionPeriod">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#Class"/>
+        </rdf:type>
+        <rdfs:subClassOf>
+            <rdf:Description rdf:about="http://www.w3.org/2006/time#Interval"/>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="es">PeriodoDelCargo</rdfs:label>
+        <rdfs:comment xml:lang="es">Define el periodo temporal que un funcionario puede ocupar un cargo.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasRelatedUnit">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">unidadRelacionada</rdfs:label>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#SubOrganization"/>
+        </rdfs:domain>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#SubOrganization"/>
+        </rdfs:range>
+        <rdfs:comment xml:lang="es">Indica las unidades relacionadas a un organismo.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasRelatedPosition">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#SubOrganization"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="es">tieneCargoAsociado</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Position"/>
+        </rdfs:range>
+        <owl:inverseOf>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#isPartOfOrganicalUnit"/>
+        </owl:inverseOf>
+        <rdfs:comment xml:lang="es">Indica los cargos asociados a un suborganismo.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasDependantUnits">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#SubOrganization"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="es">tieneUnidadesDependientes</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#SubOrganization"/>
+        </rdfs:range>
+        <owl:inverseOf>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#dependsOf"/>
+        </owl:inverseOf>
+        <rdfs:comment xml:lang="es">Indica que una unidad organizativa tiene unidades dependientes.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#dependsOf">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#SubOrganization"/>
+        </rdfs:domain>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#SubOrganization"/>
+        </rdfs:range>
+        <rdfs:label>dependeDe</rdfs:label>
+        <owl:inverseOf>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasDependantUnits"/>
+        </owl:inverseOf>
+        <rdfs:comment xml:lang="es">Indica que un organismo depende de otro.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasChief">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#SubOrganization"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="es">tieneJefe</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Functionary"/>
+        </rdfs:range>
+        <rdfs:comment xml:lang="es">Indica que una unidad organizativa tiene un jefe.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2006/time#hasEnd">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#PositionPeriod"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="es">tieneFin</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#date"/>
+        </rdfs:range>
+        <rdfs:comment xml:lang="es">Indica la fecha de finalizacion.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2006/time#hasBeginning">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">tieneInicio</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#date"/>
+        </rdfs:range>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#PositionPeriod"/>
+        </rdfs:domain>
+        <rdfs:comment xml:lang="es">Indica la fecha de inicio.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2006/time#Interval">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#Class"/>
+        </rdf:type>
+        <rdfs:comment xml:lang="es">Determina un intervalo de tiempo</rdfs:comment>
+        <rdfs:label xml:lang="es">Intervalo</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasPosition">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#PositionPeriod"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="es">tieneCargo</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Position"/>
+        </rdfs:range>
+        <owl:inverseOf>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasPeriodByPosition"/>
+        </owl:inverseOf>
+        <rdfs:comment xml:lang="es">Indica el cargo que tiene un funcionario en un periodo de tiempo.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasCode">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Position"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="es">tieneCodigo</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+        </rdfs:range>
+        <rdfs:comment xml:lang="es">Indica que un cargo tiene un codigo.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://xmlns.com/foaf/0.1/name">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Position"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="es">tieneNombre</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+        </rdfs:range>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#SubOrganization"/>
+        </rdfs:domain>
+        <rdfs:comment xml:lang="es">Indica el nombre de una persona.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#isPartOfOrganicalUnit">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">esParteDeUnidadOrganica</rdfs:label>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Position"/>
+        </rdfs:domain>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#SubOrganization"/>
+        </rdfs:range>
+        <rdfs:comment xml:lang="es">Relaciona un cargo con una unidad organizativa.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasSupervisor">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Position"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="es">tieneSuperiorDirecto</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Position"/>
+        </rdfs:range>
+        <rdfs:comment xml:lang="es">Indica el superior directo de un cargo especifico.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasFunctionary">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#PositionPeriod"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="es">tieneFuncionario</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Functionary"/>
+        </rdfs:range>
+        <owl:inverseOf>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasPositionPeriod"/>
+        </owl:inverseOf>
+        <rdfs:comment xml:lang="es">Indica que un periodo en un cargo est� asociado a un funcionario.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasPeriodByPosition">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Position"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="es">tienePeriodoPorCargo</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#PositionPeriod"/>
+        </rdfs:range>
+        <owl:inverseOf>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasPosition"/>
+        </owl:inverseOf>
+        <rdfs:comment xml:lang="es">Indica el periodo que cumple un cargo particular.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasDirection">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">tieneDireccion</rdfs:label>
+        <rdfs:subPropertyOf>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasDependantUnits"/>
+        </rdfs:subPropertyOf>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#LibraryCommission"/>
+        </rdfs:domain>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Direction"/>
+        </rdfs:range>
+        <rdfs:comment xml:lang="es">Indica que la comision de biblioteca se relaciona con la direccion.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://xmlns.com/foaf/0.1/Person">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#Class"/>
+        </rdf:type>
+        <rdfs:comment xml:lang="es">Describe la estructura basica de una persona.</rdfs:comment>
+        <rdfs:label xml:lang="es">Persona</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-biographies#surnameOfFather">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:comment xml:lang="en">Father's inherited surname.</rdfs:comment>
+        <rdfs:comment xml:lang="es">Apellido heredado desde el padre.</rdfs:comment>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://xmlns.com/foaf/0.1/Person"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="es">Apellido Paterno</rdfs:label>
+        <rdfs:label xml:lang="en">Surname of father</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+        </rdfs:range>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-biographies#surnameOfMother">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:comment xml:lang="en">Mother's inherited surname.</rdfs:comment>
+        <rdfs:comment xml:lang="es">Apellido heredado desde la madre.</rdfs:comment>
+        <rdfs:label xml:lang="en">Surname of mother</rdfs:label>
+        <rdfs:label xml:lang="es">Apellido Materno</rdfs:label>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://xmlns.com/foaf/0.1/Person"/>
+        </rdfs:domain>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+        </rdfs:range>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://xmlns.com/foaf/0.1/givenName">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:comment xml:lang="es">nombre de una persona</rdfs:comment>
+        <rdfs:comment xml:lang="en">name of a person</rdfs:comment>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://xmlns.com/foaf/0.1/Person"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="en">name</rdfs:label>
+        <rdfs:label xml:lang="es">nombre</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+        </rdfs:range>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-biographies#profession">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:comment xml:lang="en">The profession of a person</rdfs:comment>
+        <rdfs:comment xml:lang="es">La profesion de una persona</rdfs:comment>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://xmlns.com/foaf/0.1/Person"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="en">profession</rdfs:label>
+        <rdfs:label xml:lang="es">profesion</rdfs:label>
+        <rdfs:label/>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+        </rdfs:range>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasContractualQuality">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">tieneCalidadContractual</rdfs:label>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Functionary"/>
+        </rdfs:domain>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+        </rdfs:range>
+        <rdfs:comment xml:lang="es">Indica que un funcionario tiene calidad contractual.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasStratum">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">tieneEstamento</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+        </rdfs:range>
+        <rdfs:comment xml:lang="es">Indica el estamento que tiene un funcionario.</rdfs:comment>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#PositionPeriod"/>
+        </rdfs:domain>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasEntryDateToBCN">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Functionary"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="es">tieneFechaDeIngresoAlaBCN</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#date"/>
+        </rdfs:range>
+        <rdfs:comment xml:lang="es">Indica la fecha de ingreso como funcionario.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasProfesionalQualification">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">tieneCalificacionProfesional</rdfs:label>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Functionary"/>
+        </rdfs:domain>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+        </rdfs:range>
+        <rdfs:comment xml:lang="es">Indica la calificacion profesional de un funcionario.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-geographics#Region">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#Class"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">Region</rdfs:label>
+        <rdfs:label xml:lang="en">Region</rdfs:label>
+        <rdfs:subClassOf>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-geographics#GeographicalPlace"/>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="es">Una region geografica del pais.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#belongsToRegion">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Functionary"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="es">perteneceARegion</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-geographics#Region"/>
+        </rdfs:range>
+        <rdfs:comment xml:lang="es">Permite definir que una entidad geografica de menor jerarquia pertenece a una region.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasMonthlySalary">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#PositionPeriod"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="es">tieneSueldomensual</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+        </rdfs:range>
+        <rdfs:comment xml:lang="es">Indica el salario relacionado a un cargo.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasGrade">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">tieneGrado</rdfs:label>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#PositionPeriod"/>
+        </rdfs:domain>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+        </rdfs:range>
+        <rdfs:comment xml:lang="es">Indica que un funcionario que tiene un cargo en un periodo, tiene un grado definido por una letra.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/ns/org#hasUnit">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+        </rdf:type>
+        <rdfs:comment xml:lang="es">Indica que algo tiene una unidad.</rdfs:comment>
+        <rdfs:label xml:lang="es">tieneUnidad</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/ns/org#unitOf">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdfs:comment xml:lang="es">Indica que una unidad es parte de otra.</rdfs:comment>
+        <rdfs:label xml:lang="es">esUnidadDe</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasSubHead">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Department"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="es">tieneSubJefatura</rdfs:label>
+        <rdfs:subPropertyOf>
+            <rdf:Description rdf:about="http://www.w3.org/ns/org#hasUnit"/>
+        </rdfs:subPropertyOf>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#SubHead"/>
+        </rdfs:range>
+        <rdfs:comment xml:lang="es">Indica que una suborganizacion tiene subjefatura.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#SubHead">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#Class"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">SubJefatura</rdfs:label>
+        <rdfs:subClassOf>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#SubOrganization"/>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="es">Corresponde a una unidad organica intermedia entre un departamento y un area.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasPositionType">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">tieneTipoDeCargo</rdfs:label>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Position"/>
+        </rdfs:domain>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+        </rdfs:range>
+        <rdfs:comment xml:lang="es">Indica el tipo de cargo.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasObjective">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Position"/>
+        </rdfs:domain>
+        <rdfs:label xml:lang="es">tieneObjetivo</rdfs:label>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+        </rdfs:range>
+        <rdfs:comment xml:lang="es">Indica el objetivo que tiene un cargo.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Ontology"/>
+        </rdf:type>
+        <rdfs:comment xml:lang="es">Modelo estructural de la BCN orientado a divulgar la transparencia.</rdfs:comment>
+        <rdfs:label>Transparencia</rdfs:label>
+        <owl:versionInfo>1.1</owl:versionInfo>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#contractualMode">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+        </rdf:type>
+        <rdfs:comment xml:lang="es">Indica la modalidad contractual, es decir, si es personal de planta, a contrata u a honorarios.</rdfs:comment>
+        <rdfs:label xml:lang="es">modalidadContractual</rdfs:label>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#PositionPeriod"/>
+        </rdfs:domain>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+        </rdfs:range>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Salary">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+        </rdf:type>
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#Class"/>
+        </rdf:type>
+        <rdfs:comment xml:lang="es">El sueldo recibido por un periodo trabajado.</rdfs:comment>
+        <rdfs:label xml:lang="es">Sueldo</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#hasUnit">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        </rdf:type>
+        <rdfs:domain>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Area"/>
+        </rdfs:domain>
+        <rdfs:range>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Unit"/>
+        </rdfs:range>
+        <rdfs:comment xml:lang="es">relaciona una unidad con el area al que pertenece.</rdfs:comment>
+        <rdfs:label xml:lang="es">tieneUnidad</rdfs:label>
+        <rdfs:subPropertyOf>
+            <rdf:Description rdf:about="http://www.w3.org/ns/org#hasUnit"/>
+        </rdfs:subPropertyOf>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#Unit">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+        </rdf:type>
+        <rdfs:label xml:lang="es">Unidad</rdfs:label>
+        <rdfs:subClassOf>
+            <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#SubOrganization"/>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="es">Representa una unidad organizativa de menor jerarqu�a respecto a un �rea.</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-transparency#HonorariumPeriod">
+        <rdf:type>
+            <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#Class"/>
+        </rdf:type>
+        <rdfs:comment xml:lang="es">Describe un periodo de trabajo por honorarios.</rdfs:comment>
+        <rdfs:label xml:lang="es">PeriodoPorHonorarios</rdfs:label>
+    </rdf:Description>
+</rdf:RDF>

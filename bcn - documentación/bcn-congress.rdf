@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:bcnbio="http://datos.bcn.cl/ontologies/bcn-biographies#" xmlns:bcncon="http://datos.bcn.cl/ontologies/bcn-congress#" xmlns:bcnres="http://datos.bcn.cl/ontologies/bcn-resources#" xmlns:bcnsd="http://datos.bcn.cl/ontologies/bcn-sessiondaily#" xmlns:bio="http://purl.org/vocab/bio/0.1/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:frbr="http://purl.org/vocab/frbr/core#" xmlns:org="http://www.w3.org/ns/org#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:time="http://www.w3.org/2006/time#">
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#Legislatura">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Legislatura</rdfs:label>
+		<rdfs:label xml:lang="en">Legislature</rdfs:label>
+		<rdfs:comment xml:lang="es">Periodo de sesiones en que el Congreso Nacional se aboca al estudio de los proyectos de ley.</rdfs:comment>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sesión Parlamentaria</rdfs:label>
+		<rdfs:label xml:lang="en">Parliamentary Session</rdfs:label>
+		<rdfs:comment xml:lang="es">Reunión de las cámaras parlamentarias o de sus órganos, destinada a debatir, analizar y votar los asuntos a tratar, conforme la tabla respectiva fijada al efecto. </rdfs:comment>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#RecursoLegislativo"/>
+		</rdfs:subClassOf>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionEspecial">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+		</rdfs:subClassOf>
+		<rdfs:label>Sesión parlamentaria especial</rdfs:label>
+		<rdfs:label xml:lang="en">Special parliamentary session</rdfs:label>
+		<rdfs:comment xml:lang="es">Es la reunión celebrada por alguna de las cámaras del Congreso Nacional, convocada por la mesa que la preside, para abocarse al tratamiento, discusión o votación de la materia contenida en la respectiva convocatoria.</rdfs:comment>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionOrdinaria">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+		</rdfs:subClassOf>
+		<rdfs:label>Sesión parlamentaria ordinaria</rdfs:label>
+		<rdfs:label xml:lang="en">Ordinary parliamentary session</rdfs:label>
+		<rdfs:comment xml:lang="es">Es la reunión celebrada por alguna de las cámaras del Congreso Nacional, dentro de la respectiva legislatura. </rdfs:comment>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionSecreta">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sesión parlamentaria secreta</rdfs:label>
+		<rdfs:label xml:lang="en">Secret Parliamentary session</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+		</rdfs:subClassOf>
+		<rdfs:comment xml:lang="es">Es la reunión celebrada por alguna de las cámaras del Congreso Nacional, en carácter de secreta o reservada, para el tratamiento de las materias que tengan dicho carácter, en conformidad a la constitución y las leyes.</rdfs:comment>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionExtraordinaria">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sesión parlamentaria extraordinaria</rdfs:label>
+		<rdfs:label xml:lang="en">Extraordinary parliamentary session</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+		</rdfs:subClassOf>
+		<rdfs:comment>Es la reunión con carácter de urgente de alguna de las cámaras del Congreso Nacional para tratar un asunto específico y de suma importancia fuera del periodo normal de sesiones.</rdfs:comment>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionInstalacion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sesión parlamentaria de instalación</rdfs:label>
+		<rdfs:label xml:lang="en">installation parliamentary session</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+		</rdfs:subClassOf>
+		<rdfs:comment xml:lang="es">Es la primera reunión celebrada por alguna de las cámaras del Congreso Nacional, al inicio de cada periodo legislativo, y en la cual los parlamentarios asumen en plenitud el ejercicio de sus funciones. 
+</rdfs:comment>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionCongresoPleno">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sesión parlamentaria de congreso pleno</rdfs:label>
+		<rdfs:label xml:lang="en">Full congress parliamentary session</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+		</rdfs:subClassOf>
+		<rdfs:comment>Sesión en donde participan ambas cámaras de manera conjunta con todos sus miembros.</rdfs:comment>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamenariaOtroTipo">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sesión parlamentaria (otro tipo)</rdfs:label>
+		<rdfs:label xml:lang="en">Parliamentary session (other type)</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+		</rdfs:subClassOf>
+		<rdfs:comment xml:lang="es">Reunión celebrada por alguna de las cámaras del Congreso Nacional que no responde los tipos de sesiones antes señalados.</rdfs:comment>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#numero">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+		</rdf:type>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#positiveInteger"/>
+		</rdfs:range>
+		<rdfs:label xml:lang="es">número</rdfs:label>
+		<rdfs:label xml:lang="en">number</rdfs:label>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#tipoLegislatura">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#Legislatura"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+		</rdfs:range>
+		<rdfs:label xml:lang="es">tipo de legislatura</rdfs:label>
+		<rdfs:label xml:lang="en">legislature type</rdfs:label>
+		<rdfs:range>
+			<rdf:Description>
+				<owl:oneOf>
+					<rdf:Description>
+						<rdf:first xml:lang="es">ordinaria</rdf:first>
+						<rdf:rest>
+							<rdf:Description>
+								<rdf:rest rdf:parseType="Collection"/>
+								<rdf:first xml:lang="es">extraordinaria</rdf:first>
+							</rdf:Description>
+						</rdf:rest>
+					</rdf:Description>
+				</owl:oneOf>
+				<rdf:type>
+					<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DataRange"/>
+				</rdf:type>
+			</rdf:Description>
+		</rdfs:range>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#Invitado">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Invitado</rdfs:label>
+		<rdfs:label xml:lang="en">Guest</rdfs:label>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-biographies#Rol"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#ComisionEspecial">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Comisión especial</rdfs:label>
+		<rdfs:label xml:lang="en">Special Commission</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#ComisionLegislativa"/>
+		</rdfs:subClassOf>
+		<rdfs:comment xml:lang="es">Organismo colegiado creado por acuerdo de alguna de las cámaras, con la composición y bajo las condiciones que ésta le señale, cuya finalidad es abocarse al estudio de una determinada legislación o a reunir antecedentes sobre una materia específica.</rdfs:comment>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#ComisionParlamentaria">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Comisión Parlamentaria</rdfs:label>
+		<rdfs:label xml:lang="en">Parliamentary Commission</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#Comision"/>
+		</rdfs:subClassOf>
+		<rdfs:comment xml:lang="es">Es un grupo de trabajo integrado por parlamentarios cuyo objetivo es el estudio en detalle de distintas materias sometidas a su conocimiento.</rdfs:comment>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#ComisionInvestigadora">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Comisión investigadora</rdfs:label>
+		<rdfs:label xml:lang="en">ResearchCommission</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#ComisionNoLegislativa"/>
+		</rdfs:subClassOf>
+		<rdfs:comment xml:lang="es">Organismo colegiado creado por acuerdo de la Cámara de Diputados en ejercicio de sus facultades fiscalizadoras, y con la competencia que le fije la Corporación.</rdfs:comment>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#ComisionPermanente">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Comisión permanente</rdfs:label>
+		<rdfs:label xml:lang="en">Permanent commission</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#ComisionLegislativa"/>
+		</rdfs:subClassOf>
+		<rdfs:comment xml:lang="es">Son las comisiones establecidas en forma permanente en el Reglamento de ambas cámaras, y les corresponde el estudio y despacho de proyectos de ley o de otros asuntos que eventualmente se les asigne, conforme la materia específica de la que conocen. </rdfs:comment>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#ComisionBicameral">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Comisión Bicameral</rdfs:label>
+		<rdfs:label xml:lang="en">Both houses commission</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#ComisionNoLegislativa"/>
+		</rdfs:subClassOf>
+		<rdfs:comment>Comisión parlamentaria en donde participan De ambas cámaras del Congreso Nacional para discutir temas de interés común.</rdfs:comment>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#ComisionLegislativa"/>
+		</rdfs:subClassOf>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#ComisionMixta">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Comisión mixta</rdfs:label>
+		<rdfs:label xml:lang="en">Mixed Chamber</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#ComisionParlamentaria"/>
+		</rdfs:subClassOf>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#ComisionLegislativa"/>
+		</rdfs:subClassOf>
+		<rdfs:comment xml:lang="es">Es aquella comisión que está formada por igual número de diputados y senadores, cuyo objetivo es solucionar las divergencias surgidas entre ambas cámaras durante la tramitación de un proyecto de ley.</rdfs:comment>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#ComisionUnida">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Cámara unida</rdfs:label>
+		<rdfs:label xml:lang="en">United chamber</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#ComisionLegislativa"/>
+		</rdfs:subClassOf>
+		<rdfs:comment xml:lang="es">Es aquella formada por dos o más comisiones, cuando las materias sometidas a estudio tienen relación con la temática propia de cada una de ellas.</rdfs:comment>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#ComisionLegislativa">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Comisión legislativa</rdfs:label>
+		<rdfs:label xml:lang="en">Legislative Commission</rdfs:label>
+		<rdfs:comment xml:lang="es">Es un grupo de trabajo integrado por cierto número de diputados o senadores, según la cámara a la cual pertenece la comisión, cuya función es permitir el estudio detallado de los proyectos de ley. Usualmente recibe la opinión de expertos en la materia de que se trate y ofrece audiencias a organizaciones de la sociedad civil interesadas en el tema. Su composición es  proporcional a la representación parlamentaria.</rdfs:comment>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#ComisionParlamentaria"/>
+		</rdfs:subClassOf>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#ComisionNoLegislativa">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Comisión no legislativa</rdfs:label>
+		<rdfs:label xml:lang="en">Non legislative commission</rdfs:label>
+		<rdfs:comment xml:lang="es">Es un grupo de trabajo integrado por cierto número de diputados o senadores, según la cámara a la cual pertenece la comisión, cuya función es permitir el estudio detallado de distintas materias sometidas a su conocimiento (ej. Régimen interno). Usualmente recibe la opinión de expertos en la materia de que se trate y ofrece audiencias a organizaciones de la sociedad civil interesadas en el tema. Su composición es  proporcional a la representación parlamentaria.</rdfs:comment>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#ComisionParlamentaria"/>
+		</rdfs:subClassOf>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#ComisionDeViaje">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Comisión parlamentaria de viaje</rdfs:label>
+		<rdfs:label xml:lang="en">Travel commission</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#ComisionNoLegislativa"/>
+		</rdfs:subClassOf>
+		<rdfs:comment xml:lang="es">También denominada Delegación Parlamentaria, constituida por un grupo de parlamentarios de una o ambas cámaras, que concurren a un país o Estado determinado para el desarrollo de funciones oficiales, exista o no invitación del país anfitrión.</rdfs:comment>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#Camara">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Cámara</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://www.w3.org/ns/org#FormalOrganization">
+				<rdf:type>
+					<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+				</rdf:type>
+			</rdf:Description>
+		</rdfs:subClassOf>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#Comision">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Comisión</rdfs:label>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionDeCamara">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:comment xml:lang="es">Sesión en donde participa aisladamente una de las cámaras.</rdfs:comment>
+		<rdfs:label xml:lang="es">Sesión de cámara</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+		</rdfs:subClassOf>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionDeSala">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:comment xml:lang="es">Reunión de cada una de las cámaras parlamentarias, destinada a debatir, analizar y votar los asuntos a tratar, conforme la tabla respectiva fijada al efecto. La sala es el lugar destinado al funcionamiento normal de la cámara respectiva, caracterizándose por ser la instancia definitiva de aprobación o rechazo de los asuntos de que conoce.</rdfs:comment>
+		<rdfs:label xml:lang="es">Sesión de sala</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+		</rdfs:subClassOf>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionDeComision">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:comment xml:lang="es">Reunión de un grupo de trabajo de parlamentarios, destinada a debatir, analizar y votar los asuntos a tratar, conforme la tabla respectiva fijada al efecto. Las comisiones pueden tener funciones legislativas o de fiscalización.</rdfs:comment>
+		<rdfs:label xml:lang="es">Sesión de comisión</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+		</rdfs:subClassOf>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentariaPublica">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:comment xml:lang="es">Es la reunión celebrada por alguna de las cámaras del Congreso Nacional, en carácter de pública, con asistentes en las tribunas, para el tratamiento de las materias, en conformidad a la constitución y las leyes.</rdfs:comment>
+		<rdfs:label xml:lang="es">Sesión pública</rdfs:label>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#fechaInicio">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#Legislatura"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#date"/>
+		</rdfs:range>
+		<rdfs:label xml:lang="es">fecha inicio</rdfs:label>
+		<rdfs:subPropertyOf>
+			<rdf:Description rdf:about="http://purl.org/dc/elements/1.1/date"/>
+		</rdfs:subPropertyOf>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#fechaFin">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#Legislatura"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#date"/>
+		</rdfs:range>
+		<rdfs:label>fecha fin</rdfs:label>
+		<rdfs:subPropertyOf>
+			<rdf:Description rdf:about="http://purl.org/dc/elements/1.1/date"/>
+		</rdfs:subPropertyOf>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#LegislaturaExtraordinaria">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Legislatura extraordinaria</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#Legislatura"/>
+		</rdfs:subClassOf>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#LegislaturaOrdinaria">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Legislatura ordinaria</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#Legislatura"/>
+		</rdfs:subClassOf>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#PeriodoLegislativo">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:comment xml:lang="es">Espacio de tiempo en que se ejerce la función parlamentaria. En el caso de los Diputados este período dura cuatro años, al cabo del cual se renueva en su totalidad. Para los Senadores el período dura 8 años y se renueva en forma parcial cada cuatro años.  </rdfs:comment>
+		<rdfs:label xml:lang="es">Periodo Legislativo</rdfs:label>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionPreparatoria">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Sesión preparatoria</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+		</rdfs:subClassOf>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionEspecialExtraordinaria">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+		</rdfs:subClassOf>
+		<rdfs:label>Sesión especial extraordinaria</rdfs:label>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionConjunta">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sesión conjunta</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+		</rdfs:subClassOf>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionCuasiOrdinaria">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sesión cuasi ordinaria</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+		</rdfs:subClassOf>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionClausura">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sesión clausura</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+		</rdfs:subClassOf>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionPedida">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Sesión pedida</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+		</rdfs:subClassOf>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionPlenaria">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sesión plenaria</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+		</rdfs:subClassOf>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#Evento">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Evento</rdfs:label>
+		<rdfs:comment xml:lang="es">Suceso importante ocurrido en algún momento.</rdfs:comment>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://purl.org/vocab/bio/0.1/Event"/>
+		</rdfs:subClassOf>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#OficinaRedaccion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:comment xml:lang="es">Define a un organismo como oficina de redacción de documentos emitidos por el Congreso Nacional.</rdfs:comment>
+		<rdfs:label xml:lang="es">Oficina de Redacción</rdfs:label>
+		<rdfs:isDefinedBy>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#"/>
+		</rdfs:isDefinedBy>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Ontology"/>
+		</rdf:type>
+		<rdfs:comment xml:lang="es">La Ontología de elementos del Congreso Nacional de Chile entrega un modelo de clases y propiedades que modelan la estructura y funcionamiento del Congreso.</rdfs:comment>
+		<rdfs:label xml:lang="es">Ontología de Congreso</rdfs:label>
+		<owl:imports>
+			<rdf:Description rdf:about="http://vocab.org/bio/0.1/.rdf"/>
+		</owl:imports>
+		<owl:imports>
+			<rdf:Description rdf:about="http://xmlns.com/foaf/spec/20100809.rdf"/>
+		</owl:imports>
+		<owl:imports>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-biographies/bcn-biographies.rdf"/>
+		</owl:imports>
+		<owl:imports>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources/bcn-resources.rdf"/>
+		</owl:imports>
+		<owl:imports>
+			<rdf:Description rdf:about="http://vocab.org/frbr/core.rdf"/>
+		</owl:imports>
+		<owl:imports>
+			<rdf:Description rdf:about="http://purl.org/dc/elements/1.1/"/>
+		</owl:imports>
+		<owl:versionInfo>1.2</owl:versionInfo>
+		<owl:priorVersion>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress/1.1/bcn-congress.rdf"/>
+		</owl:priorVersion>
+	</rdf:Description>
+</rdf:RDF>

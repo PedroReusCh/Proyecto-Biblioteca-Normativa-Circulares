@@ -1,0 +1,1616 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://datos.bcn.cl/ontologies/bcn-resources#"
+     xml:base="http://datos.bcn.cl/ontologies/bcn-resources"
+     xmlns:cc="http://web.resource.org/cc/"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:ns="http://www.w3.org/2003/06/sw-vocab-status/ns#"
+     xmlns:bio="http://purl.org/vocab/bio/0.1/"
+     xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+     xmlns:org="http://www.w3.org/ns/org#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:wot="http://xmlns.com/wot/0.1/"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:foaf="http://xmlns.com/foaf/0.1/"
+     xmlns:frbr="http://purl.org/vocab/frbr/core#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:time="http://www.w3.org/2006/time#"
+     xmlns:vann="http://purl.org/vocab/vann/"
+     xmlns:terms="http://purl.org/dc/terms/"
+     xmlns:bcnbio="http://datos.bcn.cl/ontologies/bcn-biographies#"
+     xmlns:bcncon="http://datos.bcn.cl/ontologies/bcn-congress#"
+     xmlns:bcnres="http://datos.bcn.cl/ontologies/bcn-resources#"
+     xmlns:dbpedia="http://dbpedia.org/ontology/">
+    <owl:Ontology rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#">
+        <owl:versionIRI rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources/1.2/bcn-resources.rdf"/>
+        <owl:imports rdf:resource="http://datos.bcn.cl/ontologies/bcn-biographies#"/>
+        <rdfs:comment xml:lang="es">La Ontología de recursos legislativos de la BCN entrega un modelo de clases y propiedades que modelan la estructura jerarquía de los principales recursos referenciables en el Congreso Nacional (tales como documentos y relaciones con actores).</rdfs:comment>
+        <rdfs:label xml:lang="es">Ontología de Recursos Legislativos</rdfs:label>
+        <owl:versionInfo xml:lang="es">1.2</owl:versionInfo>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-congress#tieneDocumento -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#tieneDocumento">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-congress#RecursoLegislativo"/>
+        <rdfs:range rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#Documento"/>
+        <rdfs:comment xml:lang="es">Enlaza un recurso legislativo con un recurso (documento) representado por una URI sintética desde la cual se referenciará tanto la información de la ficha FRBR como la URI del documento real.</rdfs:comment>
+        <rdfs:label>tiene documento</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-congress#tieneSeccionRecurso -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#tieneSeccionRecurso">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-congress#RecursoLegislativo"/>
+        <rdfs:range rdf:resource="http://datos.bcn.cl/ontologies/bcn-congress#SeccionRecurso"/>
+        <rdfs:label xml:lang="en">has resource section</rdfs:label>
+        <rdfs:label xml:lang="es">tiene seccion recurso</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#convertedTo -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#convertedTo">
+        <rdfs:comment>Permite mantener la trazabilidad entre una entidad temporal y una entidad existente a la cual fue atribuida</rdfs:comment>
+        <rdfs:label>convertido a</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#creadaPor -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#creadaPor">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#TramitacionProyectoDeLey"/>
+        <rdfs:range rdf:resource="http://www.w3.org/ns/org#FormalOrganization"/>
+        <rdfs:comment>Enlaza una tramitación de proyecto de ley con la organización creadora</rdfs:comment>
+        <rdfs:label>creada por</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#esParteDe -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#esParteDe">
+        <rdfs:comment>Permite enlazar dos recursos mediante una relación de inclusión S es parte de O</rdfs:comment>
+        <rdfs:label xml:lang="es">es parte de</rdfs:label>
+        <rdfs:label xml:lang="en">is part of</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#estado -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#estado">
+        <rdfs:label>estado</rdfs:label>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#extraidoDesde -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#extraidoDesde">
+        <rdfs:comment>Vincula un documento o una sección del documento con su origen</rdfs:comment>
+        <rdfs:label xml:lang="en">extracted from</rdfs:label>
+        <rdfs:label xml:lang="es">extraído desde</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#fromTemporalEntity -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#fromTemporalEntity">
+        <rdfs:domain rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+        <rdfs:range rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#EntidadTemporal"/>
+        <rdfs:comment>Relaciona una entidad de tipo persona con su origen en una entidad temporal</rdfs:comment>
+        <rdfs:label>extraído desde entidad temporal</rdfs:label>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#fuenteDocumento -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#fuenteDocumento">
+        <rdfs:range rdf:resource="http://www.w3.org/ns/org#FormalOrganization"/>
+        <rdfs:comment>Asocia un documento con la oficina de origen de este</rdfs:comment>
+        <rdfs:label xml:lang="en">document source</rdfs:label>
+        <rdfs:label xml:lang="es">fuente documento</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#hasExpression -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#hasExpression">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#FichaFRBR"/>
+        <rdfs:range rdf:resource="http://purl.org/vocab/frbr/core#Expression"/>
+        <rdfs:label xml:lang="en">has expression</rdfs:label>
+        <rdfs:label xml:lang="es">tiene expresión</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#hasManifestation -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#hasManifestation">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#FichaFRBR"/>
+        <rdfs:range rdf:resource="http://purl.org/vocab/frbr/core#Manifestation"/>
+        <rdfs:label xml:lang="en">has manifestation</rdfs:label>
+        <rdfs:label xml:lang="es">tiene manifestación</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#hasWork -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#hasWork">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#FichaFRBR"/>
+        <rdfs:range rdf:resource="http://purl.org/vocab/frbr/core#Work"/>
+        <rdfs:label xml:lang="en">has work</rdfs:label>
+        <rdfs:label xml:lang="es">tiene trabajo</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#incluidoEn -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#incluidoEn">
+        <rdfs:domain rdf:resource="http://xmlns.com/foaf/0.1/Document"/>
+        <rdfs:comment>Relaciona un documento con la sección de otro documento donde está incluído de fuente</rdfs:comment>
+        <rdfs:label xml:lang="en">included in</rdfs:label>
+        <rdfs:label xml:lang="es">incluído en</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#perteneceA -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#perteneceA">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#TipoDocumento"/>
+        <rdfs:comment>Permite relacionar una sección de un documento a un tipo de documento Akoma Ntoso [Editor XML]</rdfs:comment>
+        <rdfs:label xml:lang="en">belongs to</rdfs:label>
+        <rdfs:label xml:lang="es">pertenece A</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneAdhesion -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneAdhesion">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+        <rdfs:range rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+        <rdfs:comment>Indica si una sección  de intervención de un documento presenta adhesiones de algún parlamentario</rdfs:comment>
+        <rdfs:label xml:lang="en">has adhesion</rdfs:label>
+        <rdfs:label xml:lang="es">tiene adhesión</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneAutor -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneAutor">
+        <rdfs:comment>Asocia un documento con su o sus autores/as</rdfs:comment>
+        <rdfs:label xml:lang="en">has author</rdfs:label>
+        <rdfs:label xml:lang="es">tiene autor</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneComision -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneComision">
+        <rdfs:domain rdf:resource="http://xmlns.com/foaf/0.1/Document"/>
+        <rdfs:range rdf:resource="http://www.w3.org/ns/org#FormalOrganization"/>
+        <rdfs:comment>Relaciona un documento con una comisión parlamentaria</rdfs:comment>
+        <rdfs:label xml:lang="en">has commission</rdfs:label>
+        <rdfs:label xml:lang="es">tiene comisión</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneDatosTemporales -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneDatosTemporales">
+        <rdfs:comment>Relaciona un recurso con algún dato temporal que debe ser corroborado</rdfs:comment>
+        <rdfs:label>tiene datos temporales</rdfs:label>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneDocumentoAkomaNtoso -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneDocumentoAkomaNtoso">
+        <rdfs:subPropertyOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-congress#tieneDocumento"/>
+        <rdfs:comment>Enlaza un recurso con su representación en formato AkomaNtoso XML</rdfs:comment>
+        <rdfs:label xml:lang="en">has Akoma Ntoso document</rdfs:label>
+        <rdfs:label xml:lang="es">tiene documento Akoma Ntoso</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneDocumentoTXT -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneDocumentoTXT">
+        <rdfs:subPropertyOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-congress#tieneDocumento"/>
+        <rdfs:comment>Enlaza un recurso con su representación en formato TXT</rdfs:comment>
+        <rdfs:label xml:lang="en">has text document</rdfs:label>
+        <rdfs:label xml:lang="es">tiene documento de texto</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneEmisor -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneEmisor">
+        <rdfs:comment>Relaciona un documento o una sección con una entidad que emite dicho mensaje</rdfs:comment>
+        <rdfs:label xml:lang="en">has transmitter</rdfs:label>
+        <rdfs:label xml:lang="es">tiene emisor</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneEtiquetaXML -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneEtiquetaXML">
+        <rdfs:comment>Relaciona una URI de una sección recurso con una URI que representa una etiqueta XML [Editor XML]</rdfs:comment>
+        <rdfs:label xml:lang="en">has XML tag</rdfs:label>
+        <rdfs:label xml:lang="es">tiene etiqueta XML</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneFichaFRBR -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneFichaFRBR">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#Documento"/>
+        <rdfs:range rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#FichaFRBR"/>
+        <rdfs:label xml:lang="en">has frbr card</rdfs:label>
+        <rdfs:label xml:lang="es">tiene ficha FRBR</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneIniciativa -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneIniciativa">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#ProyectoDeLey"/>
+        <rdfs:comment>Describe el tipo de iniciativa que ha tenido un documento, preferentemente un proyecto de ley (moción o mensaje presidencial)</rdfs:comment>
+        <rdfs:label xml:lang="en">initiative type</rdfs:label>
+        <rdfs:label xml:lang="es">tiene iniciativa</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneItem -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneItem">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#FichaFRBR"/>
+        <rdfs:range rdf:resource="http://purl.org/vocab/frbr/core#Item"/>
+        <rdfs:label xml:lang="en">has item</rdfs:label>
+        <rdfs:label xml:lang="es">tiene ítem</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneMateria -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneMateria">
+        <rdfs:range rdf:resource="http://purl.org/vocab/frbr/core#subject"/>
+        <rdfs:comment>Asocia un recurso a un metadato normalizado de tipo materia</rdfs:comment>
+        <rdfs:label xml:lang="en">has subject</rdfs:label>
+        <rdfs:label xml:lang="es">tiene materia</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tienePersona -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tienePersona">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Asistente"/>
+        <rdfs:range rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+        <rdfs:comment>Enlaza una entidad de asistncia con una persona</rdfs:comment>
+        <rdfs:label xml:lang="en">has person</rdfs:label>
+        <rdfs:label xml:lang="es">tiene persona</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneProyectoDeLey -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneProyectoDeLey">
+        <rdfs:range rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#ProyectoDeLey"/>
+        <rdfs:comment>Relaciona un documento o una sección de un documento con un proyecto de ley</rdfs:comment>
+        <rdfs:label xml:lang="en">has bill</rdfs:label>
+        <rdfs:label xml:lang="es">tiene proyecto de ley</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneReceptor -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneReceptor">
+        <rdfs:comment>Relaciona un documento o una parte de un documento con una entidad a la cual está dirigida</rdfs:comment>
+        <rdfs:label xml:lang="en">has receiver</rdfs:label>
+        <rdfs:label xml:lang="es">tiene receptor</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneReferencia -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneReferencia">
+        <rdfs:label xml:lang="en">has reference</rdfs:label>
+        <rdfs:label xml:lang="es">tiene referencia</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneResultadoDebate -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneResultadoDebate">
+        <rdfs:range rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#ResultadoDebate"/>
+        <rdfs:comment>Enlaza un debate con su resultado en caso de tenerlo</rdfs:comment>
+        <rdfs:label xml:lang="en">has debate result</rdfs:label>
+        <rdfs:label xml:lang="es">tiene resultado debate</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneResultadoVotacion -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneResultadoVotacion">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+        <rdfs:range rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#ResultadoVotacion"/>
+        <rdfs:comment>Relaciona una votación con su resultado</rdfs:comment>
+        <rdfs:label xml:lang="en">has voting result</rdfs:label>
+        <rdfs:label xml:lang="es">tiene resultado votación</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneSesion -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneSesion">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#TramitacionProyectoDeLey"/>
+        <rdfs:domain rdf:resource="http://xmlns.com/foaf/0.1/Document"/>
+        <rdfs:range rdf:resource="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+        <rdfs:comment>Enlaza un recurso con una sesión parlamentaria</rdfs:comment>
+        <rdfs:label xml:lang="en">has parliamentary session</rdfs:label>
+        <rdfs:label xml:lang="es">tiene sesión parlamentaria</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneTipoDocumento -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneTipoDocumento">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#Documento"/>
+        <rdfs:range rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#TipoDocumento"/>
+        <rdfs:label xml:lang="en">has document type</rdfs:label>
+        <rdfs:label xml:lang="es">tiene tipo documento</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneTipoParticipacion -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneTipoParticipacion">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#Participacion"/>
+        <rdfs:range rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#TipoParticipacion"/>
+        <rdfs:comment>Relaciona una participación parlamentaria con su tipo</rdfs:comment>
+        <rdfs:label xml:lang="en">has speech type</rdfs:label>
+        <rdfs:label xml:lang="es">tiene tipo participacion</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneTramitacion -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneTramitacion">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#ProyectoDeLey"/>
+        <rdfs:range rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#TramitacionProyectoDeLey"/>
+        <rdfs:comment>Asocia un documento con la tramitación de un proyecto de ley a la cual está relacionada o donde fue presentado</rdfs:comment>
+        <rdfs:label xml:lang="en">has processing</rdfs:label>
+        <rdfs:label xml:lang="es">tiene tramitación</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneTramiteConstitucional -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneTramiteConstitucional">
+        <rdfs:range rdf:resource="http://datos.bcn.cl/ontologies/bcn-bills#TramiteConstitucional"/>
+        <rdfs:comment>Enlaza un documento o proyecto de ley a un trámite constitucional específico</rdfs:comment>
+        <rdfs:label xml:lang="en">has constitutional procedure</rdfs:label>
+        <rdfs:label xml:lang="es">tiene trámite constitucional</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneTramiteReglamentario -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneTramiteReglamentario">
+        <rdfs:range rdf:resource="http://datos.bcn.cl/ontologies/bcn-bills#TramiteReglamentario"/>
+        <rdfs:comment>Enlaza un documento o proyecto de ley a un trámite reglamentario específico</rdfs:comment>
+        <rdfs:label xml:lang="en">has regulatory procedure</rdfs:label>
+        <rdfs:label xml:lang="es">tiene trámite reglamentario</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneTrazabilidad -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneTrazabilidad">
+        <rdfs:comment>Indica el origen desde donde surge cierto nuevo recurso</rdfs:comment>
+        <rdfs:label>tiene trazablidad</rdfs:label>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneVotacion -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneVotacion">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#ProyectoDeLey"/>
+        <rdfs:range rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#VotacionProyectoDeLey"/>
+        <rdfs:comment>Vincula cada una de las votaciones de un proyecto de ley a su proyecto respectivo</rdfs:comment>
+        <rdfs:label xml:lang="en">has voting</rdfs:label>
+        <rdfs:label xml:lang="es">tiene votación</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneVoto -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneVoto">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#VotacionProyectoDeLey"/>
+        <rdfs:range rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#VotoProyectoDeLey"/>
+        <rdfs:comment>Vincula con la votación a cada voto emitido</rdfs:comment>
+        <rdfs:label xml:lang="en">has vote</rdfs:label>
+        <rdfs:label xml:lang="es">tiene voto</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tipoProyecto -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tipoProyecto">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#ProyectoDeLey"/>
+        <rdfs:range rdf:resource="http://datos.bcn.cl/ontologies/bcn-bills#TipoProyectoDeLey"/>
+        <rdfs:comment>Asocia un proyecto de ley con su tipo</rdfs:comment>
+        <rdfs:label xml:lang="en">has bill type</rdfs:label>
+        <rdfs:label xml:lang="es">tipo proyecto</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tipoVotacion -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tipoVotacion">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#VotacionProyectoDeLey"/>
+        <rdfs:range rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#TipoVotacionProyectoDeLey"/>
+        <rdfs:comment>Vincula para cada votación el tipo al cual está asociado</rdfs:comment>
+        <rdfs:label xml:lang="en">has voting type</rdfs:label>
+        <rdfs:label xml:lang="es">tipo votación</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#valorVoto -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#valorVoto">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#VotoProyectoDeLey"/>
+        <rdfs:range rdf:resource="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ValoresVoto"/>
+        <rdfs:comment>Vincula al voto con su valor</rdfs:comment>
+        <rdfs:label xml:lang="es">valor voto</rdfs:label>
+        <rdfs:label xml:lang="en">vote value</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#votante -->
+
+    <owl:ObjectProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#votante">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#VotoProyectoDeLey"/>
+        <rdfs:range rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+        <rdfs:comment>Vincula al voto con la persona que lo emite</rdfs:comment>
+        <rdfs:label xml:lang="es">votante</rdfs:label>
+        <rdfs:label xml:lang="en">voter</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#crdate -->
+
+    <owl:DatatypeProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#crdate">
+        <rdfs:domain rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:comment>Indica la fecha de creción en formato YYYY-MM-DD</rdfs:comment>
+        <rdfs:label xml:lang="en">creation date</rdfs:label>
+        <rdfs:label xml:lang="es">fecha de creación</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#creadaPorWorkflow -->
+
+    <owl:DatatypeProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#creadaPorWorkflow">
+        <rdfs:comment>Indica si una sesión o legislatura ha sido creada por el worwflow de procesamiento</rdfs:comment>
+        <rdfs:label>creada por workflow</rdfs:label>
+        <rdfs:label xml:lang="en">created by workflow</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#descripcionXML -->
+
+    <owl:DatatypeProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#descripcionXML">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+        <rdfs:comment xml:lang="es">Entrega la descripción en XML de una sección de documento Akoma Ntoso</rdfs:comment>
+        <rdfs:label xml:lang="es">descripción en XML</rdfs:label>
+        <rdfs:label xml:lang="en">xml description</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#editorId -->
+
+    <owl:DatatypeProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#editorId">
+        <rdfs:comment>Establece un id de tipo texto para recursos referenciados desde diversas marcas en un editor XML</rdfs:comment>
+        <rdfs:label xml:lang="en">editor id</rdfs:label>
+        <rdfs:label xml:lang="es">id en editor XML</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#metadatoGenerico -->
+
+    <owl:DatatypeProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#metadatoGenerico">
+        <rdfs:comment>Permite generar metadatos para uso exclusivo el editor XML [Editor XML]</rdfs:comment>
+        <rdfs:label xml:lang="en">generic metadata</rdfs:label>
+        <rdfs:label xml:lang="es">metadato genérico</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#nerAcronym -->
+
+    <owl:DatatypeProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#nerAcronym">
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-biographies#Rol"/>
+                    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#Evento"/>
+                    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#ProyectoDeLey"/>
+                    <rdf:Description rdf:about="http://dbpedia.org/ontology/Place"/>
+                    <rdf:Description rdf:about="http://www.w3.org/2006/time#TemporalEntity"/>
+                    <rdf:Description rdf:about="http://www.w3.org/ns/org#FormalOrganization"/>
+                    <rdf:Description rdf:about="http://xmlns.com/foaf/0.1/Document"/>
+                    <rdf:Description rdf:about="http://xmlns.com/foaf/0.1/Person"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:comment xml:lang="es">Acrónimo en el NER (marcador automático de entidades)</rdfs:comment>
+        <rdfs:comment xml:lang="en">has ner acronym</rdfs:comment>
+        <rdfs:label>acrónimo en el NER</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#numero -->
+
+    <owl:DatatypeProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#numero">
+        <rdfs:comment>Asocia un número (string) identificatorio a un recurso en diversos contextos</rdfs:comment>
+        <rdfs:label xml:lang="en">number</rdfs:label>
+        <rdfs:label xml:lang="es">número</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#obsoleto -->
+
+    <owl:DatatypeProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#obsoleto">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#Caducable"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label xml:lang="en">deprecated</rdfs:label>
+        <rdfs:label xml:lang="es">obsoleto</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tempId -->
+
+    <owl:DatatypeProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tempId">
+        <rdfs:comment>Relaciona un recurso con un id temporal</rdfs:comment>
+        <rdfs:label>id temporal</rdfs:label>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneAtributoName_Editor -->
+
+    <owl:DatatypeProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneAtributoName_Editor">
+        <rdfs:comment>Relaciona una URI de un recurso con una etiqueta en XML con la cual es marcada en los documentos Akoma Ntoso [Editor XML]</rdfs:comment>
+        <rdfs:label xml:lang="en">has name attribute</rdfs:label>
+        <rdfs:label xml:lang="es">tiene atributo name</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneFin -->
+
+    <owl:DatatypeProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneFin">
+        <rdfs:comment>Establece una hora de fin de un evento específico</rdfs:comment>
+        <rdfs:label xml:lang="en">has end</rdfs:label>
+        <rdfs:label xml:lang="es">tiene fin</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneInicio -->
+
+    <owl:DatatypeProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneInicio">
+        <rdfs:comment>Establece una hora de inicio de un evento específico</rdfs:comment>
+        <rdfs:label xml:lang="en">has init</rdfs:label>
+        <rdfs:label xml:lang="es">tiene inicio</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tienePathXML -->
+
+    <owl:DatatypeProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tienePathXML">
+        <rdfs:domain rdf:resource="http://xmlns.com/foaf/0.1/Document"/>
+        <rdfs:comment>Describe en sintaxis XPATH la ubicación de una sección dentro de un documento XML</rdfs:comment>
+        <rdfs:label xml:lang="en">has XML path</rdfs:label>
+        <rdfs:label xml:lang="es">tiene path XML</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneTerminoLibre -->
+
+    <owl:DatatypeProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneTerminoLibre">
+        <rdfs:comment>Asocia un recurso a un metadato de texto denominado término libre</rdfs:comment>
+        <rdfs:label xml:lang="en">has keyword</rdfs:label>
+        <rdfs:label xml:lang="es">tiene término libre</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#tieneURI -->
+
+    <owl:DatatypeProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneURI">
+        <rdfs:domain rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#Documento"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
+        <rdfs:label xml:lang="en">has URI</rdfs:label>
+        <rdfs:label xml:lang="es">tiene URI</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#totalPareos -->
+
+    <owl:DatatypeProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#totalPareos">
+        <rdfs:domain rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+        <rdfs:comment>Indica el número de pareos en la votación</rdfs:comment>
+        <rdfs:label xml:lang="es">total de pareos</rdfs:label>
+        <rdfs:label xml:lang="en">total of agree abstention</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#totalParlamentariosPareados -->
+
+    <owl:DatatypeProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#totalParlamentariosPareados">
+        <rdfs:domain rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+        <rdfs:comment>Indica el número de votantes optaron por pareo en la votación</rdfs:comment>
+        <rdfs:label xml:lang="es">total parlamentarios pareados</rdfs:label>
+        <rdfs:label xml:lang="en">total parliamentarians in abstention agree</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#totalVotosAFavor -->
+
+    <owl:DatatypeProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#totalVotosAFavor">
+        <rdfs:domain rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+        <rdfs:comment>Indica el número de votantes que votaron a favor en la votación</rdfs:comment>
+        <rdfs:label xml:lang="es">total de votos a favor</rdfs:label>
+        <rdfs:label xml:lang="en">total pro</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#totalVotosEnContra -->
+
+    <owl:DatatypeProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#totalVotosEnContra">
+        <rdfs:domain rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+        <rdfs:comment>Indica el número de votantes que votaron en contra en la votación</rdfs:comment>
+        <rdfs:label xml:lang="en">total cons</rdfs:label>
+        <rdfs:label xml:lang="es">total de votos en contra</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#totalVotosSeAbstiene -->
+
+    <owl:DatatypeProperty rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#totalVotosSeAbstiene">
+        <rdfs:domain rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+        <rdfs:comment>Indica el número de votantes que se abstuvieron en la votación</rdfs:comment>
+        <rdfs:label xml:lang="en">total abstention</rdfs:label>
+        <rdfs:label xml:lang="es">total de votos de abstención</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-bills#TipoProyectoDeLey -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-bills#TipoProyectoDeLey">
+        <rdfs:label xml:lang="en">Bill type</rdfs:label>
+        <rdfs:label xml:lang="es">Tipo proyecto de ley</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-bills#TramiteConstitucional -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-bills#TramiteConstitucional">
+        <rdfs:label xml:lang="en">Constitutional procedure</rdfs:label>
+        <rdfs:label xml:lang="es">Trámite constitucional</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-bills#TramiteReglamentario -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-bills#TramiteReglamentario">
+        <rdfs:label xml:lang="en">Regulatory procedure</rdfs:label>
+        <rdfs:label xml:lang="es">Trámite reglamentario</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-biographies#Rol -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-biographies#Rol">
+        <rdfs:label xml:lang="en">Role</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-congress#Evento -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#Evento"/>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-congress#RecursoLegislativo -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#RecursoLegislativo">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#Relacionable"/>
+        <rdfs:comment>Clase de alto nivel que permite agrupar diferentes recursos referenciables desde todo el grafo RDF. Adicionalmente cuenta con una propiedad no especificada denominada tieneAtributo que agrupa todas las DatatypeProperties</rdfs:comment>
+        <rdfs:label xml:lang="es">Recurso legislativo</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-congress#SeccionRecurso -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SeccionRecurso"/>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#AcuerdosDeComite -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#AcuerdosDeComite">
+        <rdfs:label xml:lang="es">Acuerdos de comité</rdfs:label>
+        <rdfs:label xml:lang="en">Committee agreements</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#AgrupadorSemantico -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#AgrupadorSemantico">
+        <rdfs:label xml:lang="es">Agrupador semántico</rdfs:label>
+        <rdfs:label xml:lang="en">Semantic grouper</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#Articulo -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#Articulo">
+        <rdfs:comment xml:lang="en">One of the basic normative unit of the law</rdfs:comment>
+        <rdfs:comment xml:lang="es">Una de las unidades básicas formativas de la ley</rdfs:comment>
+        <rdfs:label xml:lang="en">Article</rdfs:label>
+        <rdfs:label xml:lang="es">Artículo</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#Caducable -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#Caducable">
+        <rdfs:comment xml:lang="es">Los recursos que tengan este tipo podrán tener estado de obsoleto o no obsoleto.</rdfs:comment>
+        <rdfs:comment xml:lang="en">Resources with this class could be obsolete</rdfs:comment>
+        <rdfs:label xml:lang="es">Caducable</rdfs:label>
+        <rdfs:label xml:lang="en">Deprecable</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#Categoria -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#Categoria">
+        <rdfs:comment xml:lang="es">Utilizado para trabajo en el [Editor XML]</rdfs:comment>
+        <rdfs:label xml:lang="en">Category</rdfs:label>
+        <rdfs:label xml:lang="es">Categoría</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#Cuenta -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#Cuenta">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#RecursoLegislativo"/>
+        <rdfs:label xml:lang="en">Account</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#DiarioDeSesion -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#DiarioDeSesion">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#RecursoLegislativo"/>
+        <rdfs:comment xml:lang="es">Publicación oficial que recoge el debate de las sesiones de sala de cada una de las cámaras, y que se divide fundamentalmente en dos partes: debate en sala y anexo documentos. En el primero, consta el debate en sala propiamente tal, y en el segundo los documentos de que se da cuenta en la sesión respectiva, por ejemplo: los informes evacuados por las Comisiones, los oficios producidos en el proceso legislativo, oficios enviados por órganos externos al Congreso Nacional, informes de comisión investigadora, etc. Se publica un Diario por cada sesión.  </rdfs:comment>
+        <rdfs:label xml:lang="es">Diario de sesión</rdfs:label>
+        <rdfs:label xml:lang="en">Session daily</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#DiscusionEnSala -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#DiscusionEnSala">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#RecursoLegislativo"/>
+        <rdfs:label xml:lang="es">Discusión en sala</rdfs:label>
+        <rdfs:label xml:lang="en">Session room discussion</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#DiscusionGeneral -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#DiscusionGeneral">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#DiscusionEnSala"/>
+        <rdfs:label xml:lang="es">Discusión general</rdfs:label>
+        <rdfs:label xml:lang="en">General discussion</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#DiscusionInformeComisionMixta -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#DiscusionInformeComisionMixta">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#DiscusionEnSala"/>
+        <rdfs:label xml:lang="es">Discusión informe comisión mixta</rdfs:label>
+        <rdfs:label xml:lang="en">Discussion on mixed commission report</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#DiscusionInsistencia -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#DiscusionInsistencia">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#DiscusionEnSala"/>
+        <rdfs:label xml:lang="es">Discusión insistencia</rdfs:label>
+        <rdfs:label xml:lang="en">Discussion insistence</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#DiscusionObservaciones -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#DiscusionObservaciones">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#DiscusionEnSala"/>
+        <rdfs:label xml:lang="es">Discusión observaciones (veto)</rdfs:label>
+        <rdfs:label xml:lang="en">Discussion observations</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#DiscusionOtraMateria -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#DiscusionOtraMateria">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#DiscusionEnSala"/>
+        <rdfs:label xml:lang="es">Discusión otra materia</rdfs:label>
+        <rdfs:label xml:lang="en">Discussion another subject</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#DiscusionParticular -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#DiscusionParticular">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#DiscusionEnSala"/>
+        <rdfs:label xml:lang="es">Discusión particular</rdfs:label>
+        <rdfs:label xml:lang="en">Particular discussion</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#DiscusionUnica -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#DiscusionUnica">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#DiscusionEnSala"/>
+        <rdfs:label xml:lang="es">Discusión única</rdfs:label>
+        <rdfs:label xml:lang="en">Unique discussion</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#Documento -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#Documento">
+        <rdfs:subClassOf rdf:resource="http://xmlns.com/foaf/0.1/Document"/>
+        <rdfs:label xml:lang="en">Document</rdfs:label>
+        <rdfs:label xml:lang="es">Documento</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#DocumentoBitacora -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#DocumentoBitacora">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#Documento"/>
+        <rdfs:label xml:lang="es">Documento bitácora</rdfs:label>
+        <rdfs:label xml:lang="en">Generic Document for bill processing</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#EnmiendasVersionProyectoDeLey -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#EnmiendasVersionProyectoDeLey">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#Documento"/>
+        <rdfs:label xml:lang="en">Ammendments of bill version</rdfs:label>
+        <rdfs:label xml:lang="es">Enmiendas versión proyecto de ley</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#EntidadTemporal -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#EntidadTemporal">
+        <rdfs:label xml:lang="es">Entidad temporal</rdfs:label>
+        <rdfs:label xml:lang="en">Temporal entity</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#FichaFRBR -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#FichaFRBR">
+        <rdfs:label xml:lang="en">FRBR card</rdfs:label>
+        <rdfs:label xml:lang="es">Ficha FRBR</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#Informe -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#Informe">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#Documento"/>
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#Relacionable"/>
+        <rdfs:label xml:lang="es">Informe</rdfs:label>
+        <rdfs:label xml:lang="en">Report</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#InformeComisionMixta -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeComisionMixta">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#InformeDeComision"/>
+        <rdfs:label xml:lang="es">Informe comisión mixta</rdfs:label>
+        <rdfs:label xml:lang="en">Report mixed commission</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#InformeComplementario -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeComplementario">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#InformeDeComision"/>
+        <rdfs:label xml:lang="en">Complementary report</rdfs:label>
+        <rdfs:label xml:lang="es">Informe complementario</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#InformeDeComision -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeDeComision">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#Informe"/>
+        <rdfs:label xml:lang="en">Debate report</rdfs:label>
+        <rdfs:label xml:lang="es">Informe de comisión</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#InformeDeDiplomaciaParlamentaria -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeDeDiplomaciaParlamentaria">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#InformeDeComision"/>
+        <rdfs:label xml:lang="es">Informe de diplomacia parlamentaria</rdfs:label>
+        <rdfs:label xml:lang="en">Parliamentary diplomacy report</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#InformeInsistencia -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeInsistencia">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#InformeDeComision"/>
+        <rdfs:label xml:lang="es">Informe insistencia</rdfs:label>
+        <rdfs:label xml:lang="en">Insistence report</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#InformeModificacion -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeModificacion">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#InformeDeComision"/>
+        <rdfs:label xml:lang="es">Informe modificación</rdfs:label>
+        <rdfs:label xml:lang="en">Modificacion report</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#InformeObservaciones -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeObservaciones">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#InformeDeComision"/>
+        <rdfs:label>Informe observaciones (veto)</rdfs:label>
+        <rdfs:label xml:lang="en">Observations report</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#IniciativaLegal -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#IniciativaLegal">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#RecursoLegislativo"/>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#Mensaje -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#Mensaje">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#IniciativaLegal"/>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#MensajeDelEjecutivoRefundido -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#MensajeDelEjecutivoRefundido">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#Mensaje"/>
+        <rdfs:label xml:lang="es">Mensaje del ejecutivo refundido</rdfs:label>
+        <rdfs:label xml:lang="en">Message of executive power fusioned</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#MocionParlamentaria -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#MocionParlamentaria">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#IniciativaLegal"/>
+        <rdfs:label xml:lang="es">Moción Parlamentaria</rdfs:label>
+        <rdfs:label xml:lang="en">Parliamentary bill</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#NuevoPrimerInforme -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#NuevoPrimerInforme">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#InformeDeComision"/>
+        <rdfs:label xml:lang="en">New first report</rdfs:label>
+        <rdfs:label xml:lang="es">Nuevo primer informe</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#NuevoSegundoInforme -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#NuevoSegundoInforme">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#InformeDeComision"/>
+        <rdfs:label xml:lang="en">New second report</rdfs:label>
+        <rdfs:label xml:lang="es">Nuevo segundo informe</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#Oficio -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#Oficio">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#RecursoLegislativo"/>
+        <rdfs:label xml:lang="en">Legal document</rdfs:label>
+        <rdfs:label xml:lang="es">Oficio</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#OrigenDocumento -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#OrigenDocumento">
+        <rdfs:comment xml:lang="es">Establece que un recurso RDF es origen de documentos, es decir, se generan por él.</rdfs:comment>
+        <rdfs:label xml:lang="en">Document source</rdfs:label>
+        <rdfs:label xml:lang="es">Origen documento</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#Participacion -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#Participacion">
+        <rdfs:label xml:lang="es">Participación</rdfs:label>
+        <rdfs:label xml:lang="en">Speech</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#PeticionDeOficio -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#PeticionDeOficio">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#Documento"/>
+        <rdfs:label xml:lang="en">Officio petition</rdfs:label>
+        <rdfs:label xml:lang="es">Petición de oficio</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#PrimerInforme -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#PrimerInforme">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#InformeDeComision"/>
+        <rdfs:label xml:lang="en">First report</rdfs:label>
+        <rdfs:label xml:lang="es">Primer informe</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#ProyectoDeAcuerdo -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#ProyectoDeAcuerdo">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#Documento"/>
+        <rdfs:label xml:lang="en">Draft agreement</rdfs:label>
+        <rdfs:label xml:lang="es">Proyecto de acuerdo</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#ProyectoDeLey -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#ProyectoDeLey">
+        <rdfs:subClassOf>
+            <owl:Class>
+                <owl:oneOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#IniciativaLegal"/>
+                    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#Mensaje"/>
+                </owl:oneOf>
+            </owl:Class>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="en">Bill</rdfs:label>
+        <rdfs:label xml:lang="es">Proyecto de ley</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#ProyectoDeLeyAntiguo -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#ProyectoDeLeyAntiguo">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#ProyectoDeLey"/>
+        <rdfs:label xml:lang="en">Old bill</rdfs:label>
+        <rdfs:label xml:lang="es">Proyecto de ley antiguo</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#ProyectoDeLeyJuntaMilitar -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#ProyectoDeLeyJuntaMilitar">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#ProyectoDeLey"/>
+        <rdfs:label xml:lang="en">Bill of militar government</rdfs:label>
+        <rdfs:label xml:lang="es">Proyecto de ley junta militar</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#RatificacionReformaConstitucional -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#RatificacionReformaConstitucional">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#DiscusionEnSala"/>
+        <rdfs:label xml:lang="es">Ratificación reforma constitucional</rdfs:label>
+        <rdfs:label xml:lang="en">Ratification constitutional reform</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#Referenciable -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#Referenciable">
+        <rdfs:label xml:lang="en">Referenciable</rdfs:label>
+        <rdfs:label xml:lang="es">Referenciable</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#Relacionable -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#Relacionable">
+        <rdfs:comment>Esta clase permite identificar recursos de cualquier tipo que puedan tener una relación (de tipo Metadato) con otro tipo de elemento.</rdfs:comment>
+        <rdfs:label xml:lang="es">Relacionable</rdfs:label>
+        <rdfs:label xml:lang="en">Relatable</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#ResultadoDebate -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#ResultadoDebate">
+        <rdfs:label xml:lang="en">Debate result</rdfs:label>
+        <rdfs:label xml:lang="es">Resultado del debate</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#ResultadoVotacion -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#ResultadoVotacion">
+        <rdfs:label xml:lang="en">Result</rdfs:label>
+        <rdfs:label xml:lang="es">Resultado</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#Resumen -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#Resumen">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#RecursoLegislativo"/>
+        <rdfs:label xml:lang="es">Resumen</rdfs:label>
+        <rdfs:label xml:lang="en">Summary</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso">
+        <rdfs:label xml:lang="en">Resource section</rdfs:label>
+        <rdfs:label xml:lang="es">Sección recurso</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#SegundoInforme -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SegundoInforme">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#InformeDeComision"/>
+        <rdfs:label xml:lang="en">Second report</rdfs:label>
+        <rdfs:label xml:lang="es">Segundo informe</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#TipoDocumento -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#TipoDocumento">
+        <rdfs:label xml:lang="en">Document type</rdfs:label>
+        <rdfs:label xml:lang="es">Tipo de documento</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#TipoParticipacion -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#TipoParticipacion">
+        <rdfs:label xml:lang="en">Speech type</rdfs:label>
+        <rdfs:label xml:lang="es">Tipo de participación</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#TipoVotacionProyectoDeLey -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#TipoVotacionProyectoDeLey">
+        <rdfs:label xml:lang="es">Tipo votación</rdfs:label>
+        <rdfs:label xml:lang="en">Voting type</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#TramitacionProyectoDeLey -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#TramitacionProyectoDeLey">
+        <rdfs:label xml:lang="en">Bill processing</rdfs:label>
+        <rdfs:label xml:lang="es">Tramitación de proyecto de ley</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#UBN -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#UBN">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#RecursoLegislativo"/>
+        <rdfs:label xml:lang="en">Basic normative unit for laws</rdfs:label>
+        <rdfs:label xml:lang="es">Unidad básica normativa</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#VersionProyectoDeLey -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#VersionProyectoDeLey">
+        <rdfs:subClassOf rdf:resource="http://datos.bcn.cl/ontologies/bcn-resources#Documento"/>
+        <rdfs:label xml:lang="en">Bill version</rdfs:label>
+        <rdfs:label xml:lang="es">Versión proyecto de ley</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#VotacionProyectoDeLey -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#VotacionProyectoDeLey">
+        <rdfs:label xml:lang="es">Votación</rdfs:label>
+        <rdfs:label xml:lang="en">Voting</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#VotoProyectoDeLey -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#VotoProyectoDeLey">
+        <rdfs:label xml:lang="en">Vote</rdfs:label>
+        <rdfs:label xml:lang="es">Voto</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-sessiondaily#Asistente -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Asistente"/>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-sessiondaily#ValoresVoto -->
+
+    <owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ValoresVoto">
+        <rdfs:label xml:lang="es">Valor voto</rdfs:label>
+        <rdfs:label xml:lang="en">Vote value</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://dbpedia.org/ontology/Place -->
+
+    <owl:Class rdf:about="http://dbpedia.org/ontology/Place"/>
+    
+
+
+    <!-- http://purl.org/vocab/frbr/core#Expression -->
+
+    <owl:Class rdf:about="http://purl.org/vocab/frbr/core#Expression">
+        <rdfs:label xml:lang="es">Expresión</rdfs:label>
+        <rdfs:label xml:lang="en">Expression</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.org/vocab/frbr/core#Item -->
+
+    <owl:Class rdf:about="http://purl.org/vocab/frbr/core#Item">
+        <rdfs:label xml:lang="en">Item</rdfs:label>
+        <rdfs:label xml:lang="es">Ítem</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.org/vocab/frbr/core#Manifestation -->
+
+    <owl:Class rdf:about="http://purl.org/vocab/frbr/core#Manifestation">
+        <rdfs:label xml:lang="es">Manifestación</rdfs:label>
+        <rdfs:label xml:lang="en">Manifestation</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.org/vocab/frbr/core#Work -->
+
+    <owl:Class rdf:about="http://purl.org/vocab/frbr/core#Work">
+        <rdfs:label xml:lang="es">Trabajo</rdfs:label>
+        <rdfs:label xml:lang="en">Work</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.org/vocab/frbr/core#subject -->
+
+    <owl:Class rdf:about="http://purl.org/vocab/frbr/core#subject"/>
+    
+
+
+    <!-- http://www.w3.org/2006/time#TemporalEntity -->
+
+    <owl:Class rdf:about="http://www.w3.org/2006/time#TemporalEntity"/>
+    
+
+
+    <!-- http://www.w3.org/ns/org#FormalOrganization -->
+
+    <owl:Class rdf:about="http://www.w3.org/ns/org#FormalOrganization"/>
+    
+
+
+    <!-- http://xmlns.com/foaf/0.1/Document -->
+
+    <owl:Class rdf:about="http://xmlns.com/foaf/0.1/Document"/>
+    
+
+
+    <!-- http://xmlns.com/foaf/0.1/Person -->
+
+    <owl:Class rdf:about="http://xmlns.com/foaf/0.1/Person">
+        <rdfs:label xml:lang="en">Person</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#IniciativaLegal -->
+
+    <owl:NamedIndividual rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#IniciativaLegal"/>
+    
+
+
+    <!-- http://datos.bcn.cl/ontologies/bcn-resources#Mensaje -->
+
+    <owl:NamedIndividual rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#Mensaje"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotations
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-biographies#Cargo">
+        <rdfs:label xml:lang="en">Position</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-biographies#PositionPeriod">
+        <rdfs:label xml:lang="en">Position period</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-biographies#totalVotes">
+        <rdfs:label xml:lang="en">total votes</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#Comision">
+        <rdfs:label xml:lang="en">Commission</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#OficinaRedaccion">
+        <rdfs:label xml:lang="en">Writting office</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#PeriodoLegislativo">
+        <rdfs:label xml:lang="en">Legislative period</rdfs:label>
+        <rdfs:label xml:lang="es">Periodo legislativo</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentariaPublica">
+        <rdfs:label xml:lang="es">Sesión pública</rdfs:label>
+        <rdfs:label xml:lang="en">Public session</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#BoletinIndicaciones">
+        <rdfs:label xml:lang="es">Boletín de indicaciones</rdfs:label>
+        <rdfs:label xml:lang="en">Directions bulletin</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#Comunicacion">
+        <rdfs:label xml:lang="es">Comunicación</rdfs:label>
+        <rdfs:label xml:lang="en">Communication</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeComisionInvestigadora">
+        <rdfs:label xml:lang="en">Investigative commission report</rdfs:label>
+        <rdfs:label xml:lang="es">Informe de comisión investigadora</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeComisionLegislativa">
+        <rdfs:label xml:lang="en">Legislative commission report</rdfs:label>
+        <rdfs:label xml:lang="es">Informe de comisión legislativa</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeDelegacionParlamentaria">
+        <rdfs:label xml:lang="es">Informe delegación parlamentaria</rdfs:label>
+        <rdfs:label xml:lang="en">Parliamentary delegation report</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#IniciativaLegal">
+        <rdfs:label xml:lang="en">Legal initiative</rdfs:label>
+        <rdfs:label xml:lang="es">Iniciativa legal</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#Mensaje">
+        <rdfs:label xml:lang="es">Mensaje</rdfs:label>
+        <rdfs:comment xml:lang="es">Legal initiative of bill presented by the president (executive power)</rdfs:comment>
+        <rdfs:label xml:lang="en">Message</rdfs:label>
+        <rdfs:comment xml:lang="es">Iniciativa legal de proyecto de ley presentada por el presidente de la república</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneCalidad">
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
+        <rdfs:label>tiene calidad (similar a tiene rol)</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Informe">
+        <rdfs:label xml:lang="es">Informe</rdfs:label>
+        <rdfs:label xml:lang="en">Report</rdfs:label>
+    </rdf:Description>
+</rdf:RDF>

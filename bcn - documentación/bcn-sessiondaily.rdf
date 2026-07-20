@@ -1,0 +1,2251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:bcnbio="http://datos.bcn.cl/ontologies/bcn-biographies#" xmlns:bcncon="http://datos.bcn.cl/ontologies/bcn-congress#" xmlns:bcngeo="http://datos.bcn.cl/ontologies/bcn-geographics#" xmlns:bcnres="http://datos.bcn.cl/ontologies/bcn-resources#" xmlns:bcnses="http://datos.bcn.cl/ontologies/bcn-sessiondaily#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:org="http://www.w3.org/ns/org#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:time="http://www.w3.org/2006/time#">
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneSecretario">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label>tiene secretario</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://xmlns.com/foaf/0.1/Person"/>
+		</rdfs:range>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+		</rdfs:domain>
+		<rdfs:subPropertyOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tienePersona"/>
+		</rdfs:subPropertyOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tienePresidente">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label>tiene presidente</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://xmlns.com/foaf/0.1/Person"/>
+		</rdfs:range>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+		</rdfs:domain>
+		<rdfs:subPropertyOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tienePersona"/>
+		</rdfs:subPropertyOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneProsecretario">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">tieneProsecretario</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://xmlns.com/foaf/0.1/Person"/>
+		</rdfs:range>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+		</rdfs:domain>
+		<rdfs:subPropertyOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tienePersona"/>
+		</rdfs:subPropertyOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionRecepcion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Sección Recepción</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Altura">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Altura</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#horaInicio">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Altura"/>
+		</rdfs:domain>
+		<rdfs:label xml:lang="es">horaInicio</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#time"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#horaTermino">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Altura"/>
+		</rdfs:domain>
+		<rdfs:label xml:lang="es">horaTermino</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#time"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#descripcion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Altura"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+		</rdfs:range>
+		<rdfs:label xml:lang="es">descripción</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneAsistente">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionRecepcion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionAsistencia"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+		<rdfs:label>tiene asistente</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Asistente"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Asistente">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Asistente</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tienePersona">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label>tienePersona</rdfs:label>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Participacion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Observacion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Juramento"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionMocionInadmisible"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Asistente"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Pareo"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#IntegranteMesa"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionPeticionDeOficio"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ParticipacionEnIncidente"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+		<rdfs:subPropertyOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneReferencia"/>
+		</rdfs:subPropertyOf>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://xmlns.com/foaf/0.1/Person"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneCalidad">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label>tiene calidad</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#Calidad"/>
+		</rdfs:range>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Participacion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Asistente"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Observacion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Juramento"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ParticipacionEnIncidente"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+		<rdfs:subPropertyOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneReferencia"/>
+		</rdfs:subPropertyOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneComision">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label>tiene comision</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#Comision"/>
+		</rdfs:range>
+		<rdfs:subPropertyOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneReferencia"/>
+		</rdfs:subPropertyOf>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Asistente"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionAnexoSesion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeComisionLegislativa"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTransmisionDelMando">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sección Transmisión Del Mando</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneAltura">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionRecepcion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTransmisionDelMando"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Participacion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTextoDebate"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionAntecedente"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionVotacion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionHomenaje"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Juramento"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionEleccionDeLaMesa"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#IntegranteMesa"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionSumarioDelDebate"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionSumarioDeDocumento"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionAperturaDeLaSesion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionActas"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionLecturaDeLaCuenta"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionIncidente"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#DiscusionProyectoDeLey"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionPeticionDeOficio"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ParticipacionEnIncidente"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionProyectoDeAcuerdo"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#DebateInterpelacion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#PreguntaRespuesta"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionProyectoDeLey"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionCierreDeLaSesion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeComisionLegislativa"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+		<rdfs:label>tiene altura</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Altura"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionAsistencia">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Asistencia a sesión parlamentaria</rdfs:label>
+		<rdfs:comment xml:lang="es">Define una instancia de participación de un parlamentario a una sesión, en donde este puede o no estar presente</rdfs:comment>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionMensajePresidencial">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">MensajePresidencial</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneParticipacion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label>tiene participacion</rdfs:label>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionMensajePresidencial"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTextoDebate"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionVotacion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionHomenaje"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#DiscusionProyectoDeLey"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionProyectoDeLey"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeComisionInvestigadora"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionProyectoDeAcuerdo"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Participacion"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Participacion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Participación</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Intervencion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Intervención</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionHomenaje"/>
+		</rdfs:subClassOf>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTextoDebate"/>
+		</rdfs:subClassOf>
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoParticipacion"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Discurso">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Discurso</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Participacion"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionNombramiento">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Nombramiento</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Participacion"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionPeticionDeOficio">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">PeticiónDeOficio</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#Documento"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Observacion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Observación</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Participacion"/>
+		</rdfs:subClassOf>
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoParticipacion"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneMateria">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Participacion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTextoDebate"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionAntecedente"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionHomenaje"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Juramento"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionEleccionDeLaMesa"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#IntegranteMesa"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionAperturaDeLaSesion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionIncidente"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#DiscusionProyectoDeLey"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionPeticionDeOficio"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ParticipacionEnIncidente"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionProyectoDeAcuerdo"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#DebateInterpelacion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#PreguntaRespuesta"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionProyectoDeLey"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Informe"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ActividadViaje"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+		<rdfs:label>tiene materia</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://purl.org/vocab/frbr/core#Subject"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneObservacion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label>tiene observacion</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Observacion"/>
+		</rdfs:range>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Participacion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TextoIncidente"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneReferencia">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label>tiene referencia</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#Relacionable"/>
+		</rdfs:range>
+		<rdfs:comment xml:lang="es">Propiedad utilizada para hacer referencia a entidades existentes dentro de los textos, tal que no pueden ser marcadas mediante otras propiedades.</rdfs:comment>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Participacion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Juramento"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionEleccionDeLaMesa"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Intervencion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTextoDebate"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionAntecedente"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionVotacion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionHomenaje"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionAperturaDeLaSesion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionCuenta"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionIncidente"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Participacion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionAntecedente"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionAperturaDeLaSesion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TextoIncidente"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionOtrosDocumentosDeLaCuenta"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ReferenciaADocumento"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionRecepcion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTransmisionDelMando"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionAsistencia"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AdjuntoBinario">
+						<rdfs:label xml:lang="es">Adjunto binario</rdfs:label>
+						<rdfs:subClassOf>
+							<rdf:Description rdf:about="http://xmlns.com/foaf/0.1/Document"/>
+						</rdfs:subClassOf>
+					</owl:Class>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionInvestidura"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionDeclaracionDeInstalacion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionActas"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#DiscusionProyectoDeLey"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ParticipacionEnIncidente"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#DebateInterpelacion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionProyectoDeLey"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionDocumentosDeLaCuenta"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Informe"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionProyectoDeAcuerdo"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ReferenciaHistoriaDeLaLey"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionInstalacion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Instalación</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Poder">
+		<rdfs:label xml:lang="es">Poder</rdfs:label>
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTextoDebate">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Sección Texto Debate</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneDebate">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Poder"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionInvestidura"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Juramento"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionEleccionDeLaMesa"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionAperturaDeLaSesion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTextoDebate"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionInstalacion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionCuenta"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionHomenajes"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionProyectosDeAcuerdo"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionPeticionesDeOficio"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTabla"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionObjetoSesion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionDiscusionInmediata"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionFacilDespacho"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionOrdenDelDia"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTiempoDeVotaciones"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionIncidentes"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionInstalacion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#InicioSesion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionOtrosDocumentosDeLaCuenta"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTextoDebate"/>
+		</rdfs:range>
+		<rdfs:label>tiene debate</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://purl.org/dc/elements/1.1/title">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionDiscusionGeneral">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sección Discusión General</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTextoDebate"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionDiscusionParticular">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sección Discusión Particular</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTextoDebate"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#OtroDebate">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">OtroDebate</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTextoDebate"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneResultadoDebate">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTextoDebate"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionVotacion"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+		<rdfs:label>tiene resultado</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ResultadoDebate"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionAntecedente">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Antecedente</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneAntecedente">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label>tiene antecedente</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionAntecedente"/>
+		</rdfs:range>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTextoDebate"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionVotacion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionHomenaje"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionEleccionDeLaMesa"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#DiscusionProyectoDeLey"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#DebateInterpelacion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionProyectoDeLey"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionVotacion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Sección Votación</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tienePareo">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionVotacion"/>
+		</rdfs:domain>
+		<rdfs:label>tiene pareo</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Pareo"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#totalAfirmativos">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionVotacion"/>
+		</rdfs:domain>
+		<rdfs:label>totalAfirmativos</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#totalNegativos">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionVotacion"/>
+		</rdfs:domain>
+		<rdfs:label>total negativos</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#totalAbstenciones">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionVotacion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#VotacionIntegranteMesa"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+		<rdfs:label>totalAbstenciones</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#votaAfirmativo">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">vota afirmativo</rdfs:label>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionVotacion"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-biographies#Parliamentary"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#votaNegativo">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionVotacion"/>
+		</rdfs:domain>
+		<rdfs:label>vota negativo</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-biographies#Parliamentary"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#votaAbstencion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label>vota abstención</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-biographies#Parliamentary"/>
+		</rdfs:range>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#VotacionIntegranteMesa"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionVotacion"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionHomenaje">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Homenaje</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneHomenaje">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label>tiene homenaje</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionHomenaje"/>
+		</rdfs:range>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:domain>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionInvestidura">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Investidura</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Juramento">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Juramento</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoParticipacion"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneJuramento">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionInvestidura"/>
+					<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionInstalacion"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+		<rdfs:label>tiene juramento</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Juramento"/>
+		</rdfs:range>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionEleccionDeLaMesa">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">ElecciónDeLaMesa</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#IntegranteMesa">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">IntegranteMesa</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneIntegranteMesa">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionEleccionDeLaMesa"/>
+		</rdfs:domain>
+		<rdfs:label>tiene integrante mesa</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#IntegranteMesa"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneVotacion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label>tiene votación</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionVotacion"/>
+		</rdfs:range>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTextoDebate"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#DiscusionProyectoDeLey"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionIncidente"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionProyectoDeLey"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTiempoDeVotaciones"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionProyectoDeAcuerdo"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneDeclaracionDeInstalacion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionEleccionDeLaMesa"/>
+		</rdfs:domain>
+		<rdfs:label xml:lang="es">tieneDeclaraciónDeInstalación</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionDeclaracionDeInstalacion"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionSumarioDelDebate">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sección Sumario del debate</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionSumarioDeDocumento">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">SumarioDeDocumento</rdfs:label>
+		<rdfs:comment xml:lang="es">Modificar cuando cambie el esquema</rdfs:comment>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTextoDelDebate">
+		<rdfs:label>Sección Texto del Debate</rdfs:label>
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:comment/>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionAperturaDeLaSesion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Apertura de la Sesión</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#perteneceALegislatura">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+		</rdfs:domain>
+		<rdfs:label>pertenece a legislatura</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#Legislatura"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionActas">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sección Actas</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionCuenta">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sección Cuenta</rdfs:label>
+		<rdfs:comment xml:lang="es">Queda pendiente</rdfs:comment>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionLecturaDeLaCuenta">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">LecturaDeLaCuenta</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneLecturaDeLaCuenta">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label>tiene lectura de la cuenta</rdfs:label>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionCuenta"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionLecturaDeLaCuenta"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionMocionInadmisible">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Sección Moción Inadmisible</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneAcuerdoComite">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionCuenta"/>
+		</rdfs:domain>
+		<rdfs:label>tiene acuerdo comité</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTextoDebate"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionIncidente">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Incidente</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneIncidente">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label>tiene incidente</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionIncidente"/>
+		</rdfs:range>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionCuenta"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionPeticionesDeOficio"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTabla"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionObjetoSesion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionOrdenDelDia"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionIncidentes"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionAnexoSesion"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ParticipacionEnIncidente">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">ParticipaciónIncidente</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Participacion"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#DiscusionProyectoDeLey">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Discusión proyecto de Ley</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneProyectoDeLey">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label>tiene proyecto de ley</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#DiscusionProyectoDeLey"/>
+		</rdfs:range>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ParticipacionEnIncidente"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTabla"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionObjetoSesion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionDiscusionInmediata"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionFacilDespacho"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionOrdenDelDia"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionDocumentosDeLaCuenta"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Urgencia"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeComisionLegislativa"/>
+					<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ReferenciaHistoriaDeLaLey"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TextoIncidente">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">TextoIncidente</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tienePeticionDeOficio">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label>tiene petición de oficio</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionPeticionDeOficio"/>
+		</rdfs:range>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionPeticionesDeOficio"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TextoIncidente"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AntecedenteProyectoAcuerdo"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTabla"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionObjetoSesion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionOrdenDelDia"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionIncidentes"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#EntidadRelacionable">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionOtrosDocumentosDeLaCuenta">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Otros documentos cuenta</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+		<rdfs:comment xml:lang="es">La propiedad tieneDebate es utilizada para referenciar documentos que justifican comunicaciones en debates del diario.</rdfs:comment>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#perteneceACamara">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#SesionParlamentaria"/>
+		</rdfs:domain>
+		<rdfs:label xml:lang="es">pertenede a camara</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-norms#GovernmentalOrganization"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#tieneDocumento">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">tiene documento</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#Documento"/>
+		</rdfs:range>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionMocionInadmisible"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionDocumentosDeLaCuenta"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Version"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+		<rdfs:subPropertyOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneReferencia"/>
+		</rdfs:subPropertyOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneMocionInadmisible">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">tiene mocion inadmisible</rdfs:label>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionOtrosDocumentosDeLaCuenta"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionMocionInadmisible"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionObjetoSesion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Objeto sesión</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTabla">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sección Tabla</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionDiscusionInmediata">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sección Discusión inmediata</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionFacilDespacho">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sección fácil despacho</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionOrdenDelDia">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Orden del día</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionProyectoDeAcuerdo">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sección Proyecto de acuerdo</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneProyectoDeAcuerdo">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionProyectoDeAcuerdo"/>
+		</rdfs:range>
+		<rdfs:label xml:lang="es">tiene proyecto de acuerdo</rdfs:label>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionProyectosDeAcuerdo"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTabla"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionObjetoSesion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionDiscusionInmediata"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionFacilDespacho"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionOrdenDelDia"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeComisionInvestigadora"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTiempoDeVotaciones">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Tiempo de votaciones</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionCierreDeLaSesion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Cierre de la sesión</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionAnexoSesion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Sección Anexo sesión</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ActaSesionAnterior">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Acta sesión anterior</rdfs:label>
+		<rdfs:comment xml:lang="es">Este elemento no se entiende como implementar</rdfs:comment>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionDocumentosDeLaCuenta">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sección documentos de la cuenta</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#asistio">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">asistió</rdfs:label>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Asistente"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoAsistencia"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneIntervencion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionEleccionDeLaMesa"/>
+		</rdfs:domain>
+		<rdfs:label xml:lang="es">tiene intervención</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Intervencion"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneCausa">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionMocionInadmisible"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneRespuestaOficio">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+		</rdf:type>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#boolean"/>
+		</rdfs:range>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ReferenciaADocumento"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionPeticionDeOficio"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneEmisor">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:range>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://www.w3.org/ns/org#FormalOrganization"/>
+					<owl:Class rdf:about="http://xmlns.com/foaf/0.1/Person"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:range>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ReferenciaADocumento"/>
+					<owl:Class rdf:about="http://xmlns.com/foaf/0.1/Document"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeDelegacionParlamentaria"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeComisionInvestigadora"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+		<rdfs:subPropertyOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneReferencia"/>
+		</rdfs:subPropertyOf>
+		<rdfs:label xml:lang="es">tiene emisor</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneReceptor">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:range>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://www.w3.org/ns/org#FormalOrganization"/>
+					<owl:Class rdf:about="http://xmlns.com/foaf/0.1/Document"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:range>
+		<rdfs:label xml:lang="es">tiene receptor</rdfs:label>
+		<rdfs:subPropertyOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneReferencia"/>
+		</rdfs:subPropertyOf>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ReferenciaADocumento"/>
+					<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionPeticionDeOficio"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#DocumentoSesion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#Documento"/>
+		</rdfs:subClassOf>
+		<rdfs:label xml:lang="es">Documento sesión</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneTipoParticipacion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Participacion"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoParticipacion"/>
+		</rdfs:range>
+		<rdfs:label xml:lang="es">tiene tipo participacion</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoParticipacion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Tipo de participación</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneTipoDebate">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoDebate"/>
+		</rdfs:range>
+		<rdfs:label xml:lang="es">tiene tipo debate</rdfs:label>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTextoDebate"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#DebateInterpelacion"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoDebate">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Tipo debate</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Pareo">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AgrupadorSemantico"/>
+		</rdf:type>
+	</rdf:Description>
+	<!--
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneParlamentario">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">tiene parlamentario</rdfs:label>
+		<rdfs:subPropertyOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tienePersona"/>
+		</rdfs:subPropertyOf>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://xmlns.com/foaf/0.1/Person"/>
+		</rdfs:range>
+	</rdf:Description>
+-->
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ResultadoDebate">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Resultado debate</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionProclamacionDeTricel">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneProclamacionDeTricel">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionProclamacionDeTricel"/>
+		</rdfs:range>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionInstalacion"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionAperturaDeLaSesion"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+		<rdfs:label>tiene proclamación de TRICEL</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneCargo">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#IntegranteMesa"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-biographies#Cargo"/>
+		</rdfs:range>
+		<rdfs:subPropertyOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#tieneReferencia"/>
+		</rdfs:subPropertyOf>
+		<rdfs:label xml:lang="es">tiene cargo</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#VotacionIntegranteMesa">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneVotacionIntegranteMesa">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#IntegranteMesa"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#VotacionIntegranteMesa"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#VotacionCandidatoMesa">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneVotacionCandidatoMesa">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#VotacionIntegranteMesa"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#VotacionCandidatoMesa"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#votoPorCandidato">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#VotacionCandidatoMesa"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-biographies#Parliamentary"/>
+		</rdfs:range>
+		<rdfs:label xml:lang="es">votó por candidato</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#totalVotosCandidato">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#VotacionCandidatoMesa"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneCandidato">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#VotacionCandidatoMesa"/>
+		</rdfs:domain>
+		<rdfs:subPropertyOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneParlamentario"/>
+		</rdfs:subPropertyOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionDeclaracionDeInstalacion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sección Declaración de instalación</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionHomenajes">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label>Sección homenajes</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionProyectosDeAcuerdo">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+		<rdfs:label xml:lang="es">Proyecto de acuerdo</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionPeticionesDeOficio">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Sección petición de oficio</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneTextoIncidente">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ParticipacionEnIncidente"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TextoIncidente"/>
+		</rdfs:range>
+		<rdfs:label xml:lang="es">tiene texto incidente</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneParticipacionEnIncidente">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionIncidente"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ParticipacionEnIncidente"/>
+		</rdfs:range>
+		<rdfs:label xml:lang="es">tiene participacion en incidente</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AntecedenteProyectoAcuerdo">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionAntecedente"/>
+		</rdfs:subClassOf>
+		<rdfs:label>Antecedente proyecto de acuerdo</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneAutor">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:subPropertyOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneParlamentario"/>
+		</rdfs:subPropertyOf>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AntecedenteProyectoAcuerdo"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeDelegacionParlamentaria"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeComisionInvestigadora"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+		<rdfs:label xml:lang="es">tiene autor</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneAntecedenteProyectoDeAcuerdo">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionProyectoDeAcuerdo"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AntecedenteProyectoAcuerdo"/>
+		</rdfs:range>
+		<rdfs:label xml:lang="es">tiene antecedente proyecto de acuerdo</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#DebateInterpelacion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Debate interpelación</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#PreguntaRespuesta">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Pregunta respuesta</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tienePreguntaRespuesta">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#DebateInterpelacion"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#PreguntaRespuesta"/>
+		</rdfs:range>
+		<rdfs:label xml:lang="es">tiene pregunta-respuesta</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tienePregunta">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#PreguntaRespuesta"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Participacion"/>
+		</rdfs:range>
+		<rdfs:subPropertyOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneParticipacion"/>
+		</rdfs:subPropertyOf>
+		<rdfs:label xml:lang="es">tiene pregunta</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneRespuesta">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#PreguntaRespuesta"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Participacion"/>
+		</rdfs:range>
+		<rdfs:subPropertyOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneParticipacion"/>
+		</rdfs:subPropertyOf>
+		<rdfs:label xml:lang="es">tiene respuesta</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneInterpelado">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#DebateInterpelacion"/>
+		</rdfs:domain>
+		<rdfs:label xml:lang="es">tiene interpelado</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://xmlns.com/foaf/0.1/Person"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneInterpelador">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#DebateInterpelacion"/>
+		</rdfs:domain>
+		<rdfs:label xml:lang="es">tiene interpelador</rdfs:label>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://xmlns.com/foaf/0.1/Person"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionProyectoDeLey">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Sección proyecto de ley</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneDebateInterpelacion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<owl:equivalentClass>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTabla"/>
+					<owl:Class rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionObjetoSesion"/>
+				</owl:unionOf>
+			</owl:equivalentClass>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#DebateInterpelacion"/>
+		</rdfs:range>
+		<rdfs:label xml:lang="es">tiene debate interpelación</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneNombramientoParlamentario">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">tiene nombramiento parlamentario</rdfs:label>
+		<rdfs:subPropertyOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneParlamentario"/>
+		</rdfs:subPropertyOf>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionCuenta"/>
+		</rdfs:domain>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Urgencia">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Urgencia</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneUrgencia">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Urgencia"/>
+		</rdfs:range>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionDocumentosDeLaCuenta"/>
+		</rdfs:domain>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneTipoUrgencia">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Urgencia"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoUrgencia"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoUrgencia">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ObjetivoUrgencia">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Objetivo urgencia</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneObjetivoUrgencia">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Urgencia"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ObjetivoUrgencia"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#fechaInicioViaje">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeDelegacionParlamentaria"/>
+		</rdfs:domain>
+		<rdfs:label xml:lang="es">fecha inicio viaje</rdfs:label>
+		<rdfs:subPropertyOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#fecha"/>
+		</rdfs:subPropertyOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneObjetivoViaje">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeDelegacionParlamentaria"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ActividadViaje">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Actividad viaje</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneActividadViaje">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeDelegacionParlamentaria"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ActividadViaje"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#lugarVisitado">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ActividadViaje"/>
+		</rdfs:domain>
+		<rdfs:label xml:lang="es">lugar visitado</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneAutoridad">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ActividadViaje"/>
+		</rdfs:domain>
+		<rdfs:subPropertyOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneAsistente"/>
+		</rdfs:subPropertyOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#fechaInicioInvestigacion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">fecha inicio investigación</rdfs:label>
+		<rdfs:subPropertyOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#fecha"/>
+		</rdfs:subPropertyOf>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#InformeComisionInvestigadora"/>
+		</rdfs:domain>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneInforme">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:subPropertyOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-congress#tieneDocumento"/>
+		</rdfs:subPropertyOf>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionDocumentosDeLaCuenta"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#Informe"/>
+		</rdfs:range>
+		<rdfs:comment xml:lang="es">Se enlaza a la clase Informe, que es super clase de *InformeDelegacionParlamentaria *InformeComisionInvestigadora e *InformeComisionLegislativa</rdfs:comment>
+		<rdfs:label xml:lang="es">tiene informe</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#InicioSesion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Inicio Sesión</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#tieneInicioSesion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+		</rdf:type>
+		<rdfs:domain>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionInstalacion"/>
+		</rdfs:domain>
+		<rdfs:range>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#InicioSesion"/>
+		</rdfs:range>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionAcuerdosDeComites">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Acuerdo comités</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionComplementoAcuerdoComites">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Complemento acuerdo comité</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ReferenciaHistoriaDeLaLey">
+		<rdfs:label xml:lang="es">Referencia Historia de la ley</rdfs:label>
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Ontology"/>
+		</rdf:type>
+		<rdfs:comment>Todos los documentos definidos dentro de este modelo son referencias a documentos, pero no documentos en sí.</rdfs:comment>
+		<owl:imports>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#"/>
+		</owl:imports>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SesionExitosa">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Exitosa</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SesionFracasada">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Fracasada</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#PermisoSimpleInasistencia">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AgrupadorSemantico"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Permiso simple para inasistencia</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#PermisoConstitucionalInasistencia">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AgrupadorSemantico"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Permiso constitucional para inasistencia</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Adhesion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AgrupadorSemantico"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Adhesion</rdfs:label>
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoParticipacion"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AutorIndicacion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AgrupadorSemantico"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Autor Indicación</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AutorProyectoDeAcuerdo">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Autor proyecto de acuerdo</rdfs:label>
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AgrupadorSemantico"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#IntervencionEnInforme">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Intervencion en informe</rdfs:label>
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AgrupadorSemantico"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AgrupadorSemantico">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Agrupador Semántico</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/recurso/cl/cargo/324">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AgrupadorSemantico"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/recurso/cl/cargo/322">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AgrupadorSemantico"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/recurso/cl/cargo/325">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AgrupadorSemantico"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/recurso/cl/cargo/321">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AgrupadorSemantico"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/recurso/cl/cargo/323">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AgrupadorSemantico"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/recurso/cl/cargo/326">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AgrupadorSemantico"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/recurso/cl/cargo/327">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AgrupadorSemantico"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#InformanteComision">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Informante Comisión</rdfs:label>
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AgrupadorSemantico"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#seAprueba">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ResultadoDebate"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">se aprueba</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#seRechaza">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ResultadoDebate"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">se rechaza</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#pendiente">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ResultadoDebate"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">pendiente</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#seApruebaEnGeneral">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ResultadoDebate"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">se aprueba en general</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#seApruebaEnParticular">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ResultadoDebate"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">se aprueba en particular</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#seApruebaEnGeneralYParticular">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ResultadoDebate"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">se aprueba en general y particular</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#seApruebaEnGeneralYParticularConModificaciones">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ResultadoDebate"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">se aprueba en general y particular con modificaciones</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#seApruebaEnGeneralYParticularSinModificaciones">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ResultadoDebate"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">se aprueba en general y particular sin modificaciones</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#seApruebaEnParticularConModificaciones">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ResultadoDebate"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Se aprueba en particular con modificaciones</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#seRechazanModificaciones">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ResultadoDebate"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">se rechazan modificaciones</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#seApruebanModificaciones">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ResultadoDebate"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Se aprueban modificaciones</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionAntedecentes">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Sección Antecedentes</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionConstanciasReglamentarias">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Sección constancias reglamentarias</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionDocumentoCuenta">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Sección documento cuenta</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#AcusacionConstitucional">
+		<rdfs:label xml:lang="es">Acusación constitucional</rdfs:label>
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoParticipacion"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionDespachoInmediato">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionTextoDebate"/>
+		</rdfs:subClassOf>
+		<rdfs:label xml:lang="es">Sección despacho inmediato</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionListaIndicaciones">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Sección lista de indicaciones</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionParteIndicacion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Sección parte indicación</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Comunicacion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoParticipacion"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Comunicación</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Homenaje">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoParticipacion"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Homenaje</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Indicacion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoParticipacion"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#IntervencionPeticionDeOficio">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoParticipacion"/>
+		</rdf:type>
+		<rdfs:label>Intervención Petición de oficio</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Integracion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoParticipacion"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Inhabilitacion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoParticipacion"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Inhabilitación</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Desafuero">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoParticipacion"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Desafuero</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Mensaje">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoParticipacion"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Mensaje</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Mocion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoParticipacion"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Moción</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Nombramiento">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Thing"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Nombramiento</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Permiso">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoParticipacion"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Permiso</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#ProyectoDeAcuerdo">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoParticipacion"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Proyecto de acuerdo</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#PeticionDeOficio">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Thing"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Petición de oficio</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#Votacion">
+		<rdf:type>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoParticipacion"/>
+		</rdf:type>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionParteIncidentes">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#SeccionPortada">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:label xml:lang="es">Sección portada</rdfs:label>
+		<rdfs:subClassOf>
+			<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-resources#SeccionRecurso"/>
+		</rdfs:subClassOf>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://datos.bcn.cl/ontologies/bcn-sessiondaily#TipoAsistencia">
+		<rdf:type>
+			<rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Class"/>
+		</rdf:type>
+		<rdfs:comment xml:lang="es">Las instancias de esta clase indican si asistió, si faltó, si justificó, etc.</rdfs:comment>
+		<rdfs:label xml:lang="es">Tipo de asistencia</rdfs:label>
+	</rdf:Description>
+</rdf:RDF>

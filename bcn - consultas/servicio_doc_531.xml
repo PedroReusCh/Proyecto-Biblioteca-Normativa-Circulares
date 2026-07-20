@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc name="circular"
+  xmlns="http://www.akomantoso.org/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.akomantoso.org/2.0 Esquema%20Akoma-Ntoso%20BCN.xsd">
+<meta>
+  <identification source="#redactor">
+    <FRBRWork>
+      <FRBRthis value="http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2023-02-17/531/main"/>
+      <FRBRuri value="http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2023-02-17/531"/>
+      <FRBRdate date="2023-02-17" name="fecha-publicacion"/>
+      <FRBRauthor href="#minvu-ddu" as="#autor"/>
+      <FRBRcountry value="cl"/>
+    </FRBRWork>
+    <FRBRExpression>
+      <FRBRthis value="http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2023-02-17/531/espanol/main"/>
+      <FRBRuri value="http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2023-02-17/531/espanol"/>
+      <FRBRdate date="2023-02-17" name="fecha-publicacion"/>
+      <FRBRauthor href="#minvu-ddu" as="#autor"/>
+      <FRBRlanguage language="es"/>
+    </FRBRExpression>
+    <FRBRManifestation>
+      <FRBRthis value="http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2023-02-17/531/espanol/datos.xml"/>
+      <FRBRuri value="http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2023-02-17/531/espanol/datos.xml"/>
+      <FRBRdate date="2026-07-17" name="fecha-generacion"/>
+      <FRBRauthor href="#redactor" as="#editor"/>
+      <FRBRformat value="xml"/>
+    </FRBRManifestation>
+  </identification>
+  <references source="#redactor">
+    <TLCOrganization id="redactor" href="http://datos.bcn.cl/recurso/cl/organismo/biblioteca-del-congreso-nacional" showAs="Biblioteca del Congreso Nacional"/>
+    <TLCOrganization id="minvu" href="http://datos.bcn.cl/recurso/cl/organismo/ministerio-de-vivienda-y-urbanismo" showAs="Ministerio de Vivienda y Urbanismo"/>
+    <TLCOrganization id="minvu-ddu" href="http://datos.bcn.cl/recurso/cl/organismo/ministerio-de-vivienda-y-urbanismo/division-de-desarrollo-urbano" showAs="División de Desarrollo Urbano"/>
+    <TLCPerson id="jefe-division-desarrollo-urbano" href="http://datos.bcn.cl/recurso/cl/persona/jefe-division-desarrollo-urbano" showAs="Jefe División de Desarrollo Urbano"/>
+    <TLCRole id="autor" href="http://datos.bcn.cl/recurso/cl/rol/autor" showAs="Autor"/>
+    <TLCRole id="editor" href="http://datos.bcn.cl/recurso/cl/rol/editor" showAs="Editor"/>
+  </references>
+</meta>
+<preface>
+  <p><docType>CIRCULAR</docType></p>
+  <p><docNumber>DDU 531</docNumber></p>
+  <p><docDate date="2023-02-17">17 de febrero de 2023</docDate></p>
+  <p><docTitle>Artículos 5.1.17. y 5.1.18. de la Ordenanza General de Urbanismo y Construcciones. Modificación de proyecto. Complementa circular Ord. N° 0535 de fecha 26 de diciembre de 2016. (DDU 328)</docTitle></p>
+</preface>
+<mainBody>
+  <section id="sec_1">
+    <heading>ENCABEZADO</heading>
+    <paragraph id="par_1_1">
+      <content>
+        <p>A SEGÚN DISTRIBUCIÓN. DDU 531 CIRCULAR ORO. Nº ___ 0_8_, 8 ___ / MAT.: Artículos 5.1.17. y 5.1.18 . de la <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47">Ordenanza General de Urbanismo y Construcciones</ref>. Modificación de proyecto. Complementa circular Ord . Nº 0535 de fecha 26 de diciembre de 2016. (DDU 328) PERMISOS, APROBACIONES Y RECEPCIONES; MODIFICACION DE PROYECTOS SANTIAGO, 1 7 FEB 2íl23 DE JEFE DIVISIÓN DE DESARROLLO URBANO.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_2">
+      <num>1.</num>
+      <content>
+        <p>De conformidad con lo dispuesto en el artículo 4° del <ref href="http://datos.bcn.cl/recurso/cl/dfl/ministerio-de-vivienda-y-urbanismo/1976-04-13/458">D.F.L. Nº 458</ref>, de 1975 <ref href="http://datos.bcn.cl/recurso/cl/dfl/ministerio-de-vivienda-y-urbanismo/1976-04-13/458">Ley General de Urbanismo y Construcciones</ref> (<ref href="http://datos.bcn.cl/recurso/cl/dfl/ministerio-de-vivienda-y-urbanismo/1976-04-13/458">LGUC</ref>), y ante consultas recibidas, se ha estimado necesario emitir la presente circular con el objeto de complementar la circular Ord. Nº 0535 de fecha 26 de diciembre de 2016, DDU 328. l. ANTECEDENTES</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_3">
+      <num>2.</num>
+      <content>
+        <p>Mediante la circular DDU 328, esta División emitió instrucciones sobre cómo debía procederse en el caso de &quot;proyectos que se modifican al amparo de un cambio de normativa, basándose en las mismas normas con que fueron aprobados originalmente, y requieran una segunda modificación, respecto del cálculo de la cifra del 5% de aumento en la superficie construida , que permite como máximo el inciso segundo del <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-5.1.18">artículo 5.1.18. de la Ordenanza General de Urbanismo y Construcciones</ref> (<ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47">OGUC</ref>)&quot; (el destacado es de esta Circular). En dicha instrucción se concluyó, en lo pertinente, que el 5% de aumento de la superficie edificada que se establece en el caso de modificación de proyecto apegado a las normas vigentes al momento de su aprobación, es el máximo permitido en una sola modificación o en modificaciones parciales que, en su conjunto, deben limitarse a dicho 5% de la superficie aprobada en el permiso original. Lo anterior aplica también en el caso de una primera modificación con disminución de superficie aprobada inicialmente y una segunda, con aumento de superficie , caso en el cual el límite para dicho aumento es igualmente el 5% de la superficie aprobada por el permiso de edificación original. De esta forma se evidencia que la hipótesis contenida en la referida circular trata de modificaciones de proyecto que se tramitan después de ocurrido el cambio en la normativa urbanística (<ref href="http://datos.bcn.cl/recurso/cl/dfl/ministerio-de-vivienda-y-urbanismo/1976-04-13/458">LGUC</ref>, <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47">OGUC</ref> o Instrumento de Planificación Territorial/IPT). y que, por tal razón, les resulta únicamente aplicable el <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-5.1.18">artículo 5.1.18. de la OGUC</ref> (inciso primero o segundo según corresponda) .</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_4">
+      <num>3.</num>
+      <content>
+        <p>Conforme a lo expuesto, se hace necesario abordar una situación que no fue tratada en la circular DDU 328, y que dice relación con el caso de permisos con modificaciones de proyecto aprobadas antes de la modificación de la <ref href="http://datos.bcn.cl/recurso/cl/dfl/ministerio-de-vivienda-y-urbanismo/1976-04-13/458">LGUC</ref>, <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47">OGUC</ref> o IPT aplicab le, y que Minister io de Vivienda y Urbanis mo - Alameda 924 - Santiago - Chile Página 1 de 3 luego del cambio normativo, requieren ser nuevamente modificados. En tal caso, se requiere precisar cómo debe procederse respecto al cálculo del límite del 5% de aumento de superficie construida.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_5">
+      <num>11.</num>
+      <content>
+        <p>NORMATIVA APLICABLE</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_6">
+      <num>4.</num>
+      <content>
+        <p>Para estos efectos, debemos tener presente que el inciso primero del artículo 1.4 .16. de la <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47">OGUC</ref> prevé que &quot; Si después de concedido un permiso hubiere necesidad de introducir modificaciones o variantes en el proyecto o en las obras correspond ientes , tales modificaciones se tramitarán en la forma señalada en los artículos 3.1 . 9. y 5.1.17. de esta Ordenanza General&quot;. Así, en lo pertinente , el aludido <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-5.1.17">artículo 5.1.17. de la OGUC</ref> enumera los antecedentes que deben presentarse ante la Dirección de Obras Municipales para tal caso, expresando su inciso final que &quot;Una vez aprobados y para todos los efecto s legales , los nuevos antecedentes reemplazarán a los documentos originales &quot; .</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_1_7">
+      <num>5.</num>
+      <content>
+        <p>Seguidamente, el <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-5.1.18">artículo 5.1.18. de la OGUC</ref> trata de las modificaciones de proyectos, pero ahora frente a cambios en la normativa urbanística -ya sea del IPT aplicable , la <ref href="http://datos.bcn.cl/recurso/cl/dfl/ministerio-de-vivienda-y-urbanismo/1976-04-13/458">LGUC</ref> o su Ordenanza General-, ocurridas entre el permiso y la recepción definitiva . En el inciso primero de la norma en comento , se dispone que el propietario podrá solicitar acogerse a las nuevas disposiciones. Si se optare por esto , se aplica rán al proyecto o a la parte de este que se modifica, dichas disposiciones y los demás aspectos de la nueva normativa que digan relación directa con las modificaciones. Por su parte, y en lo que interesa, el inciso segundo del <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-5.1.18">artículo 5.1.18</ref> . establece que el propietario podrá modificar el proyecto en construcción sobre la base de las mismas normas con que este fue aprobado , siempre que la mod ificación no contemple un aumento de superficie edificada mayor al 5% o nuevos destinos no admitidos por la normativa vigente al momento de solicitar la modificación.</p>
+      </content>
+    </paragraph>
+  </section>
+  <section id="sec_2">
+    <num>III.</num>
+    <heading>INSTRUCCIÓN COMPLEMENTARIA A LOS CASOS ABORDADOS POR LA</heading>
+    <paragraph id="par_2_1">
+      <content>
+        <p>CIRCULAR DDU 328</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_2">
+      <num>6.</num>
+      <content>
+        <p>De la normativa reseñada, se desprende que el titular de un proyecto que cuente con un permiso de edificación vigente puede introducirle modificaciones, rigiéndose para ello por las normas urbanísticas que resulten aplicables: a) Serán aplicables las normas vigentes al ingreso de la solicitud -conforme con el <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-1.1.3">artículo 1.1.3. de la OGUC</ref>- por regla general, cuando no mediare modificac ión de las normas de la <ref href="http://datos.bcn.cl/recurso/cl/dfl/ministerio-de-vivienda-y-urbanismo/1976-04-13/458">LGUC</ref>, <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47">OGUC</ref> o el IPT respectivo, resultado aplic able el <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-5.1.17">artículo 5.1.17</ref> . de la <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47">OGUC</ref>. La modificación de proyectos sin mediar cambio normativo, de acuerdo con lo dispuesto en al citado <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-5.1.17">artículo 5.1.17</ref>., no tiene limitaciones con relación al aumento de la superficie edificada . Evidentemente, dicha modificación deberá cumplir con las normas urbanísticas admitidas en el instrumento de planificación vigente al ingreso de la solicitud de modificación. En este caso, los nuevos antecedentes aprobados por la modificación de proyecto reemplazarán a los documentos originales del permiso para todos los efectos legales. b) Si al presentarse la solicitud de modificación de proyecto se ha verificado que hubo cambios en normativa urbanística en el tiempo que media entre el otorgamiento del permiso y la recepción de la obra, tal solicitud deberá regirse por el <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-5.1.18">artículo 5.1.18. de la OGUC</ref>. Si el propietario desea acogerse a las misma s normas con que el permiso fue aprobado, deberán cumpl irse los límites dispuestos en su inciso segundo, esto es, no aumentar la superficie edificada por sobre el 5% ni considerar nuevos destinos no admitidos en la normativa vigente al momento de solicitar la modificación. Ministerio de Vivienda y Urbanis mo - Alamed a 924 - Santi ago - Chile Pág ina 2 de 3</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_3">
+      <num>7.</num>
+      <content>
+        <p>De esta forma, tratándose de permisos con modificaciones de proyecto aprobadas antes del cambio en la normativa urbanística conforme a lo dispuesto en el <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-5.1.17">artículo 5.1.17. de la OGUC</ref>, y que luego del cambio normativo, requieren ser nuevamente modificados, el límite del 5% de la superfic ie edificada a que se refiere el <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-5.1.18">artículo 5.1.18</ref>. deberá computarse en relación con la superficie resultante de las modificaciones tramitadas antes del cambio normativo , es decir , conforme al <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-5.1.17">artículo 5.1.17</ref> . Lo anterior, por cuanto el límite del 5% es aplicable solo a las mod ificaciones de proyecto que se suscitan entre el otorgamiento del permiso y la recepción defin itiva habiendo ocurrido una modificación en la normat iva urbanística aplicable , y porque conforme al citado <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-5.1.17">artículo 5.1.17. de la OGUC</ref> los antecedentes aprobados por la modificación de proyecto pasarán a reemplazar los originales para todos los efectos legales . Lo señalado se aplicará tanto si se hubieren producido una o más modifica ciones de proyecto antes del cambio en la normativa urbanística (por el <ref href="http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-5.1.17">artículo 5.1.17</ref> .), como si se hubiere disminuido o aumentado la superficie edificada original del permiso . En todos los casos, cuando la modificación de proyecto implique un aum ento de la superficie edifi cada, dicho increment o además de circunscribi rse al límite porcentua l ante s referido no podrá sobrepasar la normativa vigente del inst rumen to de planificación territorial con que se otorgó el respectivo permi so.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_4">
+      <num>8.</num>
+      <content>
+        <p>Entiéndase complementada la Circular DDU 328 en los términos expuestos . Saluda atentamente a Ud., &apos;\/\ ~WIEND,4 &gt;&apos; ~ ~ ,, ~ ;¡ , i:. ~ * ~~ 6 &apos; ...) ( 1:hf,pr,,; . \ D STRIBUCIÓN: 1 1! Sr. Ministro de Vivienda y Urbanismo .</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_5">
+      <num>2.</num>
+      <content>
+        <p>Sra. Subsecreta ria de Vivienda y Urban ismo .</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_6">
+      <num>3.</num>
+      <content>
+        <p>Sra. Contralora General de la República . 4 . Sres. Gobernadores Regionales, todas las regiones.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_7">
+      <num>5.</num>
+      <content>
+        <p>Bibliot eca del Congreso Nacional.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_8">
+      <num>6.</num>
+      <content>
+        <p>Sres. Jefes de Divisió n MINVU.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_9">
+      <num>7.</num>
+      <content>
+        <p>Contra loría Interna MINVU.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_10">
+      <num>8.</num>
+      <content>
+        <p>Sres. Secreta rios Regionales Ministeriales MINVU.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_11">
+      <num>9.</num>
+      <content>
+        <p>Sres. Directo res Regio nales SERVIU.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_12">
+      <num>10.</num>
+      <content>
+        <p>Sres. Directore s de Obras Municipales (a/c SEREMI MINVU).</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_13">
+      <num>11.</num>
+      <content>
+        <p>Sres. Asesores Urba nistas (a/c SEREMI MINVU).</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_14">
+      <num>12.</num>
+      <content>
+        <p>Sres. Secretarios Comunales de Planificac ión y Coordinación (a/c SEREMI MINVU).</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_15">
+      <num>13.</num>
+      <content>
+        <p>Depto. de Ordenamien to Territorial y Medio Ambie nte (GORE Metropolitano)</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_16">
+      <num>14.</num>
+      <content>
+        <p>Sres. Jefes Depto. D.D.U.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_17">
+      <num>15.</num>
+      <content>
+        <p>Sres. Jefes Depto. D.D. U.I. SEREMI MINVU Regionales.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_18">
+      <num>16.</num>
+      <content>
+        <p>Ministe rio del Medio Ambiente.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_19">
+      <num>17.</num>
+      <content>
+        <p>Colegio de Arquitectos de Chile.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_20">
+      <num>18.</num>
+      <content>
+        <p>Institu to de la Construcción .</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_21">
+      <num>19.</num>
+      <content>
+        <p>Cámara Chilena de la Construcción.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_22">
+      <num>20.</num>
+      <content>
+        <p>Asociación de Oficinas de Arquitectos de Chile (AOA)</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_23">
+      <num>21.</num>
+      <content>
+        <p>Asociación Nacional de Reviso res I ndependientes (ANRI) 22 . Asociación Chilena de Municipalidades (AChM)</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_24">
+      <num>23.</num>
+      <content>
+        <p>Asociación de Municipalidades de Chile (AMUCH)</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_25">
+      <num>24.</num>
+      <content>
+        <p>Asociación de desarrolladores inmobiliarios (ADI )</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_26">
+      <num>25.</num>
+      <content>
+        <p>Consejo Nacional de Desarro llo Terr itorial.</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_27">
+      <num>26.</num>
+      <content>
+        <p>Sr. Secreta rio Ejecutivo Consejo de Monumentos Nacionales 27 . Centro de Documentación (CEDOC) MINVU 28 . OIRS 29 . Jefe SIAC</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_28">
+      <num>30.</num>
+      <content>
+        <p>Archivo DDU</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_29">
+      <num>31.</num>
+      <content>
+        <p>Oficina de Partes DDU</p>
+      </content>
+    </paragraph>
+    <paragraph id="par_2_30">
+      <num>32.</num>
+      <content>
+        <p>Oficina de Partes MINVU Ley 20.285 Ministerio de Vivienda y Urbanismo - Alameda 924 - Santiago - Chile Página 3 de 3</p>
+      </content>
+    </paragraph>
+  </section>
+</mainBody>
+</doc>
