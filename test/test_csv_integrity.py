@@ -56,6 +56,7 @@ def test_csv_integrity() -> None:
         
     csv_diccionario = doc_dir / "diccionario_dato_akoma_ntoso.csv"
     csv_secuencia = doc_dir / "secuencia_planilla_akoma_ntoso.csv"
+    csv_estructura = doc_dir / "estructura_circular_ddu.csv"
     
     # 1. Validar Diccionario de Datos (6 columnas esperadas)
     success_dicc = validar_csv(csv_diccionario, 6)
@@ -63,12 +64,31 @@ def test_csv_integrity() -> None:
     # 2. Validar Secuencia de Plantilla (6 columnas esperadas)
     success_sec = validar_csv(csv_secuencia, 6)
     
+    # 3. Validar Estructura Circular DDU (12 columnas esperadas)
+    success_est = validar_csv(csv_estructura, 12)
+    
+    # Validación semántica específica para estructura_circular_ddu.csv
+    if success_est:
+        try:
+            with open(csv_estructura, "r", encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                for idx, row in enumerate(reader, start=2):
+                    for col in ["bloque", "campo", "tipo_dato", "obligatorio", "orden", "zona"]:
+                        if not row.get(col):
+                            print(f"  [FALLO] estructura_circular_ddu.csv - Fila {idx}: columna crítica '{col}' está vacía.")
+                            success_est = False
+        except Exception as e:
+            print(f"  [ERROR] Error en validación semántica del CSV: {e}")
+            success_est = False
+            
     print("\nResumen de Validacion:")
     print(f"  Diccionario de Datos: {'PASO' if success_dicc else 'FALLO'}")
     print(f"  Secuencia de Plantilla: {'PASO' if success_sec else 'FALLO'}")
+    print(f"  Estructura Circular DDU: {'PASO' if success_est else 'FALLO'}")
     
     assert success_dicc, "Diccionario de Datos CSV no es válido."
     assert success_sec, "Secuencia de Plantilla CSV no es válida."
+    assert success_est, "Estructura Circular DDU CSV no es válida."
 
 
 if __name__ == "__main__":

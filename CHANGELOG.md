@@ -14,6 +14,9 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
   * Creación de [`pytest.ini`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/pytest.ini) para el descubrimiento y ejecución unificada de las pruebas del proyecto.
 * **Especificación local de cobertura**:
   * Creación de [`bcn - documentación/especificacion_cobertura.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n/especificacion_cobertura.md) con la declaración explícita de todos los elementos del esquema XSD de la BCN para validar la cobertura estructural al 100% de manera local y autónoma.
+* **CSV de Estructura de Circular DDU**:
+  * Creación de [`bcn - documentación/estructura_circular_ddu.csv`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n/estructura_circular_ddu.csv) que formaliza las reglas y campos del documento Word `Estructura circular.docx`.
+  * Actualización de [`test/test_csv_integrity.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_csv_integrity.py) para validar la integridad semántica y alineación del nuevo CSV.
 
 ### Changed
 
