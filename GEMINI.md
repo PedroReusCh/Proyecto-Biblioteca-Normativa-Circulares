@@ -10,8 +10,6 @@ El objetivo principal es tomar circulares DDU (División de Desarrollo Urbano de
 2. **Generación Akoma Ntoso XML**: [`scripts/ddu_to_xml.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_xml.py) transforma los datos estructurados al estándar XML Akoma Ntoso v2.0 BCN compatible con el validador oficial.
 3. **Generación RDF (Turtle)**: [`scripts/ddu_to_rdf.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_rdf.py) mapea los metadatos a grafos semánticos RDF.
 
----
-
 ## Reglas Críticas para la IA
 
 ### 1. Mantenimiento de la Suite de Pruebas
@@ -28,10 +26,12 @@ El objetivo principal es tomar circulares DDU (División de Desarrollo Urbano de
 
 * Al generar identificadores normalizados para URIs, se debe seguir estrictamente la función `normalizar_uri` implementada en [`scripts/ddu_parser.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_parser.py), la cual contempla remoción de diacríticos y singularización de sustantivos.
 
-### 4. Idioma Obligatorio (Interacciones y Commits)
-*   **Idioma Único**: Toda la comunicación, explicaciones, preguntas y respuestas con el usuario deben generarse exclusivamente en **español**.
-*   **Mensajes de Commit**: Todos los mensajes de confirmación (commits) generados para Git por la IA deben redactarse exclusivamente en **español** (por ejemplo, `doc: actualizar documentación` en lugar de `docs: update documentation`).
+### 3. Idioma Obligatorio (Interacciones y Commits)
 
-### 5. Trazabilidad y Evidencia
-*   Antes de cerrar cualquier tarea técnica, reporta el comando exacto ejecutado en la consola y la salida del test como evidencia empírica de funcionamiento.
-*   Cualquier modificación debe quedar debidamente descrita en el archivo [`CHANGELOG.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/CHANGELOG.md).
+* **Idioma Único**: Toda la comunicación, explicaciones, preguntas y respuestas con el usuario deben generarse exclusivamente en **español**.
+* **Mensajes de Commit**: Todos los mensajes de confirmación (commits) generados para Git por la IA deben redactarse exclusivamente en **español** (por ejemplo, `doc: actualizar documentación` en lugar de `docs: update documentation`).
+
+### 4. Trazabilidad y Evidencia
+
+* Antes de cerrar cualquier tarea técnica, reporta el comando exacto ejecutado en la consola y la salida del test como evidencia empírica de funcionamiento.
+* Cualquier modificación debe quedar debidamente descrita en el archivo [`CHANGELOG.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/CHANGELOG.md).
