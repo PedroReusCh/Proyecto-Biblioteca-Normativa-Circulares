@@ -6,6 +6,26 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ---
 
+## [0.2.0] - 2026-07-20
+
+### Added
+
+* **Configuración de pytest**:
+  * Creación de [`pytest.ini`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/pytest.ini) para el descubrimiento y ejecución unificada de las pruebas del proyecto.
+* **Especificación local de cobertura**:
+  * Creación de [`bcn - documentación/especificacion_cobertura.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n/especificacion_cobertura.md) con la declaración explícita de todos los elementos del esquema XSD de la BCN para validar la cobertura estructural al 100% de manera local y autónoma.
+
+### Changed
+
+* **Tipado Estricto (Strict Typing)**:
+  * Creación del módulo central de tipos [`scripts/ddu_types.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_types.py) definiendo las estructuras de datos `DatosCircularDDU` y `SeccionDDU` mediante `TypedDict`.
+  * Refactorización de las firmas de los métodos y variables internas de [`scripts/ddu_parser.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_parser.py), [`scripts/ddu_to_xml.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_xml.py) y [`scripts/ddu_to_rdf.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_rdf.py) al estándar strict de tipado.
+* **Modernización y Refactorización de la Suite de Pruebas**:
+  * Refactorización de todos los scripts en `test/` para ser descubiertos de forma nativa por pytest (renombrando `main()` a `test_*` y adecuando aserciones a pytest nativo).
+  * Preservación del punto de entrada dual mediante bloques `if __name__ == "__main__":` en cada archivo de prueba.
+* **Corrección de Calidad y NameErrors**:
+  * Solución de NameError potencial al acceder a los metadatos de `fallbacks_estaticos` sin calificar con `self` en [`scripts/ddu_parser.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_parser.py).
+
 ## [0.1.0] - 2026-07-20
 
 ### Added
