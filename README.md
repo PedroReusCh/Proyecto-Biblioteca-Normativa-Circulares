@@ -56,6 +56,7 @@ pip install pypdf
 Para garantizar que el sistema y sus modelos semánticos de datos cumplen al 100% con los contratos estructurales definidos por el XSD y los CSV de la BCN, se incluye una suite completa de pruebas.
 
 ### Ejecución Unificada (Pytest)
+
 Puedes ejecutar la suite completa de pruebas de manera agrupada con el siguiente comando en la raíz del repositorio:
 
 ```powershell
@@ -63,29 +64,35 @@ pytest -v
 ```
 
 ### Ejecución Individual de Tests
+
 Cada script conserva la compatibilidad de ejecución independiente y directa mediante Python:
 
 1. **Integridad de Columnas CSV**:
+
     ```powershell
     python test/test_csv_integrity.py
     ```
 
 2. **Validación de Cobertura Estructural (100% Real)**:
+
     ```powershell
     python test/test_spec_coverage.py
     ```
 
 3. **Certificación XSD vs CSV (Herencia y Atributos)**:
+
     ```powershell
     python test/test_xsd_structural_validation.py
     ```
 
 4. **Verificación de Generación de XML Akoma Ntoso**:
+
     ```powershell
     python test/test_xml_generation.py
     ```
 
 5. **Verificación de Generación RDF/Turtle**:
+
     ```powershell
     python test/test_rdf_generation.py
     ```
