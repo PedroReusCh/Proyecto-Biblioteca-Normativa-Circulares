@@ -8,6 +8,8 @@ import re
 from pathlib import Path
 from typing import Any, Dict, List, Set
 
+from ddu_types import DatosCircularDDU, SeccionDDU
+
 
 class DDUToRDF:
     """Clase para construir grafos semánticos RDF en formato Turtle (N3) para circulares DDU."""
@@ -27,11 +29,11 @@ class DDUToRDF:
         """
         return texto.replace("\\", "\\\\").replace('"', '\\"')
 
-    def _extraer_articulos_interpretados(self, datos: Dict[str, Any]) -> Set[str]:
+    def _extraer_articulos_interpretados(self, datos: DatosCircularDDU) -> Set[str]:
         """Extrae URIs de los artículos o normas interpretados en la circular.
 
         Args:
-            datos: Diccionario con los datos de la circular.
+            datos: Datos estructurados de la circular.
 
         Returns:
             Conjunto de URIs de artículos/normas de la LGUC/OGUC.
@@ -52,12 +54,12 @@ class DDUToRDF:
         if datos.get("antecedentes"):
             textos_a_buscar.append(str(datos["antecedentes"]))
 
-        secciones: List[Dict[str, Any]] = datos.get("secciones", [])
+        secciones: List[SeccionDDU] = datos.get("secciones", [])
         for seccion in secciones:
             titulo = seccion.get("titulo", "")
             if titulo:
                 textos_a_buscar.append(str(titulo))
-            parrafos: List[Any] = seccion.get("parrafos", [])
+            parrafos: List[str] = seccion.get("parrafos", [])
             for parrafo in parrafos:
                 if parrafo:
                     textos_a_buscar.append(str(parrafo))
@@ -88,11 +90,11 @@ class DDUToRDF:
 
         return uris
 
-    def _extraer_circulares_complementadas(self, datos: Dict[str, Any]) -> Set[str]:
+    def _extraer_circulares_complementadas(self, datos: DatosCircularDDU) -> Set[str]:
         """Extrae URIs de las circulares DDU complementadas/citadas en la circular.
 
         Args:
-            datos: Diccionario con los datos de la circular.
+            datos: Datos estructurados de la circular.
 
         Returns:
             Conjunto de URIs de circulares DDU referenciadas.
@@ -112,12 +114,12 @@ class DDUToRDF:
         if datos.get("antecedentes"):
             textos_a_buscar.append(str(datos["antecedentes"]))
 
-        secciones: List[Dict[str, Any]] = datos.get("secciones", [])
+        secciones: List[SeccionDDU] = datos.get("secciones", [])
         for seccion in secciones:
             titulo = seccion.get("titulo", "")
             if titulo:
                 textos_a_buscar.append(str(titulo))
-            parrafos: List[Any] = seccion.get("parrafos", [])
+            parrafos: List[str] = seccion.get("parrafos", [])
             for parrafo in parrafos:
                 if parrafo:
                     textos_a_buscar.append(str(parrafo))
@@ -183,11 +185,11 @@ class DDUToRDF:
 
         return "0000-00-00"
 
-    def generar_rdf(self, datos: Dict[str, Any]) -> str:
+    def generar_rdf(self, datos: DatosCircularDDU) -> str:
         """Genera el grafo semántico RDF en formato Turtle para una circular DDU.
 
         Args:
-            datos: Diccionario con los datos estructurados de la circular.
+            datos: Datos estructurados de la circular.
 
         Returns:
             String con el grafo RDF serializado en formato Turtle.

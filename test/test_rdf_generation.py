@@ -16,22 +16,16 @@ from ddu_parser import DDUParser
 from ddu_to_rdf import DDUToRDF
 
 
-def main() -> None:
+def test_rdf_generation() -> None:
     # Definir rutas
     proyecto_raiz = Path(__file__).resolve().parents[1]
     pdf_path = proyecto_raiz / "circulares" / "DDU 533.pdf"
 
-    if not pdf_path.exists():
-        print(f"ERROR: No se encontró el archivo de prueba en {pdf_path}")
-        return
+    assert pdf_path.exists(), f"No se encontró el archivo de prueba en {pdf_path}"
 
     print("=== PASO 1: Validando compilación con py_compile ===")
-    try:
-        py_compile.compile(str(proyecto_raiz / "scripts" / "ddu_to_rdf.py"), doraise=True)
-        print("Compilación EXITOSA para scripts/ddu_to_rdf.py")
-    except Exception as e:
-        print(f"ERROR de compilación: {e}")
-        return
+    py_compile.compile(str(proyecto_raiz / "scripts" / "ddu_to_rdf.py"), doraise=True)
+    print("Compilación EXITOSA para scripts/ddu_to_rdf.py")
 
     print("\n=== PASO 2: Parseando PDF ===")
     print(f"Parseando PDF: {pdf_path.name}")
@@ -111,4 +105,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    test_rdf_generation()
