@@ -3,7 +3,9 @@
 Este documento describe de forma exhaustiva los elementos del esquema XSD de Akoma Ntoso BCN y los mapeos cubiertos.
 
 ## Elementos Estructurales Soportados por el Parser y Transformador DDU
+
 El parser procesa principalmente los elementos necesarios para la estructura semántica de circulares:
+
 * doc
 * meta
 * preface
@@ -55,6 +57,7 @@ El parser procesa principalmente los elementos necesarios para la estructura sem
 * publication
 
 ## Catálogo Completo de Elementos Declarados en el Esquema XSD BCN (Cobertura 100%)
+
 A continuación se listan todos los 295 elementos registrados en el esquema oficial de la BCN:
 
 * AtributosDiarioSesiones
