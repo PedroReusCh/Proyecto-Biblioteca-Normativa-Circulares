@@ -174,13 +174,6 @@ class DDUExporter:
         columnas = [
             "bloque",
             "campo",
-            "obligatorio",
-            "orden",
-            "zona",
-            "campo_parser",
-            "estado_parser",
-            "reglas",
-            "descripcion",
             "valor_extraido",
         ]
 
