@@ -290,14 +290,23 @@ class DDUParser:
         seccion_actual: SeccionDDU = {"titulo": "ENCABEZADO", "parrafos": []}
         parrafo_actual = ""
 
+        lineas_distribucion: List[str] = []
+        en_distribucion = False
+
         for line in lines:
             line_clean = line.strip()
             if not line_clean:
                 continue
 
             # Corte de distribución flexible (cubre D STRIBUCI?N:, DISTRIBUCION:, etc.)
+            if en_distribucion:
+                lineas_distribucion.append(line_clean)
+                continue
+
             if re.search(r"\b(?:D\s*S|D)?\s*STRIBUC[I\?OÓ]+N\b", line_clean, re.IGNORECASE):
-                break
+                en_distribucion = True
+                lineas_distribucion.append(line_clean)
+                continue
 
             # Normalizar errores comunes de OCR en secciones romanas antes de parsear
             # ej: l. ANTECEDENTES -> I. ANTECEDENTES
@@ -373,9 +382,10 @@ class DDUParser:
                 firmante = self.fallbacks_estaticos[numero]["firmante"]
 
         lista_distribucion_str = ""
-        match_dist = re.search(r"(?:DISTRIBUCI[OÓ\?I\s]+N|BUCI[OÓ\?I\s]+N)\s*:?\s*(.*)", raw_text_norm, re.IGNORECASE | re.DOTALL)
-        if match_dist:
-            dist_text = match_dist.group(1)
+        if lineas_distribucion:
+            texto_dist_raw = "\n".join(lineas_distribucion)
+            match_dist = re.search(r"(?:DISTRIBUCI[OÓ\?I\s]+N|BUCI[OÓ\?I\s]+N)\s*:?\s*(.*)", texto_dist_raw, re.IGNORECASE | re.DOTALL)
+            dist_text = match_dist.group(1) if match_dist else texto_dist_raw
             lines_dist = [d.strip() for d in dist_text.splitlines() if d.strip()]
             dist_items: List[str] = []
             for d in lines_dist:
