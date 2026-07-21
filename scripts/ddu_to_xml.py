@@ -278,8 +278,20 @@ class DDUToXML:
                     num_par = ""
                     texto_par = parrafo_texto_str
 
+                # Intentamos extraer subtítulo en mayúsculas dentro del numeral
+                heading_par = ""
+                match_sub = re.match(r"^([A-ZÁÉÍÓÚÑ\s\d\"'()]+[:.])\s+(.+)$", texto_par)
+                if match_sub:
+                    heading_par = match_sub.group(1).strip()
+                    texto_par = match_sub.group(2).strip()
+
                 texto_escapado: str = self._xml_escape(texto_par)
                 texto_procesado: str = self._aplicar_referencias_citas(texto_escapado)
+
+                # Identificar y formatear listas multinivel del cuerpo con saltos de línea <br/>
+                # ej: "a) Que se encuentren..." -> "<br/>a) Que se encuentren..."
+                texto_procesado = re.sub(r"\s+([a-z\d]+\)\s+)", r"<br/>\1", texto_procesado)
+
                 par_id = f"par_{idx_sec}_{idx_par}"
 
                 builder.add(f'<paragraph id="{par_id}">')
@@ -287,6 +299,9 @@ class DDUToXML:
 
                 if num_par:
                     builder.add(f'<num>{self._xml_escape(num_par)}</num>')
+
+                if heading_par:
+                    builder.add(f'<heading>{self._xml_escape(heading_par)}</heading>')
 
                 builder.add('<content>')
                 builder.indent()
@@ -302,6 +317,20 @@ class DDUToXML:
 
         builder.dedent()
         builder.add('</mainBody>')
+
+        # Bloque <conclusions> (opcional, para firma y lista de distribución)
+        firmante: str = str(datos.get("firmante", "")).strip()
+        lista_distribucion: str = str(datos.get("lista_distribucion", "")).strip()
+
+        if firmante or lista_distribucion:
+            builder.add('<conclusions>')
+            builder.indent()
+            if firmante:
+                builder.add(f'<p><span refersTo="#jefe-division-desarrollo-urbano">{self._xml_escape(firmante)}</span></p>')
+            if lista_distribucion:
+                builder.add(f'<p>Distribución: {self._xml_escape(lista_distribucion)}</p>')
+            builder.dedent()
+            builder.add('</conclusions>')
 
         builder.add('</doc>')
 

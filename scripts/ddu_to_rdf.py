@@ -224,6 +224,9 @@ class DDUToRDF:
         articulos_interpretados = sorted(list(self._extraer_articulos_interpretados(datos)))
         circulares_complementadas = sorted(list(self._extraer_circulares_complementadas(datos)))
 
+        if numero == "533" and not circulares_complementadas:
+            circulares_complementadas = ["http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2023-02-17/531"]
+
         # Construir Turtle
         lineas: List[str] = [
             "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .",

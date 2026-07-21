@@ -23,3 +23,7 @@ class DatosCircularDDU(TypedDict):
     emisor: str
     antecedentes: str
     secciones: List[SeccionDDU]
+    numero_ord: str
+    destinatarios: str
+    firmante: str
+    lista_distribucion: List[str]

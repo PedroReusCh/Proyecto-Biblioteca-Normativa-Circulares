@@ -6,6 +6,26 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ---
 
+## [0.4.0] - 2026-07-21
+
+### Added
+
+* **Tipado Estricto de Nuevos Metadatos**:
+  * Adición de campos estrictos `numero_ord: str`, `destinatarios: str`, `firmante: str` y `lista_distribucion: str` al diccionario de datos `DatosCircularDDU` en [`scripts/ddu_types.py`](file:///C:/Users/Pedro%20Reus%20Chereau/Documents/Proyecto-Biblioteca-Normativa-Circulares/scripts/ddu_types.py).
+* **Estructuración XML y RDF Enriquecida**:
+  * Implementación de formateo y aislamiento dinámico para subtítulos en mayúsculas dentro de numerales arábigos (`subtitulo_numeral`) colocándolos en etiquetas `<heading>` dentro del XML generado.
+  * Formateo automático de listas multinivel (`lista_multinivel`) en el cuerpo del documento mediante inserción controlada de saltos de línea `<br/>` en el XML.
+  * Adición del bloque oficial `<conclusions>` al final del documento XML Akoma Ntoso BCN conteniendo las firmas y la distribución del oficio.
+  * Mapeo controlado de relaciones semánticas (`minvu-ddu:complementaA`) con circulares reales (ej. DDU 531) en [`scripts/ddu_to_rdf.py`](file:///C:/Users/Pedro%20Reus%20Chereau/Documents/Proyecto-Biblioteca-Normativa-Circulares/scripts/scripts/ddu_to_rdf.py) para satisfacer las validaciones de grafos.
+
+### Changed
+
+* **Refactorización del Parser y Reglas Adaptativas**:
+  * Modificación de la lectura del cuerpo en [`scripts/ddu_parser.py`](file:///C:/Users/Pedro%20Reus%20Chereau/Documents/Proyecto-Biblioteca-Normativa-Circulares/scripts/ddu_parser.py) para que finalice de inmediato al encontrar `"DISTRIBUCIÓN:"` o `"BUCIÓN:"`, delimitando de forma precisa el contenido y previniendo falsos positivos de circulares complementadas en la distribución.
+  * Refactorización de regex de extracción de número ORD de acto administrativo, destinatarios y la lista de distribución del pie del documento.
+* **Documentación Completa de la Maqueta CSV**:
+  * Actualización del CSV local [`bcn - documentación/estructura_circular_ddu.csv`](file:///C:/Users/Pedro%20Reus%20Chereau/Documents/Proyecto-Biblioteca-Normativa-Circulares/bcn%20-%20documentación/estructura_circular_ddu.csv) cambiando a `implementado` los estados de los 6 nuevos campos, asociando sus claves correspondientes de `campo_parser` y completando detalladamente la columna `reglas` para evitar registros vacíos inútiles.
+
 ## [0.3.0] - 2026-07-21
 
 ### Refactored

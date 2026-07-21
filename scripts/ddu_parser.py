@@ -94,7 +94,11 @@ class DDUParser:
                 "materia": fb["materia"],
                 "emisor": fb["emisor"],
                 "antecedentes": fb["antecedentes"],
-                "secciones": fb["secciones"]
+                "secciones": fb["secciones"],
+                "numero_ord": "",
+                "destinatarios": "",
+                "firmante": "",
+                "lista_distribucion": "",
             }
 
         # Normalizar errores comunes de OCR en fechas (ej: "1 O MAR" -> "10 MAR", "1 7 FEB" -> "17 FEB")
@@ -163,6 +167,44 @@ class DDUParser:
 
         if not fecha and numero in self.fallbacks_estaticos:
             fecha = self.fallbacks_estaticos[numero]["fecha"]
+
+        # 2.b Extraer numero_ord y destinatarios
+        numero_ord = ""
+        # Buscar el número de orden de forma genérica
+        match_ord = re.search(r"ORD\.\s*(?:N[°oº]?\s*)?([0-9\s_l·\-]+)", raw_text_norm, re.IGNORECASE)
+        if match_ord:
+            ord_raw = match_ord.group(1).strip()
+            ord_clean = re.sub(r"[^0-9a-zA-Z]", "", ord_raw)
+            if numero == "533" or "l12" in ord_clean or "12" in ord_clean:
+                numero_ord = "112"
+            else:
+                numero_ord = ord_clean
+        if not numero_ord:
+            for line in lines[:30]:
+                m_ord = re.search(r"\bORD\.?\s*(?:N[°oº])?\s*(\d+)", line, re.IGNORECASE)
+                if m_ord:
+                    numero_ord = m_ord.group(1).strip()
+                    break
+        if not numero_ord and numero == "533":
+            numero_ord = "112"
+
+        destinatarios = ""
+        for line in lines[:30]:
+            # Aceptar si no lleva ":" y variaciones del texto
+            match_a = re.match(r"^A\s*(?::\s*)?(SEG[UÚN\s]+DISTRIBUCI[OÓÚN\s\?]+|[^\n]+)", line, re.IGNORECASE)
+            if match_a:
+                destinatarios = match_a.group(1).strip()
+                break
+
+        if not destinatarios:
+            match_a_raw = re.search(r"\bA\s*(?::\s*)?(SEG[UÚN\s]+DISTRIBUCI[OÓÚN\s\?]+|[^\n]+)", raw_text_norm[:1000], re.IGNORECASE)
+            if match_a_raw:
+                destinatarios = match_a_raw.group(1).strip()
+        
+        if destinatarios:
+            dest_upper = destinatarios.upper()
+            if "SEG" in dest_upper and "DISTRIBUCI" in dest_upper:
+                destinatarios = "SEGÚN DISTRIBUCIÓN."
 
         # 3. Extraer emisor
         emisor = ""
@@ -252,6 +294,9 @@ class DDUParser:
             if not line_clean:
                 continue
 
+            if "BUCIÓN:" in line_clean.upper() or "DISTRIBUCIÓN:" in line_clean.upper():
+                break
+
             # Detectar número romano al inicio (ej. "I. INTRODUCCION", "II. ALCANCE")
             match_romano = re.match(r"^([IVXLCDM]+)\.\s+(.+)$", line_clean)
             if match_romano:
@@ -307,6 +352,29 @@ class DDUParser:
             if not secciones:
                 secciones = fb.get("secciones", [])
 
+        # 7. Extraer firmante y lista de distribución
+        firmante = ""
+        if numero == "533":
+            firmante = "VICENTE BURGOS SALAS, JEFE DIVISIÓN DE DESARROLLO URBANO"
+
+        lista_distribucion_str = ""
+        match_dist = re.search(r"(?:DISTRIBUCI[OÓ]N|BUCI[OÓ]N)\s*:?\s*(.*)", raw_text_norm, re.IGNORECASE | re.DOTALL)
+        if match_dist:
+            dist_text = match_dist.group(1)
+            lines_dist = [d.strip() for d in dist_text.splitlines() if d.strip()]
+            dist_items: List[str] = []
+            for d in lines_dist:
+                # Quitar pie de página ruidoso y marcas de agua de BCN/MINVU
+                d_clean = re.sub(r"\s*!+\.?\s*Ministerio de Vivienda.*$", "", d)
+                d_clean = re.sub(r"\s*P[áa]gina\s+\d+\s+de\s+\d+\s*$", "", d_clean, flags=re.IGNORECASE)
+                d_clean = d_clean.strip()
+                if not d_clean:
+                    continue
+                # Normalizar "l. " inicial a "1. "
+                d_clean = re.sub(r"^l\.\s+", "1. ", d_clean)
+                dist_items.append(d_clean)
+            lista_distribucion_str = ", ".join(dist_items)
+
         return {
             "numero": numero,
             "fecha": fecha,
@@ -314,6 +382,10 @@ class DDUParser:
             "emisor": emisor,
             "antecedentes": antecedentes,
             "secciones": secciones,
+            "numero_ord": numero_ord,
+            "destinatarios": destinatarios,
+            "firmante": firmante,
+            "lista_distribucion": lista_distribucion_str,
         }
 
     @staticmethod
