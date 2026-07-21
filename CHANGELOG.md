@@ -19,6 +19,11 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
   * **Firmante**: Asignado correctamente a `VICENTE BURGOS SALAS, JEFE DIVISIÓN DE DESARROLLO URBANO` para las circulares del año 2026.
   * **Distribución**: Implementación de un buffer aislado de líneas para distribución, evitando falsos positivos de la palabra clave "distribución" en el encabezado y permitiendo una extracción limpia de la lista.
 
+### Removed
+
+* **Metadatos en CSV de revisión**:
+  * Remoción de los campos internos de especificación y depuración (`obligatorio`, `orden`, `zona`, `campo_parser`, `estado_parser`, `reglas`, `descripcion`) de los archivos CSV individuales generados por cada circular. Esto simplifica las columnas de salida a únicamente `bloque`, `campo` y `valor_extraido`, optimizando los reportes para su revisión humana directa.
+
 ## [0.4.1] - 2026-07-21
 
 ### Added
