@@ -73,6 +73,8 @@ class DDUParser:
         # 1. Determinar número (priorizar número en el nombre del archivo como fuente de verdad)
         match_filename = re.search(r"\b(\d+)\b", self.pdf_path.name)
         num_filename = match_filename.group(1) if match_filename else ""
+        descriptores = ""
+        firmante = ""
 
         numero = ""
         # Buscar en las primeras 30 líneas del texto
@@ -364,11 +366,11 @@ class DDUParser:
                 secciones = fb.get("secciones", [])
 
         # 7. Extraer firmante y lista de distribución
-        firmante = ""
-        if numero in ["531", "533", "537", "546"]:
-            firmante = "VICENTE BURGOS SALAS, JEFE DIVISIÓN DE DESARROLLO URBANO"
-        if numero in self.fallbacks_estaticos and "firmante" in self.fallbacks_estaticos[numero]:
-            firmante = self.fallbacks_estaticos[numero]["firmante"]
+        if not firmante:
+            if numero in ["531", "533", "537", "546"]:
+                firmante = "VICENTE BURGOS SALAS, JEFE DIVISIÓN DE DESARROLLO URBANO"
+            if numero in self.fallbacks_estaticos and "firmante" in self.fallbacks_estaticos[numero]:
+                firmante = self.fallbacks_estaticos[numero]["firmante"]
 
         lista_distribucion_str = ""
         match_dist = re.search(r"(?:DISTRIBUCI[OÓ\?I\s]+N|BUCI[OÓ\?I\s]+N)\s*:?\s*(.*)", raw_text_norm, re.IGNORECASE | re.DOTALL)
@@ -389,10 +391,10 @@ class DDUParser:
             lista_distribucion_str = ", ".join(dist_items)
 
         # 8. Extraer descriptores, referencias y elementos visuales de forma genérica
-        descriptores = ""
-        match_desc = re.search(r"(?:DESCRIPTORES|PALABRAS\s+CLAVE|VOCABLOS)\s*:?\s*([^\n]+)", raw_text_norm, re.IGNORECASE)
-        if match_desc:
-            descriptores = match_desc.group(1).strip()
+        if not descriptores:
+            match_desc = re.search(r"(?:DESCRIPTORES|PALABRAS\s+CLAVE|VOCABLOS)\s*:?\s*([^\n]+)", raw_text_norm, re.IGNORECASE)
+            if match_desc:
+                descriptores = match_desc.group(1).strip()
 
         referencias_list: List[str] = []
         patron_ref = re.compile(r"(?:circular\s+(?:ddu\s+)?n?[°oº]?\s*(\d+)\b|\bddu\s+n?[°oº]?\s*(\d+)\b)", re.IGNORECASE)
