@@ -64,8 +64,8 @@ def test_csv_integrity() -> None:
     # 2. Validar Secuencia de Plantilla (6 columnas esperadas)
     success_sec = validar_csv(csv_secuencia, 6)
     
-    # 3. Validar Estructura Circular DDU (10 columnas esperadas)
-    success_est = validar_csv(csv_estructura, 10)
+    # 3. Validar Estructura Circular DDU (9 columnas esperadas)
+    success_est = validar_csv(csv_estructura, 9)
     
     # Validación semántica específica para estructura_circular_ddu.csv
     if success_est:
