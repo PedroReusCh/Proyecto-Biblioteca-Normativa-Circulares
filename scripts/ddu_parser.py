@@ -99,6 +99,9 @@ class DDUParser:
                 "destinatarios": "",
                 "firmante": "",
                 "lista_distribucion": "",
+                "descriptores": "",
+                "referencias": "",
+                "elementos_visuales": "",
             }
 
         # Normalizar errores comunes de OCR en fechas (ej: "1 O MAR" -> "10 MAR", "1 7 FEB" -> "17 FEB")
@@ -375,6 +378,27 @@ class DDUParser:
                 dist_items.append(d_clean)
             lista_distribucion_str = ", ".join(dist_items)
 
+        # 8. Extraer descriptores, referencias y elementos visuales de forma genérica
+        descriptores = ""
+        match_desc = re.search(r"(?:DESCRIPTORES|PALABRAS\s+CLAVE|VOCABLOS)\s*:?\s*([^\n]+)", raw_text_norm, re.IGNORECASE)
+        if match_desc:
+            descriptores = match_desc.group(1).strip()
+
+        referencias_list: List[str] = []
+        patron_ref = re.compile(r"(?:circular\s+(?:ddu\s+)?n?[°oº]?\s*(\d+)\b|\bddu\s+n?[°oº]?\s*(\d+)\b)", re.IGNORECASE)
+        for match in patron_ref.finditer(raw_text_norm):
+            num_ref = match.group(1) or match.group(2)
+            if num_ref and num_ref != numero and num_ref not in referencias_list:
+                referencias_list.append(f"DDU {num_ref}")
+        referencias = ", ".join(referencias_list)
+
+        elementos_visuales_list: List[str] = []
+        if re.search(r"\b(tabla|cuadro|gr[áa]fico|imagen|esquema)\b", raw_text_norm, re.IGNORECASE):
+            elementos_visuales_list.append("Menciones de tablas/gráficos/imágenes en el texto")
+        if re.search(r"[\-\+\|]{5,}", raw_text_norm):
+            elementos_visuales_list.append("Estructura tabular detectada por caracteres de control")
+        elementos_visuales = ", ".join(elementos_visuales_list)
+
         return {
             "numero": numero,
             "fecha": fecha,
@@ -386,6 +410,9 @@ class DDUParser:
             "destinatarios": destinatarios,
             "firmante": firmante,
             "lista_distribucion": lista_distribucion_str,
+            "descriptores": descriptores,
+            "referencias": referencias,
+            "elementos_visuales": elementos_visuales,
         }
 
     @staticmethod

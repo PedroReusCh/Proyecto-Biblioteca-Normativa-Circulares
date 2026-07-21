@@ -22,8 +22,11 @@ class DatosCircularDDU(TypedDict):
     materia: str
     emisor: str
     antecedentes: str
-    secciones: List[SeccionDDU]
     numero_ord: str
     destinatarios: str
     firmante: str
-    lista_distribucion: List[str]
+    lista_distribucion: str
+    descriptores: str
+    referencias: str
+    elementos_visuales: str
+    secciones: List[SeccionDDU]
