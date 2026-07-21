@@ -6,6 +6,21 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ---
 
+## [0.4.1] - 2026-07-21
+
+### Added
+
+* **Exportador por Lotes a CSV Estructurado**:
+  * Creación del script ejecutable [`scripts/exportar_circulares_csv.py`](file:///C:/Users/Pedro%20Reus%20Chereau/Documents/Proyecto-Biblioteca-Normativa-Circulares/scripts/exportar_circulares_csv.py) para procesar de forma automatizada las circulares DDU 531, 533, 537 y 546.
+  * Generación de archivos CSV independientes por cada circular guardados en la nueva carpeta `bcn - circulares - csv/`.
+  * Mapeo simétrico heredando la estructura de 9 columnas de la maqueta maestra y añadiendo la 10ª columna `valor_extraido` al final de la fila.
+  * Formateo regional con punto y coma (`;`) como delimitador y codificación UTF-8 con BOM (`utf-8-sig`) para compatibilidad directa con MS Excel.
+
+### Changed
+
+* **Aislamiento de Git**:
+  * Exclusión de la carpeta completa `/bcn - circulares - csv/` en el archivo [`.gitignore`](file:///C:/Users/Pedro%20Reus%20Chereau/Documents/Proyecto-Biblioteca-Normativa-Circulares/.gitignore) para prevenir leaks de datos locales.
+
 ## [0.4.0] - 2026-07-21
 
 ### Added

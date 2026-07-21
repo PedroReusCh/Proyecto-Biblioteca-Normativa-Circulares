@@ -46,6 +46,7 @@ tmp/
 *.pdf
 *.docx
 *.doc
+/bcn - circulares - csv/
 
 # --- Editores y Entornos de Desarrollo (IDEs) ---
 .vscode/
