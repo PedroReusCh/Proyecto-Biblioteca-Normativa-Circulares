@@ -15,7 +15,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
   * **Antecedentes (`antecedentes`)**: Limpiado a vacío en conformidad con la circular real.
   * **Descriptores (`descriptores`)**: Asignados y extraídos correctamente desde fallbacks estáticos.
   * **Fecha de Emisión**: Corregida a `2026-02-17` en el JSON de fallbacks.
-  * **Estructura del Cuerpo**: Normalización automática de errores comunes de OCR en secciones romanas (ej: `l. ANTECEDENTES` -> `I. ANTECEDENTES` y `11. NORMATIVA APLICABLE` -> `II. NORMATIVA APLICABLE`), permitiendo la correcta jerarquía y anidamiento de los numerales arábigos e ítems multinivel.
+  * **Estructura del Cuerpo**: Normalización de errores específicos de OCR en secciones romanas restringida estrictamente a títulos conocidos (ej: `l. ANTECEDENTES` -> `I. ANTECEDENTES` y `11. NORMATIVA APLICABLE` -> `II. NORMATIVA APLICABLE`), previniendo colisiones accidentales con numerales arábigos reales como el `11.` en circulares extensas y restableciendo el anidamiento jerárquico de numerales arábigos e ítems multinivel.
   * **Firmante**: Asignado correctamente a `VICENTE BURGOS SALAS, JEFE DIVISIÓN DE DESARROLLO URBANO` para las circulares del año 2026.
   * **Distribución**: Implementación de un buffer aislado de líneas para distribución, evitando falsos positivos de la palabra clave "distribución" en el encabezado y permitiendo una extracción limpia de la lista.
 

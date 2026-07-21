@@ -308,11 +308,11 @@ class DDUParser:
                 lineas_distribucion.append(line_clean)
                 continue
 
-            # Normalizar errores comunes de OCR en secciones romanas antes de parsear
+            # Normalizar errores específicos de OCR en secciones romanas conocidas
             # ej: l. ANTECEDENTES -> I. ANTECEDENTES
-            line_clean = re.sub(r"^l\.\s+([A-ZÁÉÍÓÚÑ\s]{3,})$", r"I. \1", line_clean)
+            line_clean = re.sub(r"^l\.\s+ANTECEDENTES\b", "I. ANTECEDENTES", line_clean, flags=re.IGNORECASE)
             # ej: 11. NORMATIVA APLICABLE -> II. NORMATIVA APLICABLE
-            line_clean = re.sub(r"^11\.\s+([A-ZÁÉÍÓÚÑ\s]{3,})$", r"II. \1", line_clean)
+            line_clean = re.sub(r"^11\.\s+NORMATIVA\s+APLICABLE\b", "II. NORMATIVA APLICABLE", line_clean, flags=re.IGNORECASE)
 
             # Detectar número romano al inicio (ej. "I. INTRODUCCION", "II. ALCANCE")
             match_romano = re.match(r"^([IVXLCDM]+)\.\s+(.+)$", line_clean)

@@ -26,11 +26,11 @@ Esta especificación detalla las soluciones técnicas diseñadas para corregir l
 *   **Diseño**: Corregir la fecha de la DDU 531 en `fallbacks_ddu.json` a `2026-02-17`.
 
 ### 1.5 Estructuración incorrecta del Cuerpo (Romanos y Arábigos desalineados)
-*   **Problema**: El OCR de la DDU 531 interpretó `I. ANTECEDENTES` como `l. ANTECEDENTES` (l minúscula) y `II. NORMATIVA APLICABLE` como `11. NORMATIVA APLICABLE`. Al no detectarse los números romanos, los numerales arábigos anidados perdieron jerarquía.
-*   **Diseño**: Implementar una fase de normalización de líneas en el cuerpo del parser que traduzca de forma genérica:
-    *   `l. <MAYÚSCULAS>` a `I. <MAYÚSCULAS>`
-    *   `11. <MAYÚSCULAS>` a `II. <MAYÚSCULAS>`
-    Esto permitirá que el parser central identifique las secciones romanas `I` y `II` de manera correcta y agrupe los numerales subordinados de forma estable.
+*   **Problema**: El OCR de la DDU 531 interpretó `I. ANTECEDENTES` como `l. ANTECEDENTES` (l minúscula) y `II. NORMATIVA APLICABLE` como `11. NORMATIVA APLICABLE`. Al no detectarse los números romanos, los numerales arábigos anidados perdieron jerarquía. Traducir genéricamente cualquier `11. <MAYÚSCULAS>` a `II.` puede colisionar con un numeral arábigo legítimo `11.` en circulares extensas.
+*   **Diseño**: Implementar una fase de normalización de líneas en el cuerpo del parser restringida estrictamente a títulos de sección conocidos:
+    *   `l. ANTECEDENTES` -> `I. ANTECEDENTES`
+    *   `11. NORMATIVA APLICABLE` -> `II. NORMATIVA APLICABLE`
+    Esto garantiza la correcta jerarquía en la circular 531 sin riesgo de alterar numerales arábigos `11.` reales en otras circulares del proyecto.
 
 ### 1.6 Nombre del Firmante (`firmante`) faltante
 *   **Problema**: No se extrajo el nombre del firmante debido a ruido en la sección de firmas digitalizadas en el PDF.
