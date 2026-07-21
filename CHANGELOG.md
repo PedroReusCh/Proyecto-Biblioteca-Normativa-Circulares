@@ -6,6 +6,19 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ---
 
+## [0.4.2] - 2026-07-21
+
+### Changed
+
+* **Corrección de Extracción DDU 531**:
+  * **Acto Administrativo (`numero_ord`)**: Corregido a `088` robusteciendo la regex para tolerar errores OCR comunes (como `ORO`).
+  * **Antecedentes (`antecedentes`)**: Limpiado a vacío en conformidad con la circular real.
+  * **Descriptores (`descriptores`)**: Asignados y extraídos correctamente desde fallbacks estáticos.
+  * **Fecha de Emisión**: Corregida a `2026-02-17` en el JSON de fallbacks.
+  * **Estructura del Cuerpo**: Normalización automática de errores comunes de OCR en secciones romanas (ej: `l. ANTECEDENTES` -> `I. ANTECEDENTES` y `11. NORMATIVA APLICABLE` -> `II. NORMATIVA APLICABLE`), permitiendo la correcta jerarquía y anidamiento de los numerales arábigos e ítems multinivel.
+  * **Firmante**: Asignado correctamente a `VICENTE BURGOS SALAS, JEFE DIVISIÓN DE DESARROLLO URBANO` para las circulares del año 2026.
+  * **Distribución**: Implementación de un buffer aislado de líneas para distribución, evitando falsos positivos de la palabra clave "distribución" en el encabezado y permitiendo una extracción limpia de la lista.
+
 ## [0.4.1] - 2026-07-21
 
 ### Added
