@@ -11,6 +11,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 ### Refactored
 
 * **Refactorización de la Estructura de Circular DDU (Maqueta DDU 533)**:
+  * Simplificación de las columnas del CSV de estructura a 10 columnas, removiendo `tipo_dato` y `patron_regex` de la especificación documental y adaptando el test de integridad correspondiente.
   * Modificación de campos en [`bcn - documentación/estructura_circular_ddu.csv`](file:///C:/Users/Pedro%20Reus%20Chereau/Documents/Proyecto-Biblioteca-Normativa-Circulares/bcn%20-%20documentación/estructura_circular_ddu.csv) para representar fielmente la circular DDU 533 como maqueta de referencia.
   * Ajuste de `patron_regex` y `ejemplo` en `Encabezado` ("533"), `Acto Administrativo` ("112") y `Emisión` ("JEFE DIVISION DE DESARROLLO URBANO.").
   * Marcado de campos no aplicables a esta circular (`seccion_romana`, `referencia_cruzada`, `tabla_imagen`) estableciendo su estado de desarrollo como `no_aplica_ddu_533`, sus expresiones regulares y ejemplos vacíos, y agregando aclaraciones en sus respectivas reglas.
