@@ -6,6 +6,18 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ---
 
+## [0.3.0] - 2026-07-21
+
+### Refactored
+
+* **Refactorización de la Estructura de Circular DDU (Maqueta DDU 533)**:
+  * Modificación de campos en [`bcn - documentación/estructura_circular_ddu.csv`](file:///C:/Users/Pedro%20Reus%20Chereau/Documents/Proyecto-Biblioteca-Normativa-Circulares/bcn%20-%20documentación/estructura_circular_ddu.csv) para representar fielmente la circular DDU 533 como maqueta de referencia.
+  * Ajuste de `patron_regex` y `ejemplo` en `Encabezado` ("533"), `Acto Administrativo` ("112") y `Emisión` ("JEFE DIVISION DE DESARROLLO URBANO.").
+  * Marcado de campos no aplicables a esta circular (`seccion_romana`, `referencia_cruzada`, `tabla_imagen`) estableciendo su estado de desarrollo como `no_aplica_ddu_533`, sus expresiones regulares y ejemplos vacíos, y agregando aclaraciones en sus respectivas reglas.
+  * Inserción de la nueva fila estructural `subtitulo_numeral` para representar subtítulos de numerales (con regex `^([A-ZÁÉÍÓÚÑ\s\d\"()]+[:.])` y ejemplo `MARCO NORMATIVO: DS 33.`) en el orden correlativo `11`.
+  * Reajuste completo de los números de orden secuenciales de las filas subsiguientes (`lista_multinivel`, `referencia_cruzada`, `tabla_imagen`, `Firma`, `Distribución`) para evitar duplicados y huecos en la secuencia numérica global.
+  * Inclusión del contenido extenso del Numeral 1 en el ejemplo de la fila `numeral_arabigo`.
+
 ## [0.2.0] - 2026-07-20
 
 ### Added
