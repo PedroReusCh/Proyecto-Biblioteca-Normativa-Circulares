@@ -68,7 +68,33 @@ class DDUParser:
             DatosCircularDDU estructurado con metadatos de la circular.
         """
         raw_text = self.extract_raw_text()
-        lines = [line.strip() for line in raw_text.splitlines()]
+        lines = [line.strip() for line in raw_text.splitlines() if line.strip()]
+
+        # Consolidar títulos multilínea de secciones romanas
+        lines_norm: List[str] = []
+        skip_next = False
+        for i in range(len(lines)):
+            if skip_next:
+                skip_next = False
+                continue
+            line_clean = lines[i]
+            if not line_clean:
+                continue
+            
+            # Normalización preliminar para coincidir con la regex de romanos
+            line_norm_temp = line_clean
+            line_norm_temp = re.sub(r"^l\.\s+ANTECEDENTES\b", "I. ANTECEDENTES", line_norm_temp, flags=re.IGNORECASE)
+            line_norm_temp = re.sub(r"^11\.\s+NORMATIVA\s+APLICABLE\b", "II. NORMATIVA APLICABLE", line_norm_temp, flags=re.IGNORECASE)
+
+            match_rom = re.match(r"^([IVXLCDM]+)\.\s+(.+)$", line_norm_temp, re.IGNORECASE)
+            if match_rom and i + 1 < len(lines):
+                line_next = lines[i+1].strip()
+                # Si termina con conjunción/preposición y la siguiente está en mayúsculas
+                if re.search(r"\b(?:LA|DE|PARA|CON|EL|AL|DEL|SOBRE)\s*$", line_norm_temp) and line_next.isupper() and not re.match(r"^(\d+|[IVXLCDM]+)\b", line_next):
+                    line_clean += " " + line_next
+                    skip_next = True
+            lines_norm.append(line_clean)
+        lines = lines_norm
 
         # 1. Determinar número (priorizar número en el nombre del archivo como fuente de verdad)
         match_filename = re.search(r"\b(\d+)\b", self.pdf_path.name)
