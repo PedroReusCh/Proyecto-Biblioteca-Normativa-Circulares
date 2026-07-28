@@ -63,74 +63,7 @@ class DDUParser:
         Returns:
             DatosCircularDDU estructurado con metadatos de la circular.
         """
-            if not secciones:
-                secciones = fb.get("secciones", [])
-
-        # 7. Extraer firmante y lista de distribución
-        if not firmante:
-            if numero in ["531", "533", "537", "546"]:
-                firmante = "VICENTE BURGOS SALAS, JEFE DIVISIÓN DE DESARROLLO URBANO"
-            if numero in self.fallbacks_estaticos and "firmante" in self.fallbacks_estaticos[numero]:
-                firmante = self.fallbacks_estaticos[numero]["firmante"]
-
-        lista_distribucion_str = ""
-        if lineas_distribucion:
-            texto_dist_raw = "\n".join(lineas_distribucion)
-            match_dist = re.search(r"(?:DISTRIBUCI[OÓ\?I\s]+N|BUCI[OÓ\?I\s]+N)\s*:?\s*(.*)", texto_dist_raw, re.IGNORECASE | re.DOTALL)
-            dist_text = match_dist.group(1) if match_dist else texto_dist_raw
-            lines_dist = [d.strip() for d in dist_text.splitlines() if d.strip()]
-            dist_items: List[str] = []
-            for d in lines_dist:
-                # Quitar pie de página ruidoso y marcas de agua de BCN/MINVU
-                d_clean = re.sub(r"\s*!+\.?\s*Ministerio de Vivienda.*$", "", d)
-                d_clean = re.sub(r"\s*P[áa]gina\s+\d+\s+de\s+\d+\s*$", "", d_clean, flags=re.IGNORECASE)
-                d_clean = d_clean.strip()
-                if not d_clean:
-                    continue
-                # Normalizar "l. " inicial a "1. "
-                d_clean = re.sub(r"^l\.\s+", "1. ", d_clean)
-                dist_items.append(d_clean)
-            lista_distribucion_str = ", ".join(dist_items)
-
-        # 8. Extraer descriptores, referencias y elementos visuales de forma genérica
-        if not descriptores:
-            match_desc = re.search(r"(?:DESCRIPTORES|PALABRAS\s+CLAVE|VOCABLOS)\s*:?\s*([^\n]+)", raw_text_norm, re.IGNORECASE)
-            if match_desc:
-                descriptores = match_desc.group(1).strip()
-
-        referencias_list: List[str] = []
-        patron_ref = re.compile(r"(?:circular\s+(?:ddu\s+)?n?[°oº]?\s*(\d+)\b|\bddu\s+n?[°oº]?\s*(\d+)\b)", re.IGNORECASE)
-        for match in patron_ref.finditer(raw_text_norm):
-            num_ref = match.group(1) or match.group(2)
-            if num_ref and num_ref != numero and num_ref not in referencias_list:
-                referencias_list.append(f"DDU {num_ref}")
-        referencias = ", ".join(referencias_list)
-
-        elementos_visuales_list: List[str] = []
-        if re.search(r"\b(tabla|cuadro|gr[áa]fico|imagen|esquema)\b", raw_text_norm, re.IGNORECASE):
-            elementos_visuales_list.append("Menciones de tablas/gráficos/imágenes en el texto")
-        if re.search(r"[\-\+\|]{5,}", raw_text_norm):
-            elementos_visuales_list.append("Estructura tabular detectada por caracteres de control")
-        elementos_visuales = ", ".join(elementos_visuales_list)
-
-        return {
-            "numero": numero,
-            "fecha": fecha,
-            "materia": materia,
-            "emisor": emisor,
-            "antecedentes": antecedentes,
-            "secciones": secciones,
-            "numero_ord": numero_ord,
-            "destinatarios": destinatarios,
-            "firmante": firmante,
-            "lista_distribucion": lista_distribucion_str,
-            "descriptores": descriptores,
-            "referencias": referencias,
-            "elementos_visuales": elementos_visuales,
-        }
-=======
         return self.orchestrator.process_pdf(self.pdf_path)
->>>>>>> 23d2ec4 (refactor: integrar ddu_parser con DDUOrchestrator manteniendo retrocompatibilidad total)
 
     @staticmethod
     def normalizar_uri(texto: str) -> str:

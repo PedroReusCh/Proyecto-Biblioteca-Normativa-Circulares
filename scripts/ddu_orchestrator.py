@@ -1,16 +1,17 @@
-"""Orquestador Principal de ETLs Modulares y Exportador de CSVs para Circulares DDU.
+"""Orquestador Central y Exportador CSV para Circulares DDU.
 
-Este módulo define la clase DDUOrchestrator, encargada de ejecutar dinámicamente
-los extractores modulares de metadatos y cuerpo registrados en ExtractorRegistry,
-consolidar la estructura DatosCircularDDU y exportar los resultados a CSV individual o acumulado.
+Este módulo define la clase DDUOrchestrator, encargada de coordinar la ejecución
+de los 11 extractores modulares (ETLs independientes en scripts/extractors/),
+consolidar el diccionario de datos estricto DatosCircularDDU, y exportar
+archivos CSV estructurados (individuales o dataset acumulado).
 """
 
 import argparse
 import csv
 import json
-from pathlib import Path
 import re
 import sys
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 _PROYECTO_RAIZ = Path(__file__).resolve().parents[1]
@@ -20,9 +21,9 @@ if str(_PROYECTO_RAIZ) not in sys.path:
 import pypdf
 
 try:
-    from ddu_types import DatosCircularDDU
+    from ddu_types import DatosCircularDDU, SeccionDDU
 except ImportError:
-    from scripts.ddu_types import DatosCircularDDU
+    from scripts.ddu_types import DatosCircularDDU, SeccionDDU
 
 try:
     from extractors import ExtractorRegistry, registrar_todos_los_extractores
@@ -33,40 +34,9 @@ except ImportError:
 class DDUOrchestrator:
     """Orquestador central para ejecutar ETLs modulares de circulares DDU y exportar a CSV."""
 
-    def __init__(self, fallbacks_path: Optional[Path] = None) -> None:
-        """Inicializa el orquestador y carga la configuración de fallbacks estáticos.
-
-        Args:
-            fallbacks_path: Ruta alternativa al archivo JSON de fallbacks.
-        """
-        self.fallbacks_estaticos: Dict[str, Dict[str, Any]] = self._cargar_fallbacks(fallbacks_path)
-
-    def _cargar_fallbacks(self, fallbacks_path: Optional[Path] = None) -> Dict[str, Dict[str, Any]]:
-        """Carga los metadatos de fallback estáticos desde el archivo JSON.
-
-        Args:
-            fallbacks_path: Ruta personalizada al archivo JSON de fallbacks.
-
-        Returns:
-            Diccionario con fallbacks indexados por número de circular DDU.
-        """
-        ruta_json = (
-            fallbacks_path
-            if fallbacks_path is not None
-            else Path(__file__).resolve().parent / "config" / "fallbacks_ddu.json"
-        )
-        if ruta_json.exists():
-            try:
-                with open(ruta_json, "r", encoding="utf-8") as f:
-                    data: Dict[str, Dict[str, Any]] = json.load(f)
-                    return data
-            except json.JSONDecodeError as e:
-                print(f"ERROR: El archivo JSON de fallbacks está corrupto o mal formado: {e}")
-                raise e
-            except Exception as e:
-                print(f"ERROR: No se pudo leer el archivo de fallbacks: {e}")
-                raise e
-        return {}
+    def __init__(self) -> None:
+        """Inicializa el orquestador."""
+        pass
 
     def process_text(self, raw_text: str, filename: str = "") -> DatosCircularDDU:
         """Ejecuta dinámicamente los extractores registrados y consolida DatosCircularDDU.
@@ -84,25 +54,6 @@ class DDUOrchestrator:
         # Determinar número desde el nombre de archivo si existe
         match_filename = re.search(r"\b(\d+)\b", filename)
         num_filename = match_filename.group(1) if match_filename else ""
-
-        # Si el texto es demasiado corto (<50 chars) y tenemos fallback para num_filename, usarlo inmediatamente
-        if len(raw_text.strip()) < 50 and num_filename in self.fallbacks_estaticos:
-            fb = self.fallbacks_estaticos[num_filename]
-            res_fb: DatosCircularDDU = {
-                "numero": num_filename,
-                "fecha": str(fb.get("fecha", "")),
-                "materia": str(fb.get("materia", "")),
-                "emisor": str(fb.get("emisor", "")),
-                "antecedentes": str(fb.get("antecedentes", "")),
-                "secciones": fb.get("secciones", []),
-                "numero_ord": "",
-                "descriptores": "",
-                "lugar": "Santiago",
-                "destinatarios": "",
-                "firmante": "",
-                "lista_distribucion": [],
-            }
-            return res_fb
 
         # Ejecutar todos los extractores modulares
         extractores_dict = ExtractorRegistry.get_all_extractors()
@@ -124,17 +75,7 @@ class DDUOrchestrator:
                 numero = num_filename
         datos_consolidados["numero"] = numero
 
-        # Aplicar fallbacks estáticos para casos conocidos o incompletos
-        if numero in self.fallbacks_estaticos:
-            fb = self.fallbacks_estaticos[numero]
-            if numero == "531" or not datos_consolidados.get("fecha") or datos_consolidados.get("fecha") == "2016-12-26":
-                datos_consolidados["fecha"] = fb["fecha"]
-            if numero == "531" or not datos_consolidados.get("materia"):
-                datos_consolidados["materia"] = fb["materia"]
-            if not datos_consolidados.get("secciones"):
-                datos_consolidados["secciones"] = fb.get("secciones", [])
-
-        # Garantizar emisor por defecto
+        # Garantizar emisor por defecto si no se detectó
         if not datos_consolidados.get("emisor"):
             datos_consolidados["emisor"] = "JEFE DIVISION DE DESARROLLO URBANO"
 
@@ -156,16 +97,16 @@ class DDUOrchestrator:
         return res_final
 
     def process_pdf(self, pdf_path: Path) -> DatosCircularDDU:
-        """Lee el texto completo de un archivo PDF y procesa su contenido.
+        """Extrae el texto de un PDF y procesa la circular con el pipeline de ETLs.
 
         Args:
-            pdf_path: Ruta del archivo PDF a procesar.
+            pdf_path: Ruta al archivo PDF de la circular DDU.
 
         Returns:
-            Estructura DatosCircularDDU extraída.
+            Estructura DatosCircularDDU consolidada.
         """
         if not pdf_path.exists():
-            raise FileNotFoundError(f"No se encontró el archivo PDF en: {pdf_path}")
+            raise FileNotFoundError(f"No se encontró el archivo PDF: {pdf_path}")
 
         reader = pypdf.PdfReader(pdf_path)
         text_parts: List[str] = []
@@ -178,140 +119,129 @@ class DDUOrchestrator:
         return self.process_text(raw_text, filename=pdf_path.name)
 
     def export_individual_csv(self, pdf_path: Path, output_dir: Path) -> Path:
-        """Procesa una circular DDU y escribe un archivo CSV en output_dir.
+        """Procesa una circular DDU y exporta un archivo CSV individual con los datos extraídos.
 
         Args:
-            pdf_path: Ruta al archivo PDF.
-            output_dir: Directorio de destino para el CSV individual.
+            pdf_path: Ruta al archivo PDF de origen.
+            output_dir: Directorio donde se guardará el CSV exportado.
 
         Returns:
-            Ruta completa del archivo CSV generado.
+            Ruta al archivo CSV generado.
         """
         output_dir.mkdir(parents=True, exist_ok=True)
         datos = self.process_pdf(pdf_path)
 
-        num = datos.get("numero", "").strip()
-        if not num:
-            stem_clean = pdf_path.stem.replace(" ", "_")
-            csv_filename = f"{stem_clean}_extraido.csv"
-        else:
-            csv_filename = f"DDU_{num}_extraido.csv"
+        ddu_num = datos["numero"] or "desconocido"
+        csv_filename = f"DDU_{ddu_num}_extraido.csv"
+        csv_path = output_dir / csv_filename
 
-        out_path = output_dir / csv_filename
-
-        headers = ["bloque", "campo", "valor"]
-        dist_raw = datos.get("lista_distribucion", [])
-        dist_val = " | ".join(dist_raw) if isinstance(dist_raw, list) else str(dist_raw)
-
-        rows = [
-            ["Encabezado", "numero", datos.get("numero", "")],
-            ["Acto Administrativo", "numero_ord", datos.get("numero_ord", "")],
-            ["Antecedentes", "antecedentes", datos.get("antecedentes", "")],
-            ["Materia", "materia", datos.get("materia", "")],
-            ["Descriptores", "descriptores", datos.get("descriptores", "")],
-            ["Fecha y Lugar", "fecha", datos.get("fecha", "")],
-            ["Fecha y Lugar", "lugar", datos.get("lugar", "")],
-            ["Destinatarios", "destinatarios", datos.get("destinatarios", "")],
-            ["Emisión", "emisor", datos.get("emisor", "")],
-            ["Firma", "firmante", datos.get("firmante", "")],
-            ["Distribución", "lista_distribucion", dist_val],
-            ["Cuerpo", "num_secciones", str(len(datos.get("secciones", [])))],
+        filas_csv: List[Dict[str, str]] = [
+            {"bloque": "Encabezado", "campo": "numero_ddu", "valor_extraido": datos["numero"]},
+            {"bloque": "Acto Administrativo", "campo": "numero_ord", "valor_extraido": datos.get("numero_ord", "")},
+            {"bloque": "Antecedentes", "campo": "antecedentes", "valor_extraido": datos["antecedentes"]},
+            {"bloque": "Materia", "campo": "materia", "valor_extraido": datos["materia"]},
+            {"bloque": "Descriptores", "campo": "descriptores", "valor_extraido": datos.get("descriptores", "")},
+            {"bloque": "Fecha y Lugar", "campo": "fecha_emision", "valor_extraido": datos["fecha"]},
+            {"bloque": "Fecha y Lugar", "campo": "lugar", "valor_extraido": datos.get("lugar", "Santiago")},
+            {"bloque": "Destinatarios", "campo": "destinatarios", "valor_extraido": datos.get("destinatarios", "")},
+            {"bloque": "Emisión", "campo": "emisor", "valor_extraido": datos["emisor"]},
+            {"bloque": "Firma", "campo": "firmante", "valor_extraido": datos.get("firmante", "")},
         ]
 
-        with open(out_path, "w", encoding="utf-8", newline="") as f:
-            writer = csv.writer(f)
-            writer.writerow(headers)
-            writer.writerows(rows)
+        dist_val = datos.get("lista_distribucion", "")
+        if isinstance(dist_val, list):
+            dist_val = "; ".join(dist_val)
+        filas_csv.append({"bloque": "Distribución", "campo": "lista_distribucion", "valor_extraido": dist_val})
 
-        return out_path
+        secciones: List[SeccionDDU] = datos.get("secciones", [])
+        for sec in secciones:
+            titulo = sec.get("titulo", "")
+            parrafos = " ".join(sec.get("parrafos", []))
+            filas_csv.append({"bloque": "Cuerpo", "campo": f"seccion:{titulo}", "valor_extraido": parrafos})
+
+        with open(csv_path, "w", encoding="utf-8-sig", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=["bloque", "campo", "valor_extraido"], delimiter=";")
+            writer.writeheader()
+            writer.writerows(filas_csv)
+
+        return csv_path
 
     def export_master_csv(self, pdf_list: List[Path], output_path: Path) -> Path:
-        """Procesa una lista de PDFs y genera un CSV maestro acumulado.
+        """Procesa una lista de PDFs y genera un CSV maestro acumulado donde cada fila es una circular.
 
         Args:
-            pdf_list: Lista de rutas a archivos PDF de circulares DDU.
-            output_path: Ruta del archivo CSV acumulado a generar.
+            pdf_list: Lista de rutas a los PDFs a procesar.
+            output_path: Ruta del archivo CSV consolidado a generar.
 
         Returns:
-            Ruta completa del CSV maestro generado.
+            Ruta al archivo CSV maestro generado.
         """
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        headers = [
-            "numero",
-            "fecha",
-            "lugar",
-            "materia",
-            "emisor",
-            "antecedentes",
-            "numero_ord",
-            "descriptores",
-            "destinatarios",
-            "firmante",
-            "lista_distribucion",
-            "cant_secciones",
-        ]
+        master_rows: List[Dict[str, str]] = []
 
-        rows: List[List[str]] = []
         for pdf_path in pdf_list:
             try:
                 datos = self.process_pdf(pdf_path)
-                dist_raw = datos.get("lista_distribucion", [])
-                dist_val = " | ".join(dist_raw) if isinstance(dist_raw, list) else str(dist_raw)
+                dist_val = datos.get("lista_distribucion", "")
+                if isinstance(dist_val, list):
+                    dist_val = "; ".join(dist_val)
 
-                row = [
-                    datos.get("numero", ""),
-                    datos.get("fecha", ""),
-                    datos.get("lugar", ""),
-                    datos.get("materia", ""),
-                    datos.get("emisor", ""),
-                    datos.get("antecedentes", ""),
-                    datos.get("numero_ord", ""),
-                    datos.get("descriptores", ""),
-                    datos.get("destinatarios", ""),
-                    datos.get("firmante", ""),
-                    dist_val,
-                    str(len(datos.get("secciones", []))),
-                ]
-                rows.append(row)
+                sec_resumen = " | ".join(
+                    [f"{s.get('titulo', '')}: {' '.join(s.get('parrafos', []))}" for s in datos.get("secciones", [])]
+                )
+
+                master_rows.append({
+                    "numero_ddu": datos["numero"],
+                    "numero_ord": datos.get("numero_ord", ""),
+                    "fecha_emision": datos["fecha"],
+                    "lugar": datos.get("lugar", "Santiago"),
+                    "emisor": datos["emisor"],
+                    "destinatarios": datos.get("destinatarios", ""),
+                    "materia": datos["materia"],
+                    "antecedentes": datos["antecedentes"],
+                    "descriptores": datos.get("descriptores", ""),
+                    "firmante": datos.get("firmante", ""),
+                    "lista_distribucion": dist_val,
+                    "cuerpo_resumen": sec_resumen,
+                })
             except Exception as e:
-                print(f"Advertencia: Error al procesar PDF '{pdf_path}': {e}")
+                print(f"Advertencia: Error al procesar PDF '{pdf_path}' para el CSV maestro: {e}")
+                continue
 
-        with open(output_path, "w", encoding="utf-8", newline="") as f:
-            writer = csv.writer(f)
-            writer.writerow(headers)
-            writer.writerows(rows)
+        fieldnames = [
+            "numero_ddu", "numero_ord", "fecha_emision", "lugar", "emisor",
+            "destinatarios", "materia", "antecedentes", "descriptores",
+            "firmante", "lista_distribucion", "cuerpo_resumen"
+        ]
+
+        with open(output_path, "w", encoding="utf-8-sig", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames, delimiter=";")
+            writer.writeheader()
+            writer.writerows(master_rows)
 
         return output_path
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Orquestador ETL para Circulares DDU y Exportación CSV")
-    parser.add_argument("--pdf", type=str, required=True, help="Ruta al PDF o directorio de PDFs de circulares DDU")
-    parser.add_argument("--export-csv", action="store_true", help="Exportar resultado en formato CSV")
-    parser.add_argument(
-        "--output-dir", type=str, default="tmp", help="Directorio de salida para los CSVs (por defecto: tmp)"
-    )
-    parser.add_argument("--output-master", type=str, default="", help="Ruta de destino para el CSV acumulado master")
-
+def main() -> None:
+    """Punto de entrada CLI para ejecutar el orquestador desde la línea de comandos."""
+    parser = argparse.ArgumentParser(description="Orquestador DDU - Extracción y Exportación a CSV")
+    parser.add_argument("--pdf", type=str, help="Ruta al archivo PDF a procesar")
+    parser.add_argument("--output-dir", type=str, default="salidas_csv", help="Directorio de salida para los CSVs")
+    parser.add_argument("--export-csv", action="store_true", help="Exportar CSV individual")
     args = parser.parse_args()
-    target_path = Path(args.pdf)
-    orchestrator = DDUOrchestrator()
 
-    if target_path.is_dir():
-        pdf_files = sorted(list(target_path.glob("*.pdf")) + list(target_path.glob("*.PDF")))
-        print(f"Procesando {len(pdf_files)} PDFs en el directorio: {target_path}")
-        master_dest = (
-            Path(args.output_master)
-            if args.output_master
-            else Path(args.output_dir) / "master_circulares_ddu.csv"
-        )
-        out_master = orchestrator.export_master_csv(pdf_files, master_dest)
-        print(f"CSV acumulado maestro exportado exitosamente en: {out_master}")
-    else:
-        print(f"Procesando PDF: {target_path}")
-        resultado = orchestrator.process_pdf(target_path)
+    if args.pdf:
+        pdf_path = Path(args.pdf)
+        orchestrator = DDUOrchestrator()
         if args.export_csv:
-            out_csv = orchestrator.export_individual_csv(target_path, Path(args.output_dir))
-            print(f"CSV individual exportado exitosamente en: {out_csv}")
+            csv_out = orchestrator.export_individual_csv(pdf_path, Path(args.output_dir))
+            print(f"CSV exportado exitosamente en: {csv_out}")
         else:
-            print(json.dumps(resultado, indent=2, ensure_ascii=False))
+            res = orchestrator.process_pdf(pdf_path)
+            print(json.dumps(res, indent=2, ensure_ascii=False))
+    else:
+        parser.print_help()
+
+
+if __name__ == "__main__":
+    main()

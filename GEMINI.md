@@ -4,7 +4,7 @@ Este archivo contiene las directrices de diseño, reglas específicas y el conte
 
 ## Contexto y Flujo del Proyecto
 
-El objetivo principal es tomar circulares DDU (División de Desarrollo Urbano del MINVU, Chile) en formato PDF y procesarlas para generar documentos semánticos:
+El objetivo principal es tomar circulares DDU (División de Desarrollo Urbano del MINVU, Chile) en formato PDF y procesarlas para generar documentos semánticos de forma 100% dinámica sobre el texto extraído:
 
 1. **Extracción y Estructuración Modular**: Paquete de ETLs modulares e independientes [`scripts/extractors/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/) coordinados por el orquestador central [`scripts/ddu_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_orchestrator.py) (`DDUOrchestrator`). El módulo [`scripts/ddu_parser.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_parser.py) actúa como wrapper de retrocompatibilidad.
 2. **Generación Akoma Ntoso XML**: [`scripts/ddu_to_xml.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_xml.py) transforma los datos estructurados al estándar XML Akoma Ntoso v2.0 BCN compatible con el validador oficial.
@@ -15,33 +15,39 @@ El objetivo principal es tomar circulares DDU (División de Desarrollo Urbano de
 ### 1. Mantenimiento y Cobertura de la Suite de Pruebas
 
 * **Cobertura Obligatoria del 100%**: Cualquier cambio en la estructura o lógica de los scripts de transformación debe validarse de inmediato y mantener siempre una cobertura del **100%** de los elementos declarados en los esquemas y diccionarios BCN.
-* **Autonomía de Pruebas**: Los tests deben permanecer completamente autónomos y pasar en su totalidad mediante `pytest -v`:
-  * [`test/extractors/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/extractors): Pruebas unitarias de los 11 extractores modulares de bloques e interfaz base.
+* **Autonomía de Pruebas**: Los tests residen en la raíz del directorio `test/` y deben pasar en su totalidad mediante `pytest -v`:
+  * [`test/test_extractor_base.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_extractor_base.py): Pruebas de la interfaz base `BaseExtractor` y `ExtractorRegistry`.
+  * [`test/test_extractor_metadata.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_extractor_metadata.py): Pruebas unitarias de los 8 extractores de metadatos.
+  * [`test/test_extractor_body.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_extractor_body.py): Pruebas unitarias de los extractores de cuerpo, firma y distribución.
   * [`test/test_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_orchestrator.py): Pruebas de integración del orquestador DDU y exportadores CSV.
   * [`test/test_csv_integrity.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_csv_integrity.py): Valida la coherencia columnar de los archivos CSV locales.
-  * [`test/test_spec_coverage.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_spec_coverage.py): Mapea elementos XSD contra el diccionario y contra el archivo de cobertura local `bcn - documentación/especificacion_cobertura.md` de forma estricta y sin simulaciones.
+  * [`test/test_spec_coverage.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_spec_coverage.py): Mapea elementos XSD contra el diccionario y contra el archivo de cobertura local.
   * [`test/test_xsd_structural_validation.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_xsd_structural_validation.py): Verifica tipos y atributos heredados entre XSD y CSV.
-  * [`test/test_xml_generation.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_xml_generation.py): Certifica que los XML construidos sean válidos y conformes estructuralmente.
-  * [`test/test_rdf_generation.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_rdf_generation.py): Valida la correctitud sintáctica del formato Turtle (RDF) y sus relaciones lógicas.
+  * [`test/test_xml_generation.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_xml_generation.py): Certifica que los XML construidos sean válidos.
+  * [`test/test_rdf_generation.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_rdf_generation.py): Valida la sintaxis del formato Turtle (RDF).
 
-### 2. Normalización y URIs
+### 2. Extracción 100% Dinámica (Prohibición de Fallbacks Estáticos)
 
-* Al generar identificadores normalizados para URIs, se debe seguir strictly la función `normalizar_uri` implementada en [`scripts/ddu_parser.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_parser.py), la cual contempla remoción de diacríticos y singularización de sustantivos.
+* Toda extracción de metadatos y cuerpo debe ser realizada **dinámicamente desde el contenido textual del PDF**. Está prohibido inyectar metadatos estáticos hardcodeados mediante archivos JSON o diccionarios estáticos.
 
-### 3. Exclusión de Datos Estructurados y PDFs
+### 3. Normalización y URIs
 
-* **Prohibición de Control de Versiones**: Ningún archivo con extensión `.xlsx`, `.xls`, `.pdf` o `.csv` debe formar parte del repositorio Git. Todos los documentos de prueba y bases de datos deben mantenerse únicamente de forma local en el espacio de trabajo.
+* Al generar identificadores normalizados para URIs, se debe seguir estrictamente la función `normalizar_uri` implementada en [`scripts/ddu_parser.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_parser.py).
 
-### 4. Idioma Obligatorio (Interacciones y Commits)
+### 4. Exclusión de Datos Estructurados y PDFs
+
+* **Prohibición de Control de Versiones**: Ningún archivo con extensión `.xlsx`, `.xls`, `.pdf` o `.csv` debe formar parte del repositorio Git.
+
+### 5. Idioma Obligatorio (Interacciones y Commits)
 
 * **Idioma Único**: Toda la comunicación, explicaciones, preguntas y respuestas con el usuario deben generarse exclusivamente en **español**.
-* **Mensajes de Commit**: Todos los mensajes de confirmación (commits) generados para Git por la IA deben redactarse exclusivamente en **español** (por ejemplo, `doc: actualizar documentación` en lugar de `docs: update documentation`).
+* **Mensajes de Commit**: Todos los mensajes de confirmación (commits) generados para Git por la IA deben redactarse exclusivamente en **español**.
 
-### 5. Calidad de Código y Tipado Estricto (Strict)
+### 6. Calidad de Código y Tipado Estricto (Strict)
 
-* **Estándar Strict**: Todo el código de scripts y pruebas debe cumplir estrictamente con el estándar de tipado de Python. Se requiere anotaciones explícitas de tipos de datos en todas las variables, argumentos de funciones, métodos y valores de retorno, minimizando el uso de tipos implícitos o `Any` sin justificar.
+* Todo el código de scripts y pruebas debe cumplir estrictamente con el estándar de tipado de Python.
 
-### 6. Trazabilidad y Evidencia
+### 7. Trazabilidad y Evidencia
 
 * Antes de cerrar cualquier tarea técnica, reporta el comando exacto ejecutado en la consola y la salida del test como evidencia empírica de funcionamiento.
-* Cualquier modificación debe quedar debidamente descrita en el archivo [`CHANGELOG.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/CHANGELOG.md).
+* Cualquier modificación debe quedar debidamente descrita en [`CHANGELOG.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/CHANGELOG.md).
