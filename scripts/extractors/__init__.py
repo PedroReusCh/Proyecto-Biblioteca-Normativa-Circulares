@@ -20,6 +20,9 @@ _EXTRACTOR_MODULES: List[str] = [
     "fecha_lugar",
     "destinatarios",
     "emisor",
+    "cuerpo",
+    "firma",
+    "distribucion",
 ]
 
 
