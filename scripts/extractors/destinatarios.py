@@ -2,12 +2,11 @@
 
 import argparse
 from dataclasses import asdict
+import importlib
 import json
 from pathlib import Path
 import re
 from typing import Any, List
-
-import pypdf
 
 from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
 
@@ -63,9 +62,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     pdf_path = Path(args.pdf)
-    reader: pypdf.PdfReader = pypdf.PdfReader(pdf_path)
-    pages: List[Any] = list(reader.pages)
-    text_list: List[str] = [str(page.extract_text() or "") for page in pages]
+    pypdf_mod: Any = importlib.import_module("pypdf")
+    pdf_reader: Any = pypdf_mod.PdfReader(pdf_path)
+    pdf_pages: Any = pdf_reader.pages
+    text_list: List[str] = [str(getattr(p, "extract_text", lambda: "")() or "") for p in pdf_pages]
     raw_text: str = "\n".join(text_list)
     lines: List[str] = [line.strip() for line in raw_text.splitlines()]
 
