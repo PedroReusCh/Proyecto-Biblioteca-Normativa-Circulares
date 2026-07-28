@@ -1,6 +1,6 @@
 """Definiciones de Tipos Estructurados para el Procesamiento de Circulares DDU.
 
-Este módulo define las estructuras de datos estrictas mediante TypedDict para garantizar
+Este módulo define las estructuras de datos strictly mediante TypedDict para garantizar
 el cumplimiento de los estándares de tipado estático (strict) en el proyecto.
 """
 
@@ -22,18 +22,12 @@ class DatosCircularDDU(TypedDict):
     materia: str
     emisor: str
     antecedentes: str
-    numero_ord: str
-    destinatarios: str
-    firmante: str
-    lista_distribucion: str
-    descriptores: str
-    referencias: str
-    elementos_visuales: str
     secciones: List[SeccionDDU]
+    referencias: NotRequired[str]
+    elementos_visuales: NotRequired[str]
     numero_ord: NotRequired[str]
     descriptores: NotRequired[str]
     lugar: NotRequired[str]
     destinatarios: NotRequired[str]
     firmante: NotRequired[str]
     lista_distribucion: NotRequired[List[str]]
-

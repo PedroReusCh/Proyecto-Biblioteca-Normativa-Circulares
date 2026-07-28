@@ -6,7 +6,7 @@ extraída de los PDFs de circulares DDU en documentos XML Akoma Ntso v2.0 BCN co
 
 from datetime import date
 import re
-from typing import Any, Dict, List
+from typing import List
 
 from ddu_types import DatosCircularDDU, SeccionDDU
 

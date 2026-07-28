@@ -12,13 +12,13 @@ import json
 import re
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 _PROYECTO_RAIZ = Path(__file__).resolve().parents[1]
 if str(_PROYECTO_RAIZ) not in sys.path:
     sys.path.insert(0, str(_PROYECTO_RAIZ))
 
-import pypdf
+import importlib
 
 try:
     from ddu_types import DatosCircularDDU, SeccionDDU
@@ -86,6 +86,8 @@ class DDUOrchestrator:
             "emisor": str(datos_consolidados.get("emisor", "")),
             "antecedentes": str(datos_consolidados.get("antecedentes", "")),
             "secciones": datos_consolidados.get("secciones", []),
+            "referencias": str(datos_consolidados.get("referencias", "")),
+            "elementos_visuales": str(datos_consolidados.get("elementos_visuales", "")),
             "numero_ord": str(datos_consolidados.get("numero_ord", "")),
             "descriptores": str(datos_consolidados.get("descriptores", "")),
             "lugar": str(datos_consolidados.get("lugar", "Santiago")),
@@ -108,12 +110,16 @@ class DDUOrchestrator:
         if not pdf_path.exists():
             raise FileNotFoundError(f"No se encontró el archivo PDF: {pdf_path}")
 
-        reader = pypdf.PdfReader(pdf_path)
+        pypdf_mod: Any = importlib.import_module("pypdf")
+        pdf_reader: Any = pypdf_mod.PdfReader(pdf_path)
+        pdf_pages: Any = pdf_reader.pages
         text_parts: List[str] = []
-        for page in reader.pages:
-            page_text = page.extract_text()
-            if page_text:
-                text_parts.append(page_text)
+        for page in pdf_pages:
+            text_fn: Any = getattr(page, "extract_text", None)
+            if callable(text_fn):
+                page_text: Any = text_fn()
+                if page_text:
+                    text_parts.append(str(page_text))
 
         raw_text = "\n".join(text_parts)
         return self.process_text(raw_text, filename=pdf_path.name)

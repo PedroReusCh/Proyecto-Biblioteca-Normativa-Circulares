@@ -6,7 +6,7 @@ extraídos de PDFs de circulares DDU en un grafo semántico estructurado en form
 
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Set
+from typing import List, Set
 
 from ddu_types import DatosCircularDDU, SeccionDDU
 

@@ -12,13 +12,12 @@ import re
 import sys
 import unicodedata
 from pathlib import Path
-from typing import List
+import importlib
+from typing import Any, List
 
 _PROYECTO_RAIZ = Path(__file__).resolve().parents[1]
 if str(_PROYECTO_RAIZ) not in sys.path:
     sys.path.insert(0, str(_PROYECTO_RAIZ))
-
-import pypdf
 
 try:
     from ddu_types import DatosCircularDDU
@@ -49,12 +48,16 @@ class DDUParser:
         Returns:
             Texto completo del PDF.
         """
-        reader = pypdf.PdfReader(self.pdf_path)
+        pypdf_mod: Any = importlib.import_module("pypdf")
+        pdf_reader: Any = pypdf_mod.PdfReader(self.pdf_path)
+        pdf_pages: Any = pdf_reader.pages
         text_parts: List[str] = []
-        for page in reader.pages:
-            page_text = page.extract_text()
-            if page_text:
-                text_parts.append(page_text)
+        for page in pdf_pages:
+            text_fn: Any = getattr(page, "extract_text", None)
+            if callable(text_fn):
+                page_text: Any = text_fn()
+                if page_text:
+                    text_parts.append(str(page_text))
         return "\n".join(text_parts)
 
     def parse_pdf(self) -> DatosCircularDDU:
