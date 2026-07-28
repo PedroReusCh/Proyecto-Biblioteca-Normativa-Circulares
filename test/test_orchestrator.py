@@ -103,3 +103,25 @@ def test_export_master_csv(tmp_path: Path) -> None:
         numeros = [row[0] for row in rows]
         assert "533" in numeros
         assert "531" in numeros
+
+
+def test_export_master_csv_error_handling(tmp_path: Path) -> None:
+    """Verifica que export_master_csv capture errores en archivos PDF defectuosos o inexistentes y continúe."""
+    orchestrator = DDUOrchestrator()
+    pdf_list: List[Path] = [
+        PROYECTO_RAIZ / "circulares" / "DDU 533.pdf",
+        tmp_path / "pdf_inexistente.pdf",
+    ]
+    master_path = tmp_path / "master" / "dataset_master_error_test.csv"
+
+    res_path = orchestrator.export_master_csv(pdf_list, master_path)
+
+    assert res_path.exists()
+    with open(res_path, "r", encoding="utf-8") as f:
+        reader = csv.reader(f)
+        header = next(reader)
+        rows = list(reader)
+        # Solo el PDF válido debe haberse procesado y agregado a las filas
+        assert len(rows) == 1
+        assert rows[0][0] == "533"
+

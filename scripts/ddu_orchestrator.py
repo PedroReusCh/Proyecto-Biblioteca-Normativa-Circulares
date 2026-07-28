@@ -253,25 +253,28 @@ class DDUOrchestrator:
 
         rows: List[List[str]] = []
         for pdf_path in pdf_list:
-            datos = self.process_pdf(pdf_path)
-            dist_raw = datos.get("lista_distribucion", [])
-            dist_val = " | ".join(dist_raw) if isinstance(dist_raw, list) else str(dist_raw)
+            try:
+                datos = self.process_pdf(pdf_path)
+                dist_raw = datos.get("lista_distribucion", [])
+                dist_val = " | ".join(dist_raw) if isinstance(dist_raw, list) else str(dist_raw)
 
-            row = [
-                datos.get("numero", ""),
-                datos.get("fecha", ""),
-                datos.get("lugar", ""),
-                datos.get("materia", ""),
-                datos.get("emisor", ""),
-                datos.get("antecedentes", ""),
-                datos.get("numero_ord", ""),
-                datos.get("descriptores", ""),
-                datos.get("destinatarios", ""),
-                datos.get("firmante", ""),
-                dist_val,
-                str(len(datos.get("secciones", []))),
-            ]
-            rows.append(row)
+                row = [
+                    datos.get("numero", ""),
+                    datos.get("fecha", ""),
+                    datos.get("lugar", ""),
+                    datos.get("materia", ""),
+                    datos.get("emisor", ""),
+                    datos.get("antecedentes", ""),
+                    datos.get("numero_ord", ""),
+                    datos.get("descriptores", ""),
+                    datos.get("destinatarios", ""),
+                    datos.get("firmante", ""),
+                    dist_val,
+                    str(len(datos.get("secciones", []))),
+                ]
+                rows.append(row)
+            except Exception as e:
+                print(f"Advertencia: Error al procesar PDF '{pdf_path}': {e}")
 
         with open(output_path, "w", encoding="utf-8", newline="") as f:
             writer = csv.writer(f)

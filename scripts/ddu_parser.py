@@ -3,16 +3,32 @@
 Este módulo contiene la clase DDUParser encargada de procesar archivos PDF correspondientes
 a circulares DDU (División de Desarrollo Urbano) del Ministerio de Vivienda y Urbanismo,
 extrayendo su texto, estructurando su cuerpo y normalizando sus metadatos.
+
+Esta clase actúa como un wrapper de retrocompatibilidad que delega la extracción
+al motor orquestado DDUOrchestrator.
 """
 
-import json
 import re
+import sys
 import unicodedata
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import List
+
+_PROYECTO_RAIZ = Path(__file__).resolve().parents[1]
+if str(_PROYECTO_RAIZ) not in sys.path:
+    sys.path.insert(0, str(_PROYECTO_RAIZ))
 
 import pypdf
-from ddu_types import DatosCircularDDU, SeccionDDU
+
+try:
+    from ddu_types import DatosCircularDDU
+except ImportError:
+    from scripts.ddu_types import DatosCircularDDU
+
+try:
+    from ddu_orchestrator import DDUOrchestrator
+except ImportError:
+    from scripts.ddu_orchestrator import DDUOrchestrator
 
 
 class DDUParser:
@@ -25,27 +41,7 @@ class DDUParser:
             pdf_path: Ruta del archivo PDF a parsear.
         """
         self.pdf_path: Path = pdf_path
-        self.fallbacks_estaticos: Dict[str, Dict[str, Any]] = self._cargar_fallbacks()
-
-    def _cargar_fallbacks(self) -> Dict[str, Dict[str, Any]]:
-        """Carga el diccionario de fallbacks estáticos desde el archivo JSON de configuración.
-
-        Returns:
-            Diccionario de fallbacks estáticos indexados por número de circular.
-        """
-        ruta_json = Path(__file__).resolve().parent / "config" / "fallbacks_ddu.json"
-        if ruta_json.exists():
-            try:
-                with open(ruta_json, "r", encoding="utf-8") as f:
-                    data: Dict[str, Dict[str, Any]] = json.load(f)
-                    return data
-            except json.JSONDecodeError as e:
-                print(f"ERROR: El archivo JSON de fallbacks está corrupto o mal formado: {e}")
-                raise e
-            except Exception as e:
-                print(f"ERROR: No se pudo leer el archivo de fallbacks: {e}")
-                raise e
-        return {}
+        self.orchestrator: DDUOrchestrator = DDUOrchestrator()
 
     def extract_raw_text(self) -> str:
         """Extrae todo el texto plano de las páginas del PDF usando pypdf.
@@ -62,341 +58,11 @@ class DDUParser:
         return "\n".join(text_parts)
 
     def parse_pdf(self) -> DatosCircularDDU:
-        """Parsea el PDF para extraer metadatos y cuerpo estructurado por secciones y párrafos.
+        """Parsea el PDF para extraer metadatos y cuerpo estructurado utilizando DDUOrchestrator.
 
         Returns:
             DatosCircularDDU estructurado con metadatos de la circular.
         """
-        raw_text = self.extract_raw_text()
-        lines = [line.strip() for line in raw_text.splitlines() if line.strip()]
-
-        # Consolidar títulos multilínea de secciones romanas
-        lines_norm: List[str] = []
-        skip_next = False
-        for i in range(len(lines)):
-            if skip_next:
-                skip_next = False
-                continue
-            line_clean = lines[i]
-            if not line_clean:
-                continue
-            
-            # Normalización preliminar para coincidir con la regex de romanos
-            line_norm_temp = line_clean
-            line_norm_temp = re.sub(r"^l\.\s+ANTECEDENTES\b", "I. ANTECEDENTES", line_norm_temp, flags=re.IGNORECASE)
-            line_norm_temp = re.sub(r"^11\.\s+NORMATIVA\s+APLICABLE\b", "II. NORMATIVA APLICABLE", line_norm_temp, flags=re.IGNORECASE)
-
-            match_rom = re.match(r"^([IVXLCDM]+)\.\s+(.+)$", line_norm_temp, re.IGNORECASE)
-            if match_rom and i + 1 < len(lines):
-                line_next = lines[i+1].strip()
-                # Si termina con conjunción/preposición y la siguiente está en mayúsculas
-                if re.search(r"\b(?:LA|DE|PARA|CON|EL|AL|DEL|SOBRE)\s*$", line_norm_temp) and line_next.isupper() and not re.match(r"^(\d+|[IVXLCDM]+)\b", line_next):
-                    line_clean += " " + line_next
-                    skip_next = True
-            lines_norm.append(line_clean)
-        lines = lines_norm
-
-        # 1. Determinar número (priorizar número en el nombre del archivo como fuente de verdad)
-        match_filename = re.search(r"\b(\d+)\b", self.pdf_path.name)
-        num_filename = match_filename.group(1) if match_filename else ""
-        descriptores = ""
-        firmante = ""
-
-        numero = ""
-        # Buscar en las primeras 30 líneas del texto
-        for line in lines[:30]:
-            m = re.search(r"\bDDU\s*(\d+)\b", line, re.IGNORECASE)
-            if m:
-                numero = m.group(1)
-                break
-
-        if not numero or numero != num_filename:
-            numero = num_filename
-
-        # Si el texto está prácticamente vacío, cargamos los metadatos de fallback y retornamos de inmediato
-        if len(raw_text.strip()) < 50 and numero in self.fallbacks_estaticos:
-            fb = self.fallbacks_estaticos[numero]
-            return {
-                "numero": numero,
-                "fecha": fb["fecha"],
-                "materia": fb["materia"],
-                "emisor": fb["emisor"],
-                "antecedentes": fb["antecedentes"],
-                "secciones": fb["secciones"],
-                "numero_ord": "",
-                "destinatarios": "",
-                "firmante": "",
-                "lista_distribucion": "",
-                "descriptores": "",
-                "referencias": "",
-                "elementos_visuales": "",
-            }
-
-        # Normalizar errores comunes de OCR en fechas (ej: "1 O MAR" -> "10 MAR", "1 7 FEB" -> "17 FEB")
-        meses_regex = (
-            r"(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|"
-            r"setiembre|octubre|noviembre|diciembre|ene|feb|mar|abr|may|jun|"
-            r"jul|ago|sep|oct|nov|dic)"
-        )
-        
-        # Corregir letras "O" u "o" leídas como cero
-        raw_text_norm = re.sub(rf"\b([123])\s+[Oo0]\s+(?={meses_regex})", r"\g<1>0 ", raw_text, flags=re.IGNORECASE)
-        raw_text_norm = re.sub(rf"\b([123])\s+([1-9])\s+(?={meses_regex})", r"\g<1>\g<2> ", raw_text_norm, flags=re.IGNORECASE)
-        # Corregir años leídos como 2325 u otros por OCR corrupto a 2023
-        raw_text_norm = re.sub(r"\b2325\b", "2023", raw_text_norm)
-        
-        # 2. Extraer fecha propia del documento
-        patron_fecha_letras = (
-            rf"(?:Santiago|Valpara[íi]so|Concepci[óo]n)?\s*,?\s*(\d{{1,2}})"
-            rf"\s+(?:de\s+)?({meses_regex})\.?\s*(?:de\s+)?(\d{{2,4}})"
-        )
-        
-        mes_map = {
-            "ene": "01", "enero": "01",
-            "feb": "02", "febrero": "02",
-            "mar": "03", "marzo": "03",
-            "abr": "04", "abril": "04",
-            "may": "05", "mayo": "05",
-            "jun": "06", "junio": "06",
-            "jul": "07", "julio": "07",
-            "ago": "08", "agosto": "08",
-            "sep": "09", "septiembre": "09", "setiembre": "09",
-            "oct": "10", "octubre": "10",
-            "nov": "11", "noviembre": "11",
-            "dic": "12", "diciembre": "12",
-        }
-
-        fecha = ""
-        # Buscar primero líneas que contengan santiago/valparaiso/concepcion para priorizar la fecha de emisión propia
-        lineas_fecha = [line for line in raw_text_norm.splitlines() if any(c in line.lower() for c in ["santiago", "valparaiso", "valparaíso", "concepcion", "concepción"])]
-        
-        for line in lineas_fecha:
-            match_f = re.search(patron_fecha_letras, line, re.IGNORECASE)
-            if match_f:
-                dd = int(match_f.group(1))
-                mes_str = match_f.group(2).lower().strip(".")
-                yyyy_str = match_f.group(3)
-                yyyy = 2000 + int(yyyy_str) if len(yyyy_str) == 2 else int(yyyy_str)
-                mm = mes_map.get(mes_str, "00")
-                fecha = f"{yyyy:04d}-{mm}-{dd:02d}"
-                break
-
-        # Fallback global si no se encontró en líneas de Santiago (excluyendo menciones de otras circulares)
-        if not fecha:
-            for line in raw_text_norm.splitlines()[:50]:
-                if any(k in line.lower() for k in ["complementa", "modifica", "deroga"]):
-                    continue
-                match_f = re.search(patron_fecha_letras, line, re.IGNORECASE)
-                if match_f:
-                    dd = int(match_f.group(1))
-                    mes_str = match_f.group(2).lower().strip(".")
-                    yyyy_str = match_f.group(3)
-                    yyyy = 2000 + int(yyyy_str) if len(yyyy_str) == 2 else int(yyyy_str)
-                    mm = mes_map.get(mes_str, "00")
-                    fecha = f"{yyyy:04d}-{mm}-{dd:02d}"
-                    break
-
-        if not fecha and numero in self.fallbacks_estaticos:
-            fecha = self.fallbacks_estaticos[numero]["fecha"]
-
-        # 2.b Extraer numero_ord y destinatarios
-        numero_ord = ""
-        # Buscar el número de orden de forma genérica
-        match_ord = re.search(r"\b(?:ORD|ORO|OR0|OR)\.?\s*(?:N[°oº\?]?\s*)?([0-9\s_l·\-,]+)", raw_text_norm, re.IGNORECASE)
-        if match_ord:
-            ord_raw = match_ord.group(1).strip()
-            ord_clean = re.sub(r"[^0-9a-zA-Z]", "", ord_raw)
-            if numero == "533" or "l12" in ord_clean or "12" in ord_clean:
-                numero_ord = "112"
-            else:
-                numero_ord = ord_clean
-        if not numero_ord and numero == "533":
-            numero_ord = "112"
-        if not numero_ord and numero in self.fallbacks_estaticos:
-            numero_ord = self.fallbacks_estaticos[numero].get("numero_ord", "")
-
-        destinatarios = ""
-        for line in lines[:30]:
-            # Aceptar si no lleva ":" y variaciones del texto
-            match_a = re.match(r"^A\s*(?::\s*)?(SEG[UÚN\s]+DISTRIBUCI[OÓÚN\s\?]+|[^\n]+)", line, re.IGNORECASE)
-            if match_a:
-                destinatarios = match_a.group(1).strip()
-                break
-
-        if not destinatarios:
-            match_a_raw = re.search(r"\bA\s*(?::\s*)?(SEG[UÚN\s]+DISTRIBUCI[OÓÚN\s\?]+|[^\n]+)", raw_text_norm[:1000], re.IGNORECASE)
-            if match_a_raw:
-                destinatarios = match_a_raw.group(1).strip()
-        
-        if destinatarios:
-            dest_upper = destinatarios.upper()
-            if "SEG" in dest_upper and "DISTRIBUCI" in dest_upper:
-                destinatarios = "SEGÚN DISTRIBUCIÓN."
-
-        # 3. Extraer emisor
-        emisor = ""
-        for line in lines[:30]:
-            match_de = re.match(r"^DE\s*:\s*(.+)$", line, re.IGNORECASE)
-            if match_de:
-                emisor = match_de.group(1).strip()
-                break
-
-        if not emisor:
-            match_de_raw = re.search(r"\bDE\s*:\s*([^\n]+)", raw_text_norm[:1000], re.IGNORECASE)
-            if match_de_raw:
-                emisor = match_de_raw.group(1).strip()
-
-        if not emisor:
-            emisor = "JEFE DIVISION DE DESARROLLO URBANO"
-
-        # 4. Extraer materia
-        materia = ""
-        en_materia = False
-        for line in lines[:50]:
-            if en_materia:
-                if re.match(
-                    r"^(ANT|DE|A|PARA|CIRCULAR|SANTIAGO|I\.)\b",
-                    line,
-                    re.IGNORECASE,
-                ) or re.match(r"^[A-Z0-9\s]+:", line):
-                    en_materia = False
-                else:
-                    if not line:
-                        en_materia = False
-                    else:
-                        materia += " " + line
-            else:
-                match_mat = re.match(
-                    r"^(?:MAT|MATERIA)\.?(?:\s*:\s*|\s+)(.+)$",
-                    line,
-                    re.IGNORECASE,
-                )
-                if match_mat:
-                    materia = match_mat.group(1).strip()
-                    en_materia = True
-
-        materia = re.sub(r"\s+", " ", materia).strip()
-
-        if not materia and numero in self.fallbacks_estaticos:
-            materia = self.fallbacks_estaticos[numero]["materia"]
-
-        # 5. Extraer antecedentes
-        antecedentes = ""
-        en_antecedentes = False
-        for line in lines[:60]:
-            if en_antecedentes:
-                if re.match(
-                    r"^(MAT|DE|A|PARA|CIRCULAR|SANTIAGO|I\.)\b",
-                    line,
-                    re.IGNORECASE,
-                ) or re.match(r"^[A-Z0-9\s]+:", line):
-                    en_antecedentes = False
-                else:
-                    if not line:
-                        en_antecedentes = False
-                    else:
-                        antecedentes += " " + line
-            else:
-                match_ant = re.match(
-                    r"^(?:ANT|ANTECEDENTES)\.?(?:\s*:\s*|\s+)(.+)$",
-                    line,
-                    re.IGNORECASE,
-                )
-                if match_ant:
-                    antecedentes = match_ant.group(1).strip()
-                    en_antecedentes = True
-
-        antecedentes = re.sub(r"\s+", " ", antecedentes).strip()
-
-        if not antecedentes and numero in self.fallbacks_estaticos:
-            antecedentes = self.fallbacks_estaticos[numero]["antecedentes"]
-
-        # 6. Dividir en secciones y párrafos
-        secciones: List[SeccionDDU] = []
-        seccion_actual: SeccionDDU = {"titulo": "ENCABEZADO", "parrafos": []}
-        parrafo_actual = ""
-
-        lineas_distribucion: List[str] = []
-        en_distribucion = False
-
-        for line in lines:
-            line_clean = line.strip()
-            if not line_clean:
-                continue
-
-            # Corte de distribución flexible (cubre D STRIBUCI?N:, DISTRIBUCION:, etc.)
-            if en_distribucion:
-                lineas_distribucion.append(line_clean)
-                continue
-
-            if re.search(r"\b(?:D\s*S|D)?\s*STRIBUC[I\?OÓ]+N\b", line_clean, re.IGNORECASE):
-                en_distribucion = True
-                lineas_distribucion.append(line_clean)
-                continue
-
-            # Normalizar errores específicos de OCR en secciones romanas conocidas
-            # ej: l. ANTECEDENTES -> I. ANTECEDENTES
-            line_clean = re.sub(r"^l\.\s+ANTECEDENTES\b", "I. ANTECEDENTES", line_clean, flags=re.IGNORECASE)
-            # ej: 11. NORMATIVA APLICABLE -> II. NORMATIVA APLICABLE
-            line_clean = re.sub(r"^11\.\s+NORMATIVA\s+APLICABLE\b", "II. NORMATIVA APLICABLE", line_clean, flags=re.IGNORECASE)
-
-            # Detectar número romano al inicio (ej. "I. INTRODUCCION", "II. ALCANCE")
-            match_romano = re.match(r"^([IVXLCDM]+)\.\s+(.+)$", line_clean)
-            if match_romano:
-                if parrafo_actual:
-                    seccion_actual["parrafos"].append(parrafo_actual)
-                    parrafo_actual = ""
-
-                if (
-                    seccion_actual["titulo"] != "ENCABEZADO"
-                    or seccion_actual["parrafos"]
-                ):
-                    secciones.append(seccion_actual)
-
-                seccion_actual = {
-                    "titulo": f"{match_romano.group(1)}. {match_romano.group(2).strip()}",
-                    "parrafos": [],
-                }
-                continue
-
-            # Detectar número arábigo al inicio (ej. "1. Se informa que...")
-            match_parrafo = re.match(r"^(\d+)\.\s+(.+)$", line_clean)
-            if match_parrafo:
-                if parrafo_actual:
-                    seccion_actual["parrafos"].append(parrafo_actual)
-
-                parrafo_actual = (
-                    f"{match_parrafo.group(1)}. {match_parrafo.group(2).strip()}"
-                )
-                continue
-
-            # De lo contrario, concatenar
-            if parrafo_actual:
-                parrafo_actual += " " + line_clean
-            else:
-                parrafo_actual = line_clean
-
-        if parrafo_actual:
-            seccion_actual["parrafos"].append(parrafo_actual)
-
-        if seccion_actual["titulo"] != "ENCABEZADO" or seccion_actual["parrafos"]:
-            secciones.append(seccion_actual)
-
-        # Sobreescribir selectivamente metadatos de fallback conocidos para circulares específicas
-        if numero in self.fallbacks_estaticos:
-            fb = self.fallbacks_estaticos[numero]
-            # Si es la 531 o si la fecha quedó vacía o corrupta, forzamos la de fallback
-            if numero == "531" or not fecha or fecha == "2016-12-26":
-                fecha = fb["fecha"]
-            # Si es la 531 o si la materia quedó vacía, forzamos la de fallback
-            if numero == "531" or not materia:
-                materia = fb["materia"]
-            # Sobreescribir descriptores y firmante si están definidos en fallback
-            if "descriptores" in fb and not descriptores:
-                descriptores = fb["descriptores"]
-            if "firmante" in fb and not firmante:
-                firmante = fb["firmante"]
-            # Si no hay secciones extraídas (por ejemplo, si falló el parseo del cuerpo)
             if not secciones:
                 secciones = fb.get("secciones", [])
 
@@ -462,6 +128,9 @@ class DDUParser:
             "referencias": referencias,
             "elementos_visuales": elementos_visuales,
         }
+=======
+        return self.orchestrator.process_pdf(self.pdf_path)
+>>>>>>> 23d2ec4 (refactor: integrar ddu_parser con DDUOrchestrator manteniendo retrocompatibilidad total)
 
     @staticmethod
     def normalizar_uri(texto: str) -> str:

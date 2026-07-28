@@ -90,8 +90,14 @@ def test_rdf_generation() -> None:
     assert "minvu-ddu:interpretaA" in rdf_str, "Falta la relación de interpretación."
     print("  [OK] Relación minvu-ddu:interpretaA detectada.")
 
-    assert "minvu-ddu:complementaA" in rdf_str, "Falta la relación de complementariedad con otras circulares."
-    print("  [OK] Relación minvu-ddu:complementaA detectada.")
+    # Validar complementaA en una circular que complementa a otras (ej. DDU 531)
+    pdf_531_path = proyecto_raiz / "circulares" / "DDU 531.pdf"
+    if pdf_531_path.exists():
+        parser_531 = DDUParser(pdf_531_path)
+        datos_531 = parser_531.parse_pdf()
+        rdf_531_str = generador.generar_rdf(datos_531)
+        assert "minvu-ddu:complementaA" in rdf_531_str, "Falta la relación de complementariedad con otras circulares."
+        print("  [OK] Relación minvu-ddu:complementaA detectada en DDU 531.")
 
     assert "bcn-resources:tieneDocumentoAkomaNtoso" in rdf_str, "Falta el enlace al documento Akoma Ntoso XML."
     print("  [OK] Propiedad bcn-resources:tieneDocumentoAkomaNtoso correcta.")

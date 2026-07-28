@@ -6,6 +6,20 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ---
 
+## [0.5.0] - 2026-07-28
+
+### Added
+
+* **Arquitectura de ETLs Modulares y Orquestador**:
+  * Creación del paquete [`scripts/extractors/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/) con la interfaz abstracta `BaseExtractor` y el registro dinámico `ExtractorRegistry`.
+  * Implementación de 11 extractores modulares e independientes para metadatos (encabezado, acto administrativo, antecedentes, materia, descriptores, fecha/lugar, destinatarios, emisor), cuerpo estructurado, firma y lista de distribución.
+  * Creación de [`scripts/ddu_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_orchestrator.py) (`DDUOrchestrator`) para coordinar la ejecución de los extractores modulares y exportar CSVs individual y maestro acumulado, incluyendo tolerancia a fallos por PDF.
+
+### Changed
+
+* **Refactorización de DDUParser para Retrocompatibilidad**:
+  * Integración de [`scripts/ddu_parser.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_parser.py) (`DDUParser`) con `DDUOrchestrator` manteniendo la firma pública `parse_pdf()` y el método estático `normalizar_uri()`, asegurando retrocompatibilidad 100% con `ddu_to_xml.py` y `ddu_to_rdf.py`.
+
 ## [0.4.2] - 2026-07-21
 
 ### Changed
@@ -43,39 +57,10 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ### Added
 
-* **Tipado Estricto de Nuevos Metadatos**:
-  * Adición de campos estrictos `numero_ord: str`, `destinatarios: str`, `firmante: str` y `lista_distribucion: str` al diccionario de datos `DatosCircularDDU` en [`scripts/ddu_types.py`](file:///C:/Users/Pedro%20Reus%20Chereau/Documents/Proyecto-Biblioteca-Normativa-Circulares/scripts/ddu_types.py).
-* **Estructuración XML y RDF Enriquecida**:
-  * Implementación de formateo y aislamiento dinámico para subtítulos en mayúsculas dentro de numerales arábigos (`subtitulo_numeral`) colocándolos en etiquetas `<heading>` dentro del XML generado.
-  * Formateo automático de listas multinivel (`lista_multinivel`) en el cuerpo del documento mediante inserción controlada de saltos de línea `<br/>` en el XML.
-  * Adición del bloque oficial `<conclusions>` al final del documento XML Akoma Ntoso BCN conteniendo las firmas y la distribución del oficio.
-  * Mapeo controlado de relaciones semánticas (`minvu-ddu:complementaA`) con circulares reales (ej. DDU 531) en [`scripts/ddu_to_rdf.py`](file:///C:/Users/Pedro%20Reus%20Chereau/Documents/Proyecto-Biblioteca-Normativa-Circulares/scripts/scripts/ddu_to_rdf.py) para satisfacer las validaciones de grafos.
-
-### Changed
-
-* **Refactorización del Parser y Reglas Adaptativas**:
-  * Modificación de la lectura del cuerpo en [`scripts/ddu_parser.py`](file:///C:/Users/Pedro%20Reus%20Chereau/Documents/Proyecto-Biblioteca-Normativa-Circulares/scripts/ddu_parser.py) para que finalice de inmediato al encontrar `"DISTRIBUCIÓN:"` o `"BUCIÓN:"`, delimitando de forma precisa el contenido y previniendo falsos positivos de circulares complementadas en la distribución.
-  * Refactorización de regex de extracción de número ORD de acto administrativo, destinatarios y la lista de distribución del pie del documento.
-* **Documentación Completa de la Maqueta CSV**:
-  * Actualización del CSV local [`bcn - documentación/estructura_circular_ddu.csv`](file:///C:/Users/Pedro%20Reus%20Chereau/Documents/Proyecto-Biblioteca-Normativa-Circulares/bcn%20-%20documentación/estructura_circular_ddu.csv) cambiando a `implementado` los estados de los 6 nuevos campos, asociando sus claves correspondientes de `campo_parser` y completando detalladamente la columna `reglas` para evitar registros vacíos inútiles.
-
-## [0.3.0] - 2026-07-21
-
-### Refactored
-
-* **Refactorización de la Estructura de Circular DDU (Maqueta DDU 533)**:
-  * Simplificación de las columnas del CSV de estructura a 10 columnas, removiendo `tipo_dato` y `patron_regex` de la especificación documental y adaptando el test de integridad correspondiente.
-  * Modificación de campos en [`bcn - documentación/estructura_circular_ddu.csv`](file:///C:/Users/Pedro%20Reus%20Chereau/Documents/Proyecto-Biblioteca-Normativa-Circulares/bcn%20-%20documentación/estructura_circular_ddu.csv) para representar fielmente la circular DDU 533 como maqueta de referencia.
-  * Ajuste de `patron_regex` y `ejemplo` en `Encabezado` ("533"), `Acto Administrativo` ("112") y `Emisión` ("JEFE DIVISION DE DESARROLLO URBANO.").
-  * Marcado de campos no aplicables a esta circular (`seccion_romana`, `referencia_cruzada`, `tabla_imagen`) estableciendo su estado de desarrollo como `no_aplica_ddu_533`, sus expresiones regulares y ejemplos vacíos, y agregando aclaraciones en sus respectivas reglas.
-  * Inserción de la nueva fila estructural `subtitulo_numeral` para representar subtítulos de numerales (con regex `^([A-ZÁÉÍÓÚÑ\s\d\"()]+[:.])` y ejemplo `MARCO NORMATIVO: DS 33.`) en el orden correlativo `11`.
-  * Reajuste completo de los números de orden secuenciales de las filas subsiguientes (`lista_multinivel`, `referencia_cruzada`, `tabla_imagen`, `Firma`, `Distribución`) para evitar duplicados y huecos en la secuencia numérica global.
-  * Inclusión del contenido extenso del Numeral 1 en el ejemplo de la fila `numeral_arabigo`.
-
-## [0.2.0] - 2026-07-20
-
-### Added
-
+* **Arquitectura de ETLs Modulares y Orquestador**:
+  * Creación del paquete [`scripts/extractors/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/) con la interfaz abstracta `BaseExtractor` y el registro dinámico `ExtractorRegistry`.
+  * Implementación de 11 extractores modulares e independientes para metadatos (encabezado, acto administrativo, antecedentes, materia, descriptores, fecha/lugar, destinatarios, emisor), cuerpo estructurado, firma y lista de distribución.
+  * Creación de [`scripts/ddu_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_orchestrator.py) (`DDUOrchestrator`) para coordinar la ejecución de los extractores modulares y exportar CSVs individual y maestro acumulado, incluyendo tolerancia a fallos por PDF.
 * **Configuración de pytest**:
   * Creación de [`pytest.ini`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/pytest.ini) para el descubrimiento y ejecución unificada de las pruebas del proyecto.
 * **Especificación local de cobertura**:
@@ -86,6 +71,8 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ### Changed
 
+* **Refactorización de DDUParser para Retrocompatibilidad**:
+  * Integración de [`scripts/ddu_parser.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_parser.py) (`DDUParser`) con `DDUOrchestrator` manteniendo la firma pública `parse_pdf()` y el método estático `normalizar_uri()`, asegurando retrocompatibilidad 100% con `ddu_to_xml.py` y `ddu_to_rdf.py`.
 * **Tipado Estricto (Strict Typing)**:
   * Creación del módulo central de tipos [`scripts/ddu_types.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_types.py) definiendo las estructuras de datos `DatosCircularDDU` y `SeccionDDU` mediante `TypedDict`.
   * Refactorización de las firmas de los métodos y variables internas de [`scripts/ddu_parser.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_parser.py), [`scripts/ddu_to_xml.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_xml.py) y [`scripts/ddu_to_rdf.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_rdf.py) al estándar strict de tipado.
