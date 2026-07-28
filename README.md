@@ -9,7 +9,7 @@ Este repositorio implementa un sistema para el procesamiento, análisis y enriqu
 El proyecto se estructura en los siguientes directorios clave:
 
 * [`bcn - consultas/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20consultas): Contiene los resultados de procesamiento semántico (.ttl, .xml) de las circulares de prueba.
-* [`bcn - documentación/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n): Contiene la documentación técnica oficial de la BCN, los esquemas de validación estructural (`Esquema Akoma-Ntoso BCN.xsd`), la especificación de cobertura local (`especificacion_cobertura.md`), el contrato de especificación estructural (`estructura_circular_ddu.csv`) y los CSVs del diccionario de datos y secuencia de plantilla.
+* [`bcn - documentación/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n): Contiene la documentación técnica oficial de la BCN, los esquemas de validación estructural (`Esquema Akoma-Ntoso BCN.xsd`), la especificación de cobertura local (`especificacion_cobertura.md`), el contrato de especificación estructural ([`estructura_circular_ddu.csv`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n/estructura_circular_ddu.csv)) y los CSVs del diccionario de datos y secuencia de plantilla.
 * [`circulares/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/circulares): Colección de circulares DDU originales en formato PDF (por ejemplo, DDU 531, 533, 537 y 546).
 * [`scripts/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts): Módulos funcionales de procesamiento y conversión:
   * [`ddu_types.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_types.py): Declaraciones de tipado estricto `DatosCircularDDU` y `SeccionDDU`.
@@ -20,6 +20,26 @@ El proyecto se estructura en los siguientes directorios clave:
   * [`ddu_to_rdf.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_rdf.py): Transformador a grafos semánticos RDF/Turtle.
   * [`leychile_api.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/leychile_api.py): Integración oficial con la API de Ley Chile de la BCN.
 * [`test/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test): Suite plana de pruebas automatizadas locales (`test_extractor_base.py`, `test_extractor_metadata.py`, `test_extractor_body.py`, `test_orchestrator.py`, `test_csv_integrity.py`, `test_spec_coverage.py`, `test_xml_generation.py`, `test_rdf_generation.py`, `test_xsd_structural_validation.py`) ejecutables con `pytest`.
+
+---
+
+## Mapeo Estandarizado de la Estructura (CSV -> ETLs)
+
+La suite de los 11 ETLs modulares deriva exactamente del contrato de especificación documentado en [`bcn - documentación/estructura_circular_ddu.csv`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n/estructura_circular_ddu.csv):
+
+| Bloque CSV | Campo Parser | Módulo ETL (`scripts/extractors/`) | Descripción |
+| :--- | :--- | :--- | :--- |
+| **Encabezado** | `numero` | `encabezado.py` | Número identificador de la circular DDU |
+| **Acto Administrativo** | `numero_ord` | `acto_administrativo.py` | Número de acto ordinario de emisión (ej. ORD. N° 112) |
+| **Antecedentes** | `antecedentes` | `antecedentes.py` | Documentos o definiciones de origen (ANT:) |
+| **Materia** | `materia` | `materia.py` | Descripción del tema o norma abordada (MAT:) |
+| **Descriptores** | `descriptores` | `descriptores.py` | Vocablos y palabras clave de catalogación |
+| **Fecha y Lugar** | `fecha_emision` | `fecha_lugar.py` | Fecha en formato ISO YYYY-MM-DD y ciudad |
+| **Destinatarios** | `destinatarios` | `destinatarios.py` | Destinatario formal del oficio (A:) |
+| **Emisión** | `emisor` | `emisor.py` | Cargo del emisor (DE:) |
+| **Cuerpo** | `secciones` | `cuerpo.py` | Estructura de secciones romanas, numerales y listas |
+| **Firma** | `firmante` | `firma.py` | Firma del Jefe de División |
+| **Distribución** | `lista_distribucion` | `distribucion.py` | Nómina de receptores al cierre del documento |
 
 ---
 
@@ -59,25 +79,27 @@ graph TD
 
 ---
 
-## Uso de los Módulos de Procesamiento
+## Guía de Ejecución y Visualización de Resultados
 
 ### 1. Ejecución de ETLs de Forma Independiente (CLI)
 
-Cada módulo de extracción en `scripts/extractors/` puede ejecutarse de forma 100% aislada desde la consola:
+Si deseas probar la extracción de **un bloque específico** sobre cualquier circular (ej. `DDU 531.pdf`):
 
 ```powershell
-python -m scripts.extractors.antecedentes --pdf "circulares/DDU 533.pdf"
+python -m scripts.extractors.materia --pdf "circulares/DDU 531.pdf"
 ```
 
-Imprimiendo en pantalla el objeto `ResultadoBloque` serializado en formato JSON.
+* **Salida / Visualización**: Imprime en consola un JSON estructurado (`ResultadoBloque`) con el resultado del bloque y su nivel de confianza.
 
-### 2. Ejecución del Orquestador Central
+### 2. Ejecución Orquestada Completa (Generación de CSV)
 
-Para procesar una circular completa y generar sus productos estructurados:
+Para procesar todos los ETLs y exportar la ficha CSV de la circular:
 
 ```powershell
-python scripts/ddu_orchestrator.py --pdf "circulares/DDU 533.pdf" --export-csv
+python scripts/ddu_orchestrator.py --pdf "circulares/DDU 531.pdf" --export-csv
 ```
+
+* **Salida / Visualización**: Genera un archivo CSV codificado en UTF-8 con BOM y delimitado por punto y coma (`;`) listo para MS Excel en la carpeta `salidas_csv/` (ej. [`salidas_csv/DDU_531_extraido.csv`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/salidas_csv/DDU_531_extraido.csv)).
 
 ---
 
