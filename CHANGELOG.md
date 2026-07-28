@@ -21,6 +21,8 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
   * Integración de [`scripts/ddu_parser.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_parser.py) (`DDUParser`) con `DDUOrchestrator` manteniendo la firma pública `parse_pdf()` y el método estático `normalizar_uri()`, asegurando retrocompatibilidad 100% con `ddu_to_xml.py` y `ddu_to_rdf.py`.
 * **Aplanado de la Estructura de la Suite de Pruebas**:
   * Reorganización de todas las pruebas unitarias de extractores en la raíz del directorio `test/` (`test_extractor_base.py`, `test_extractor_metadata.py`, `test_extractor_body.py`), eliminando la subcarpeta intermedia `test/extractors/`.
+* **Simplificación de Maqueta CSV de Estructura**:
+  * Reducción de [`bcn - documentación/estructura_circular_ddu.csv`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n/estructura_circular_ddu.csv) a 6 columnas esenciales (`orden`, `bloque`, `campo`, `obligatorio`, `descripcion`, `reglas`), removiendo columnas técnicas y redundantes.
 
 ### Removed
 
