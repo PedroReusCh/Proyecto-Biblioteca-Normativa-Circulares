@@ -25,7 +25,7 @@ El proyecto se estructura en los siguientes directorios clave:
 
 ## Mapeo Estandarizado de la Estructura (CSV -> ETLs)
 
-La suite de los 11 ETLs modulares deriva exactamente del contrato de especificación documentado en [`bcn - documentación/estructura_circular_ddu.csv`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n/estructura_circular_ddu.csv):
+La suite de los 11 ETLs modulares deriva exactamente del contrato de especificación documentado en [`bcn - documentación/estructura_circular_ddu.csv`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n/estructura_circular_ddu.csv), simplificado a **6 columnas esenciales** (`orden`, `bloque`, `campo`, `obligatorio`, `descripcion`, `reglas`):
 
 | Bloque CSV | Campo Parser | Módulo ETL (`scripts/extractors/`) | Descripción |
 | :--- | :--- | :--- | :--- |
