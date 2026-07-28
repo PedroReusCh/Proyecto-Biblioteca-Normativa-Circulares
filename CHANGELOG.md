@@ -23,6 +23,8 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
   * Reorganización de todas las pruebas unitarias de extractores en la raíz del directorio `test/` (`test_extractor_base.py`, `test_extractor_metadata.py`, `test_extractor_body.py`), eliminando la subcarpeta intermedia `test/extractors/`.
 * **Simplificación de Maqueta CSV de Estructura**:
   * Reducción de [`bcn - documentación/estructura_circular_ddu.csv`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n/estructura_circular_ddu.csv) a 6 columnas esenciales (`orden`, `bloque`, `campo`, `obligatorio`, `descripcion`, `reglas`), removiendo columnas técnicas y redundantes.
+* **Tipado Estricto de los 11 ETLs Modulares (Pylance Strict)**:
+  * Resolución completa de los diagnósticos Pylance/Pyright (`reportMissingImports`, `reportUnknownVariableType`, `reportUnknownMemberType`, `reportUnknownArgumentType`) en los 11 extractores de `scripts/extractors/`.
 
 ### Removed
 

@@ -5,7 +5,7 @@ from dataclasses import asdict
 import json
 from pathlib import Path
 import re
-from typing import List
+from typing import Any, List
 
 import pypdf
 
@@ -119,9 +119,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     pdf_path = Path(args.pdf)
-    reader = pypdf.PdfReader(pdf_path)
-    raw_text = "\n".join([page.extract_text() or "" for page in reader.pages])
-    lines = [line.strip() for line in raw_text.splitlines()]
+    reader: pypdf.PdfReader = pypdf.PdfReader(pdf_path)
+    pages: List[Any] = list(reader.pages)
+    text_list: List[str] = [str(page.extract_text() or "") for page in pages]
+    raw_text: str = "\n".join(text_list)
+    lines: List[str] = [line.strip() for line in raw_text.splitlines()]
 
     extractor = CuerpoExtractor()
     resultado = extractor.extract(raw_text, lines)
