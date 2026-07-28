@@ -19,9 +19,13 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 * **Refactorización de DDUParser para Retrocompatibilidad**:
   * Integración de [`scripts/ddu_parser.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_parser.py) (`DDUParser`) con `DDUOrchestrator` manteniendo la firma pública `parse_pdf()` y el método estático `normalizar_uri()`, asegurando retrocompatibilidad 100% con `ddu_to_xml.py` y `ddu_to_rdf.py`.
+* **Aplanado de la Estructura de la Suite de Pruebas**:
+  * Reorganización de todas las pruebas unitarias de extractores en la raíz del directorio `test/` (`test_extractor_base.py`, `test_extractor_metadata.py`, `test_extractor_body.py`), eliminando la subcarpeta intermedia `test/extractors/`.
 
 ### Removed
 
+* **Prohibición y Eliminación de Fallbacks Estáticos**:
+  * Eliminación del archivo `scripts/config/fallbacks_ddu.json` y remoción de toda lógica de fallback estático en `DDUOrchestrator`. Toda extracción debe realizarse de forma 100% dinámica sobre el contenido textual del PDF.
 * **Depuración de Scripts Obsoletos y PoCs**:
   * Remoción de scripts experimentales e iniciales superados por la arquitectura modular y el orquestador: `scripts/poc_ddu_to_akomantoso.py`, `scripts/bcn_doc_scraper.py`, `scripts/generate_ppt.py`, `scripts/exportar_circulares_csv.py`, `scripts/get_arbol.py`, `scripts/get_listado.py` y `scripts/get_norma.py`.
 
