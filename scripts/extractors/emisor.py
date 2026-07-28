@@ -1,0 +1,83 @@
+"""Extractor de metadato Emisor (DE:)."""
+
+import argparse
+from dataclasses import asdict
+import json
+from pathlib import Path
+import re
+from typing import List
+
+import pypdf
+
+from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
+
+
+@register_extractor
+class EmisorExtractor(BaseExtractor):
+    """Extractor para el emisor (DE:) de la circular DDU."""
+
+    @property
+    def nombre_bloque(self) -> str:
+        return "emisor"
+
+    def extract(self, raw_text: str, lines: List[str]) -> ResultadoBloque:
+        """Extrae el emisor indicado en la circular.
+
+        Args:
+            raw_text: Texto completo del PDF.
+            lines: Líneas limpias del documento.
+
+        Returns:
+            ResultadoBloque con el emisor extraído.
+        """
+        emisor = ""
+
+        for line in lines[:30]:
+            match = re.match(r"^DE\s*:\s*(.+)$", line, re.IGNORECASE)
+            if not match:
+                match = re.match(
+                    r"^DE\s+((?:JEFE|MINISTRO|SUBSECRETARI[OA]|DIRECTOR|DIVISI[ÓO]N)\b.+)$",
+                    line,
+                    re.IGNORECASE,
+                )
+            if match:
+                emisor = match.group(1).strip()
+                break
+
+        if not emisor:
+            match = re.search(
+                r"\bDE\s*:\s*([^\n]+)",
+                raw_text[:1000],
+                re.IGNORECASE,
+            )
+            if match:
+                emisor = match.group(1).strip()
+
+        if emisor.endswith("."):
+            emisor = emisor[:-1].strip()
+
+        emisor = re.sub(r"\s+", " ", emisor).strip()
+        exito = bool(emisor)
+
+        return ResultadoBloque(
+            nombre_bloque=self.nombre_bloque,
+            exito=exito,
+            datos={"emisor": emisor},
+            confianza=1.0 if exito else 0.0,
+            observaciones="" if exito else "No se encontró emisor en la circular.",
+        )
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="ETL Emisor Extractor Standalone")
+    parser.add_argument("--pdf", type=str, required=True, help="Ruta al archivo PDF")
+    args = parser.parse_args()
+
+    pdf_path = Path(args.pdf)
+    reader = pypdf.PdfReader(pdf_path)
+    raw_text = "\n".join([page.extract_text() or "" for page in reader.pages])
+    lines = [line.strip() for line in raw_text.splitlines()]
+
+    extractor = EmisorExtractor()
+    resultado = extractor.extract(raw_text, lines)
+    print(json.dumps(asdict(resultado), indent=2, ensure_ascii=False))
