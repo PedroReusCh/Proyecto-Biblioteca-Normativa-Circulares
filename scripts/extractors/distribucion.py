@@ -36,6 +36,39 @@ class DistribucionExtractor(BaseExtractor):
             r"^(?:DISTRIBUCI[OÓ\?I\s]+N|BUCI[OÓ\?I\s]+N|STRIBUCI[OÓ\?I\s]+N|D\s*STRIBUC[I\?OÓ\s]*N)[\s:]*"
         )
 
+        def _limpiar_item_distribucion(item: str) -> str:
+            # 1. Normalizar prefijo numérico ruidoso como "1!", "1 !", "2 .", "4 ." -> "1. ", "2. ", "4. "
+            item = re.sub(r"^(\d+)[\!\;\:\,\_\-]+\s*", r"\1. ", item)
+            item = re.sub(r"^(\d+)\s*\.\s*", r"\1. ", item)
+
+            # 2. Corregir palabras divididas erróneamente por OCR
+            correcciones = [
+                (r"\bUrban\s+ismo\b", "Urbanismo"),
+                (r"\bRegio\s+nales\b", "Regionales"),
+                (r"\bRegio\s+nal\b", "Regional"),
+                (r"\bSecreta\s+ria\b", "Secretaria"),
+                (r"\bSecreta\s+rias\b", "Secretarias"),
+                (r"\bSecreta\s+rios\b", "Secretarios"),
+                (r"\bSubsecreta\s+ria\b", "Subsecretaria"),
+                (r"\bDesarro\s+llo\b", "Desarrollo"),
+                (r"\bTerr\s+itorial\b", "Territorial"),
+                (r"\bDirecto\s+res\b", "Directores"),
+                (r"\bReviso\s+res\b", "Revisores"),
+                (r"\bI\s+ndependientes\b", "Independientes"),
+                (r"\bBibliot\s+eca\b", "Biblioteca"),
+                (r"\bMiniste\s+rio\b", "Ministerio"),
+                (r"\bInstitu\s+to\b", "Instituto"),
+                (r"\bPlanificac\s+i[óo]n\b", "Planificación"),
+                (r"\bOrdenamien\s+to\b", "Ordenamiento"),
+                (r"\bAmbie\s+nte\b", "Ambiente"),
+                (r"\bDivisi[óo]\s+n\b", "División"),
+                (r"\bNaciona\s+l\b", "Nacional"),
+            ]
+            for p, r in correcciones:
+                item = re.sub(p, r, item, flags=re.IGNORECASE)
+
+            return re.sub(r"\s+", " ", item).strip()
+
         for line in lines:
             line_clean = line.strip()
             if not line_clean:
@@ -48,8 +81,7 @@ class DistribucionExtractor(BaseExtractor):
                 ) or re.match(r"^!+$", line_clean):
                     continue
 
-                # Si es un elemento numerado o destinatario (ej. "1. Sr. Ministro...", "2. Sra. Subsecretaria...")
-                item_clean = re.sub(r"\s+", " ", line_clean).strip()
+                item_clean = _limpiar_item_distribucion(line_clean)
                 if item_clean:
                     lista_distribucion.append(item_clean)
             else:
@@ -57,7 +89,7 @@ class DistribucionExtractor(BaseExtractor):
                     en_distribucion = True
                     sub = re.sub(patron_encabezado_distribucion, "", line_clean, flags=re.IGNORECASE).strip()
                     if sub and not re.match(r"^\d+$", sub):
-                        lista_distribucion.append(sub)
+                        lista_distribucion.append(_limpiar_item_distribucion(sub))
 
         exito = len(lista_distribucion) > 0
 

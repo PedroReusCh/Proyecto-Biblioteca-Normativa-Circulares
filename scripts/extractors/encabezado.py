@@ -29,19 +29,20 @@ class EncabezadoExtractor(BaseExtractor):
         Returns:
             ResultadoBloque con el número DDU extraído.
         """
-        numero = ""
+        digits = ""
         # Buscar en las primeras 30 líneas
         for line in lines[:30]:
             match = re.search(r"\bDDU\s*N?[°oº]?\s*(\d+)\b", line, re.IGNORECASE)
             if match:
-                numero = match.group(1)
+                digits = match.group(1)
                 break
 
-        if not numero:
+        if not digits:
             match = re.search(r"\bDDU\s*N?[°oº]?\s*(\d+)\b", raw_text, re.IGNORECASE)
             if match:
-                numero = match.group(1)
+                digits = match.group(1)
 
+        numero = f"DDU {digits}" if digits else ""
         exito = bool(numero)
         return ResultadoBloque(
             nombre_bloque=self.nombre_bloque,

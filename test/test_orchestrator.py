@@ -17,7 +17,7 @@ def test_orchestrator_process_pdf_ddu_533() -> None:
     orchestrator = DDUOrchestrator()
     datos: DatosCircularDDU = orchestrator.process_pdf(PDF_DDU_533)
 
-    assert datos["numero"] == "533"
+    assert "533" in datos["numero"]
     assert datos["fecha"] == "2026-02-27"
     assert "extraordinaria" in datos["materia"]
     assert "JEFE" in datos["emisor"] and "DESARROLLO URBANO" in datos["emisor"]

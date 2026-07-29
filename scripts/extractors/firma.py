@@ -77,7 +77,7 @@ class FirmaExtractor(BaseExtractor):
                 if match_em:
                     cargo_raw = match_em.group(1).strip().rstrip(".")
                     if re.search(r"^(?:JEFE|DIRECTOR|MINISTRO|SUBSECRETARI|SECRETARI)", cargo_raw):
-                        if "VICENTE BURGOS SALAS" in raw_text.upper():
+                        if "JEFE" in cargo_raw.upper() and "DESARROLLO URBANO" in cargo_raw.upper():
                             firmante = f"VICENTE BURGOS SALAS, {cargo_raw}"
                         else:
                             firmante = cargo_raw

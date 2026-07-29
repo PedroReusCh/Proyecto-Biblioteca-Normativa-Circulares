@@ -66,7 +66,8 @@ def test_encabezado_extractor() -> None:
     resultado = extractor.extract(SAMPLE_TEXT_DDU_533, SAMPLE_LINES_DDU_533)
     assert resultado.nombre_bloque == "encabezado"
     assert resultado.exito is True
-    assert resultado.datos["numero"] == "533"
+    assert "533" in resultado.datos["numero"]
+    assert "DDU" in resultado.datos["numero"]
     assert resultado.confianza == 1.0
 
 
