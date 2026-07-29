@@ -22,12 +22,13 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 * **Aplanado de la Estructura de la Suite de Pruebas**:
   * Reorganización de todas las pruebas unitarias de extractores en la raíz del directorio `test/` (`test_extractor_base.py`, `test_extractor_metadata.py`, `test_extractor_body.py`), eliminando la subcarpeta intermedia `test/extractors/`.
 * **Simplificación de Maqueta CSV de Estructura**:
-  * Reducción de [`bcn - documentación/estructura_circular_ddu.csv`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n/estructura_circular_ddu.csv) a 6 columnas esenciales (`orden`, `bloque`, `campo`, `obligatorio`, `descripcion`, `reglas`), removiendo columnas técnicas y redundantes.
+  * Reducción de [`bcn - documentación/estructura_circular_ddu.csv`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n/estructura_circular_ddu.csv) a 6 columnas esenciales (`orden`, `bloque`, `campo`, `obligatorio`, `descripcion`, `reglas`) y consolidación del bloque `Cuerpo` en una sola fila (orden 9), logrando un total exacto de 11 ítems correlativos.
 * **Tipado Estricto de los 11 ETLs Modulares (Pylance Strict)**:
   * Resolución completa de los diagnósticos Pylance/Pyright (`reportMissingImports`, `reportUnknownVariableType`, `reportUnknownMemberType`, `reportUnknownArgumentType`) en los 11 extractores de `scripts/extractors/`.
-* **Actualización de Instrucciones Operativas (GEMINI.md)**:
-  * Inclusión formal del flujo de trabajo por fases con el plugin `superpowers` (Inicio, Ejecución, Verificación y Cierre).
-  * Explicitación del estándar obligatorio Pylance Strict Mode para todo el código en `scripts/` y `test/`.
+* **Ordenamiento Estándar de Bloques en Exportación CSV**:
+  * Reordenamiento de las filas y columnas generadas por `export_individual_csv` y `export_master_csv` en [`scripts/ddu_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_orchestrator.py) para ajustarse a la secuencia estricta 01-11: Encabezado, Acto Administrativo, Antecedentes, Materia, Descriptores, Fecha y Lugar, Destinatarios, Emisión, Cuerpo, Firma y Distribución.
+* **Estandarización de Comandos de Consola en Documentación**:
+  * Actualización de todas las referencias de ejecución en [`README.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/README.md) y especificaciones en `docs/` reemplazando `python -m` y `python scripts/` por `py -3 -m` y `py -3 scripts/` para compatibilidad directa con entornos Windows PowerShell.
 
 ### Removed
 

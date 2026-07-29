@@ -96,7 +96,7 @@ Verificar que la suite completa pase y registrar en Git.
 *   Modificar: [`CHANGELOG.md`](file:///C:/Users/Pedro%20Reus%20Chereau/Documents/Proyecto-Biblioteca-Normativa-Circulares/CHANGELOG.md)
 
 - [ ] **Paso 1: Correr tests locales**
-  Ejecutar: `python -m pytest`
+  Ejecutar: `py -3 -m pytest`
   Resultado esperado: `5 passed`
 
 - [ ] **Paso 2: Registrar en CHANGELOG.md**

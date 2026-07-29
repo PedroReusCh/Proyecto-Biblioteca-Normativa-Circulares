@@ -152,7 +152,7 @@ Correr el exportador y comprobar la correctitud física y semántica de la salid
 - [ ] **Step 1: Ejecutar el script exportador**
   Correr en la consola:
   ```powershell
-  python scripts/exportar_circulares_csv.py
+  py -3 scripts/exportar_circulares_csv.py
   ```
 
 - [ ] **Step 2: Verificar la salida de DDU 531**
@@ -170,5 +170,5 @@ Correr el exportador y comprobar la correctitud física y semántica de la salid
 Validar la suite completa del proyecto.
 
 - [ ] **Step 1: Correr pytest**
-  Correr: `python -m pytest`
+  Correr: `py -3 -m pytest`
   Resultado esperado: `5 passed`.

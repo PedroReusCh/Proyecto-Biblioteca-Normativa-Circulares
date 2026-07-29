@@ -86,7 +86,7 @@ graph TD
 Si deseas probar la extracción de **un bloque específico** sobre cualquier circular (ej. `DDU 531.pdf`):
 
 ```powershell
-python -m scripts.extractors.materia --pdf "circulares/DDU 531.pdf"
+py -3 -m scripts.extractors.materia --pdf "circulares/DDU 531.pdf"
 ```
 
 * **Salida / Visualización**: Imprime en consola un JSON estructurado (`ResultadoBloque`) con el resultado del bloque y su nivel de confianza.
@@ -96,7 +96,7 @@ python -m scripts.extractors.materia --pdf "circulares/DDU 531.pdf"
 Para procesar todos los ETLs y exportar la ficha CSV de la circular:
 
 ```powershell
-python scripts/ddu_orchestrator.py --pdf "circulares/DDU 531.pdf" --export-csv
+py -3 scripts/ddu_orchestrator.py --pdf "circulares/DDU 531.pdf" --export-csv
 ```
 
 * **Salida / Visualización**: Genera un archivo CSV codificado en UTF-8 con BOM y delimitado por punto y coma (`;`) listo para MS Excel en la carpeta `salidas_csv/` (ej. [`salidas_csv/DDU_531_extraido.csv`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/salidas_csv/DDU_531_extraido.csv)).

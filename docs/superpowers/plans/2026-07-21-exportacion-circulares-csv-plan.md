@@ -67,7 +67,7 @@ Validar el funcionamiento del script y el formato de los CSVs generados.
 - [ ] **Paso 1: Ejecutar el script exportador**
   Correr en la consola:
   ```powershell
-  python scripts/exportar_circulares_csv.py
+  py -3 scripts/exportar_circulares_csv.py
   ```
   Validar que termine sin excepciones e imprima el reporte por pantalla.
 
@@ -81,7 +81,7 @@ Validar el funcionamiento del script y el formato de los CSVs generados.
 Garantizar la estabilidad general de la suite de pruebas del proyecto.
 
 - [ ] **Paso 1: Correr la suite de pytest**
-  Correr: `python -m pytest`
+  Correr: `py -3 -m pytest`
   Resultado esperado: `5 passed`.
 
 ---

@@ -92,7 +92,7 @@ Modificar el script `test/test_csv_integrity.py` para reflejar el nuevo formato 
 
 - [ ] **Paso 2: Ejecutar los tests locales**
   Correr la suite de pruebas del proyecto para certificar que todo pasa exitosamente:
-  *   Ejecutar: `python -m pytest`
+  *   Ejecutar: `py -3 -m pytest`
   *   Resultado esperado: `5 passed`
 
 - [ ] **Paso 3: Confirmar cambios del test en Git**

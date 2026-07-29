@@ -59,7 +59,7 @@ Se creará un script autónomo que realice los siguientes pasos:
 
 1.  **Ejecución**: Correr el script mediante:
     ```powershell
-    python scripts/exportar_circulares_csv.py
+    py -3 scripts/exportar_circulares_csv.py
     ```
 2.  **Verificación**:
     *   Comprobar que se crearon los 4 archivos CSV en `/bcn - circulares - csv/`.

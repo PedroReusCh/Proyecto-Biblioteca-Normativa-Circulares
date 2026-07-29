@@ -89,7 +89,7 @@ class BaseExtractor(ABC):
 Cada extractor podrá ejecutarse solo en consola mediante CLI:
 
 ```bash
-python -m extractors.antecedentes --pdf "circulares/DDU 533.pdf" --json
+py -3 -m scripts.extractors.antecedentes --pdf "circulares/DDU 533.pdf" --json
 ```
 
 Imprimiendo en consola el JSON formateado con el resultado del bloque `ResultadoBloque`.

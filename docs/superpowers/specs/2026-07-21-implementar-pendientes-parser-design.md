@@ -74,4 +74,4 @@ Se modifica [`scripts/ddu_to_xml.py`](file:///C:/Users/Pedro%20Reus%20Chereau/Do
     *   Cambiar `estado_parser` de `pendiente` a `implementado` para: `numero_ord`, `destinatarios`, `subtitulo_numeral`, `lista_multinivel`, `firmante` y `lista_distribucion`.
     *   Definir sus correspondientes `campo_parser` según el modelo.
 2.  **Validación de Pruebas**:
-    *   Asegurar que todas las pruebas en `test/` pasen de forma exitosa (`python -m pytest`).
+    *   Asegurar que todas las pruebas en `test/` pasen de forma exitosa (`py -3 -m pytest`).
