@@ -154,10 +154,19 @@ class DDUOrchestrator:
         ]
 
         secciones: List[SeccionDDU] = datos.get("secciones", [])
+        partes_cuerpo: List[str] = []
         for sec in secciones:
-            titulo = sec.get("titulo", "")
-            parrafos = " ".join(sec.get("parrafos", []))
-            filas_csv.append({"bloque": "Cuerpo", "campo": f"seccion:{titulo}", "valor_extraido": parrafos})
+            titulo = sec.get("titulo", "").strip()
+            parrafos = " ".join(sec.get("parrafos", [])).strip()
+            if titulo and parrafos:
+                partes_cuerpo.append(f"{titulo}: {parrafos}")
+            elif parrafos:
+                partes_cuerpo.append(parrafos)
+            elif titulo:
+                partes_cuerpo.append(titulo)
+
+        cuerpo_consolidado = " | ".join(partes_cuerpo)
+        filas_csv.append({"bloque": "Cuerpo", "campo": "cuerpo", "valor_extraido": cuerpo_consolidado})
 
         filas_csv.append({"bloque": "Firma", "campo": "firmante", "valor_extraido": datos.get("firmante", "")})
 
