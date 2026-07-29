@@ -143,3 +143,40 @@ def test_emisor_extractor() -> None:
     assert resultado.exito is True
     assert resultado.datos["emisor"] == "JEFE DIVISIÓ N DE DESARROLLO URBANO"
     assert resultado.confianza == 1.0
+
+
+# --- Texto de prueba con orden invertido (DE: antes de A:) ---
+SAMPLE_TEXT_INVERTIDO: str = """DDU 120
+CIRCULAR ORD. N° 045
+ANT.: Ley N° 19.175
+MAT.: Interpretación sobre permisos de edificación.
+PERMISOS, EDIFICACIÓN.
+SANTIAGO, 15 MAR 2005
+DE: JEFE DIVISIÓN DE DESARROLLO URBANO
+A: SEÑORES INTENDENTES Y GOBERNADORES
+1. De conformidad con lo previsto en el artículo 4° de la LGUC...
+"""
+
+SAMPLE_LINES_INVERTIDO: List[str] = [
+    line.strip() for line in SAMPLE_TEXT_INVERTIDO.splitlines() if line.strip()
+]
+
+
+def test_destinatarios_orden_invertido() -> None:
+    """Prueba que la extracción de destinatarios funcione cuando DE: aparece antes de A:."""
+    extractor = DestinatariosExtractor()
+    resultado = extractor.extract(SAMPLE_TEXT_INVERTIDO, SAMPLE_LINES_INVERTIDO)
+    assert resultado.nombre_bloque == "destinatarios"
+    assert resultado.exito is True
+    assert "INTENDENTES" in resultado.datos["destinatarios"]
+    assert resultado.confianza == 1.0
+
+
+def test_emisor_orden_invertido() -> None:
+    """Prueba que la extracción de emisor funcione cuando DE: aparece antes de A:."""
+    extractor = EmisorExtractor()
+    resultado = extractor.extract(SAMPLE_TEXT_INVERTIDO, SAMPLE_LINES_INVERTIDO)
+    assert resultado.nombre_bloque == "emisor"
+    assert resultado.exito is True
+    assert "DESARROLLO URBANO" in resultado.datos["emisor"]
+    assert resultado.confianza == 1.0

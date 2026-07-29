@@ -22,6 +22,9 @@ class EmisorExtractor(BaseExtractor):
     def extract(self, raw_text: str, lines: List[str]) -> ResultadoBloque:
         """Extrae el emisor indicado en la circular.
 
+        Soporta tanto el orden moderno (A: ... DE:) como el orden invertido
+        de circulares antiguas (DE: ... A:).
+
         Args:
             raw_text: Texto completo del PDF.
             lines: Líneas limpias del documento.
@@ -31,22 +34,45 @@ class EmisorExtractor(BaseExtractor):
         """
         emisor = ""
 
-        for line in lines[:30]:
-            match = re.match(r"^DE\s*:\s*(.+)$", line, re.IGNORECASE)
-            if not match:
-                match = re.match(
+        # Fase 1: Localizar posiciones de DE: y A:/PARA: en las primeras 40 líneas
+        idx_de: int = -1
+        idx_a: int = -1
+        scan_limit = min(40, len(lines))
+
+        for i in range(scan_limit):
+            line = lines[i]
+            if idx_de == -1:
+                match_de = re.match(r"^DE\s*:\s*(.+)$", line, re.IGNORECASE)
+                if not match_de:
+                    match_de = re.match(
+                        r"^DE\s+((?:JEFE|MINISTRO|SUBSECRETARI[OA]|DIRECTOR|DIVISI[ÓO]N)\b.+)$",
+                        line,
+                        re.IGNORECASE,
+                    )
+                if match_de:
+                    idx_de = i
+            if idx_a == -1 and re.match(r"^(?:A(?:\s|:)|PARA\s*:)\s*.+$", line, re.IGNORECASE):
+                m_check = re.match(r"^(?:A(?:\s|:)|PARA\s*:)\s*:?\s*(.+)$", line, re.IGNORECASE)
+                if m_check and not re.match(r"^LA\s+FECHA", m_check.group(1).strip(), re.IGNORECASE):
+                    idx_a = i
+
+        # Fase 2: Extraer contenido de DE: acotado por la posición de A:/PARA:
+        if idx_de != -1:
+            match_de = re.match(r"^DE\s*:\s*(.+)$", lines[idx_de], re.IGNORECASE)
+            if not match_de:
+                match_de = re.match(
                     r"^DE\s+((?:JEFE|MINISTRO|SUBSECRETARI[OA]|DIRECTOR|DIVISI[ÓO]N)\b.+)$",
-                    line,
+                    lines[idx_de],
                     re.IGNORECASE,
                 )
-            if match:
-                emisor = match.group(1).strip()
-                break
+            if match_de:
+                emisor = match_de.group(1).strip()
 
+        # Fase 3: Fallback sobre raw_text si no se encontró en líneas
         if not emisor:
             match = re.search(
                 r"\bDE\s*:\s*([^\n]+)",
-                raw_text[:1000],
+                raw_text[:1500],
                 re.IGNORECASE,
             )
             if match:

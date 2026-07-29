@@ -22,6 +22,9 @@ class DestinatariosExtractor(BaseExtractor):
     def extract(self, raw_text: str, lines: List[str]) -> ResultadoBloque:
         """Extrae el valor del campo A: / PARA:.
 
+        Soporta tanto el orden moderno (A: ... DE:) como el orden invertido
+        de circulares antiguas (DE: ... A:).
+
         Args:
             raw_text: Texto completo del PDF.
             lines: Líneas limpias del documento.
@@ -31,18 +34,34 @@ class DestinatariosExtractor(BaseExtractor):
         """
         destinatarios = ""
 
-        for line in lines[:30]:
-            match = re.match(r"^(?:A|PARA)\s*:?\s*(.+)$", line, re.IGNORECASE)
+        # Fase 1: Localizar posiciones de A:/PARA: y DE: en las primeras 40 líneas
+        idx_a: int = -1
+        idx_de: int = -1
+        scan_limit = min(40, len(lines))
+
+        for i in range(scan_limit):
+            line = lines[i]
+            if idx_a == -1 and re.match(r"^(?:A(?:\s|:)|PARA\s*:)\s*.+$", line, re.IGNORECASE):
+                # Descartar falsos positivos como "A LA FECHA"
+                m_check = re.match(r"^(?:A(?:\s|:)|PARA\s*:)\s*:?\s*(.+)$", line, re.IGNORECASE)
+                if m_check and not re.match(r"^LA\s+FECHA", m_check.group(1).strip(), re.IGNORECASE):
+                    idx_a = i
+            if idx_de == -1 and re.match(r"^DE\s*:?\s*(?:JEFE|MINISTRO|SUBSECRETARI[OA]|DIRECTOR|DIVISI[ÓO]N|\w).+$", line, re.IGNORECASE):
+                idx_de = i
+
+        # Fase 2: Extraer contenido de A:/PARA: acotado por la posición de DE:
+        if idx_a != -1:
+            match_a = re.match(r"^(?:A(?:\s|:)|PARA\s*:)\s*:?\s*(.+)$", lines[idx_a], re.IGNORECASE)
+            if match_a:
+                destinatarios = match_a.group(1).strip()
+
+        # Fase 3: Fallback sobre raw_text si no se encontró en líneas
+        if not destinatarios:
+            match = re.search(r"\b(?:A|PARA)\s*:\s*([^\n]+)", raw_text[:1500], re.IGNORECASE)
             if match:
                 val = match.group(1).strip()
                 if not re.match(r"^LA\s+FECHA", val, re.IGNORECASE):
                     destinatarios = val
-                    break
-
-        if not destinatarios:
-            match = re.search(r"\bA\s*:\s*([^\n]+)", raw_text[:1000], re.IGNORECASE)
-            if match:
-                destinatarios = match.group(1).strip()
 
         destinatarios = re.sub(r"\s+", " ", destinatarios).strip()
         exito = bool(destinatarios)
