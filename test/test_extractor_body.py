@@ -96,3 +96,57 @@ def test_distribucion_extractor() -> None:
     assert len(distribucion) == 4
     assert "1. Sr. Ministro de Vivienda y Urbanismo" in str(distribucion[0])
     assert "4. Biblioteca del Congreso Nacional." in str(distribucion[3])
+
+
+# --- Texto de prueba con orden invertido (DE: antes de A:) ---
+SAMPLE_TEXT_INVERTIDO_BODY: str = """DDU 120
+CIRCULAR ORD. N° 045
+ANT.: Ley N° 19.175
+MAT.: Interpretación sobre permisos de edificación.
+PERMISOS, EDIFICACIÓN.
+SANTIAGO, 15 MAR 2005
+DE: JEFE DIVISIÓN DE DESARROLLO URBANO
+A: SEÑORES INTENDENTES Y GOBERNADORES
+
+1. De conformidad con lo previsto en el artículo 4° de la LGUC, se instruye lo siguiente.
+
+2. MARCO NORMATIVO: Ley 19.175.
+Se establece el alcance de la normativa vigente.
+
+Saluda atentamente a Ud.,
+
+PEDRO LÓPEZ MUÑOZ
+JEFE DIVISIÓN DE DESARROLLO URBANO
+
+DISTRIBUCIÓN:
+1. Sr. Ministro de Vivienda y Urbanismo
+"""
+
+SAMPLE_LINES_INVERTIDO_BODY: List[str] = [
+    line.strip() for line in SAMPLE_TEXT_INVERTIDO_BODY.splitlines() if line.strip()
+]
+
+
+def test_cuerpo_orden_invertido() -> None:
+    """Prueba que el cuerpo se extraiga correctamente cuando DE: aparece antes de A:."""
+    extractor = CuerpoExtractor()
+    resultado = extractor.extract(SAMPLE_TEXT_INVERTIDO_BODY, SAMPLE_LINES_INVERTIDO_BODY)
+    assert resultado.nombre_bloque == "cuerpo"
+    assert resultado.exito is True
+
+    secciones: List[SeccionDDU] = list(resultado.datos["secciones"])
+    assert len(secciones) > 0
+
+    parrafos_list: List[str] = []
+    for sec in secciones:
+        parrafos_list.extend(sec["parrafos"])
+    parrafos_concatenados = " ".join(parrafos_list)
+
+    # El cuerpo debe contener los numerales, no metadatos del encabezado
+    assert "1. De conformidad con lo previsto" in parrafos_concatenados
+    assert "2. MARCO NORMATIVO: Ley 19.175." in parrafos_concatenados
+
+    # El cuerpo NO debe contener metadatos del encabezado
+    assert "CIRCULAR ORD" not in parrafos_concatenados
+    assert "SEÑORES INTENDENTES" not in parrafos_concatenados
+    assert "JEFE DIVISIÓN" not in parrafos_concatenados or "Saluda" not in parrafos_concatenados

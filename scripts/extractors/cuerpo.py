@@ -23,8 +23,9 @@ class CuerpoExtractor(BaseExtractor):
     def extract(self, raw_text: str, lines: List[str]) -> ResultadoBloque:
         """Extrae las secciones y párrafos estructurados del cuerpo de la circular DDU.
 
-        Detecta numerales romanos (ej. I. ALCANCE) como títulos de sección y
-        numerales arábigos (ej. 1. De conformidad...) o apartados como párrafos.
+        Localiza ambos marcadores A:/PARA: y DE: (en cualquier orden) y comienza
+        la extracción del cuerpo a partir de la línea siguiente al segundo marcador.
+        La extracción se detiene al encontrar la fórmula de cierre (firma o distribución).
 
         Args:
             raw_text: Texto completo del PDF.
@@ -33,13 +34,44 @@ class CuerpoExtractor(BaseExtractor):
         Returns:
             ResultadoBloque con la lista de SeccionDDU extraída.
         """
+        # Fase 1: Localizar posiciones de A:/PARA: y DE: para determinar inicio del cuerpo
+        idx_a: int = -1
+        idx_de: int = -1
+        scan_limit = min(50, len(lines))
+
+        for i in range(scan_limit):
+            line = lines[i]
+            if idx_a == -1 and re.match(r"^(?:A(?:\s|:)|PARA\s*:)\s*.+$", line, re.IGNORECASE):
+                m_check = re.match(r"^(?:A(?:\s|:)|PARA\s*:)\s*:?\s*(.+)$", line, re.IGNORECASE)
+                if m_check and not re.match(r"^LA\s+FECHA", m_check.group(1).strip(), re.IGNORECASE):
+                    idx_a = i
+            if idx_de == -1:
+                match_de = re.match(r"^DE\s*:\s*(.+)$", line, re.IGNORECASE)
+                if not match_de:
+                    match_de = re.match(
+                        r"^DE\s+((?:JEFE|MINISTRO|SUBSECRETARI[OA]|DIRECTOR|DIVISI[ÓO]N)\b.+)$",
+                        line,
+                        re.IGNORECASE,
+                    )
+                if match_de:
+                    idx_de = i
+
+        # El cuerpo comienza después del segundo marcador (el que aparece último)
+        if idx_a != -1 and idx_de != -1:
+            inicio_cuerpo = max(idx_a, idx_de) + 1
+        elif idx_de != -1:
+            inicio_cuerpo = idx_de + 1
+        elif idx_a != -1:
+            inicio_cuerpo = idx_a + 1
+        else:
+            inicio_cuerpo = 0
+
+        # Fase 2: Extraer secciones y párrafos del cuerpo
         secciones: List[SeccionDDU] = []
         seccion_actual: SeccionDDU = {"titulo": "ENCABEZADO", "parrafos": []}
         parrafo_actual = ""
 
-        # Ignorar encabezados de metadatos iniciales hasta el cuerpo principal
-        # y detenerse al encontrar la firma o distribución
-        for line in lines:
+        for line in lines[inicio_cuerpo:]:
             line_clean = line.strip()
             if not line_clean:
                 continue
@@ -85,14 +117,6 @@ class CuerpoExtractor(BaseExtractor):
             if parrafo_actual:
                 parrafo_actual += " " + line_clean
             else:
-                # Si aún estamos en el encabezado de metadatos (antes de 1. o I.), omitir metadatos de cabecera
-                if seccion_actual["titulo"] == "ENCABEZADO":
-                    if re.match(
-                        r"^(?:DDU|CIRCULAR|ORD\.|ANT|MAT|DE|A|SANTIAGO|VALPARA[ÍI]SO|PERMISOS|VIGENCIA)\b",
-                        line_clean,
-                        re.IGNORECASE,
-                    ) or re.match(r"^\d+\)", line_clean):
-                        continue
                 parrafo_actual = line_clean
 
         if parrafo_actual:
