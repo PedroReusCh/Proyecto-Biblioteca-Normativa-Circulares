@@ -141,13 +141,17 @@ class DDUOrchestrator:
         csv_filename = f"DDU_{ddu_num}_extraido.csv"
         csv_path = output_dir / csv_filename
 
+        lugar_str = datos.get("lugar", "Santiago").strip()
+        fecha_str = datos["fecha"].strip()
+        fecha_lugar_comb = f"{lugar_str}, {fecha_str}" if lugar_str else fecha_str
+
         filas_csv: List[Dict[str, str]] = [
             {"bloque": "Encabezado", "campo": "numero_ddu", "valor_extraido": datos["numero"]},
             {"bloque": "Acto Administrativo", "campo": "numero_ord", "valor_extraido": datos.get("numero_ord", "")},
             {"bloque": "Antecedentes", "campo": "antecedentes", "valor_extraido": datos["antecedentes"]},
             {"bloque": "Materia", "campo": "materia", "valor_extraido": datos["materia"]},
             {"bloque": "Descriptores", "campo": "descriptores", "valor_extraido": datos.get("descriptores", "")},
-            {"bloque": "Fecha y Lugar", "campo": "fecha_emision", "valor_extraido": datos["fecha"]},
+            {"bloque": "Fecha y Lugar", "campo": "fecha_emision", "valor_extraido": fecha_lugar_comb},
             {"bloque": "Destinatarios", "campo": "destinatarios", "valor_extraido": datos.get("destinatarios", "")},
             {"bloque": "Emisión", "campo": "emisor", "valor_extraido": datos["emisor"]},
         ]
