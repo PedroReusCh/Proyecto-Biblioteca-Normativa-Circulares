@@ -20,15 +20,8 @@ if str(_PROYECTO_RAIZ) not in sys.path:
 
 import importlib
 
-try:
-    from ddu_types import DatosCircularDDU, SeccionDDU
-except ImportError:
-    from scripts.ddu_types import DatosCircularDDU, SeccionDDU
-
-try:
-    from extractors import ExtractorRegistry, registrar_todos_los_extractores
-except ImportError:
-    from scripts.extractors import ExtractorRegistry, registrar_todos_los_extractores
+from scripts.ddu_types import DatosCircularDDU
+from scripts.extractors import ExtractorRegistry, registrar_todos_los_extractores
 
 
 class DDUOrchestrator:
