@@ -68,7 +68,7 @@ class CuerpoExtractor(BaseExtractor):
 
         # Fase 2: Extraer secciones y párrafos del cuerpo
         secciones: List[SeccionDDU] = []
-        seccion_actual: SeccionDDU = {"titulo": "ENCABEZADO", "parrafos": []}
+        seccion_actual: SeccionDDU = {"titulo": "", "parrafos": []}
         parrafo_actual = ""
 
         for line in lines[inicio_cuerpo:]:
@@ -88,6 +88,15 @@ class CuerpoExtractor(BaseExtractor):
             ):
                 break
 
+            # Omitir metadatos de cabecera si aún no hemos comenzado ningún párrafo/sección
+            if not parrafo_actual and not secciones and not seccion_actual["titulo"]:
+                if re.match(
+                    r"^(?:DDU|CIRCULAR|ORD\.|ORO\.|ANT|MAT|DE|A|PARA|SANTIAGO|VALPARA[ÍI]SO|PERMISOS)\b",
+                    line_clean,
+                    re.IGNORECASE,
+                ) or re.match(r"^\d+\)", line_clean):
+                    continue
+
             # Detectar número romano al inicio (ej. "I. INTRODUCCIÓN", "II. MARCO NORMATIVO")
             match_romano = re.match(r"^([IVXLCDM]+)\.\s+(.+)$", line_clean)
             if match_romano:
@@ -95,7 +104,7 @@ class CuerpoExtractor(BaseExtractor):
                     seccion_actual["parrafos"].append(parrafo_actual)
                     parrafo_actual = ""
 
-                if seccion_actual["titulo"] != "ENCABEZADO" or seccion_actual["parrafos"]:
+                if seccion_actual["titulo"] or seccion_actual["parrafos"]:
                     secciones.append(seccion_actual)
 
                 seccion_actual = {
@@ -122,7 +131,7 @@ class CuerpoExtractor(BaseExtractor):
         if parrafo_actual:
             seccion_actual["parrafos"].append(parrafo_actual)
 
-        if seccion_actual["titulo"] != "ENCABEZADO" or seccion_actual["parrafos"]:
+        if seccion_actual["titulo"] or seccion_actual["parrafos"]:
             secciones.append(seccion_actual)
 
         exito = len(secciones) > 0 and any(len(s["parrafos"]) > 0 for s in secciones)
