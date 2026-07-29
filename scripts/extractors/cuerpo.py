@@ -12,6 +12,46 @@ from scripts.ddu_types import SeccionDDU
 from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
 
 
+def _limpiar_texto_cuerpo(texto: str) -> str:
+    """Repara palabras rotas y espacios antes de signos de puntuación producidos por OCR."""
+    patrones_reemplazo = [
+        (r"\binst\s+rumen\s+to\b", "instrumento"),
+        (r"\bpermi\s+so\b", "permiso"),
+        (r"\bpermi\s+sos\b", "permisos"),
+        (r"\bedifi\s+cad([aaos])\b", r"edificad\1"),
+        (r"\bedifi\s+cac(i[oó]n|iones)\b", r"edificac\1"),
+        (r"\bincrement\s+o\b", "incremento"),
+        (r"\bcircunscribi\s+rse\b", "circunscribirse"),
+        (r"\bporcentua\s+l\b", "porcentual"),
+        (r"\bante\s+s\b", "antes"),
+        (r"\baplicab\s+le([s]?)\b", r"aplicable\1"),
+        (r"\bmod\s+ificac(i[oó]n|iones)\b", r"modificac\1"),
+        (r"\bmod\s+ificad([aaos])\b", r"modificad\1"),
+        (r"\bespec[ií]f\s+ic([aaos])\b", r"específic\1"),
+        (r"\bconstruid\s+a\b", "construida"),
+        (r"\bcorrespond\s+ient([es]?)\b", r"correspondient\1"),
+        (r"\binst\s+rucc(i[oó]n|iones)\b", r"instrucc\1"),
+        (r"\bcircul\s+ar([es]?)\b", r"circular\1"),
+        (r"\bsuperf\s+ic(ie[s]?)\b", r"superfic\1"),
+        (r"\bdispos\s+ic(i[oó]n|iones)\b", r"disposic\1"),
+        (r"\burban[íi]st\s+ic([aaos])\b", r"urbanístic\1"),
+        (r"\bterritor\s+ial\b", "territorial"),
+        (r"\bsolic\s+itud\b", "solicitud"),
+        (r"\baprob\s+ad([aaos])\b", r"aprobad\1"),
+        (r"\baprob\s+ac(i[oó]n|iones)\b", r"aprobac\1"),
+        (r"\bexpuest\s+os\b", "expuestos"),
+        (r"\s+\.", "."),
+        (r"\s+,", ","),
+        (r"\s+;", ";"),
+        (r"\s+:", ":"),
+    ]
+
+    res = texto
+    for pat, repl in patrones_reemplazo:
+        res = re.sub(pat, repl, res, flags=re.IGNORECASE)
+    return res
+
+
 def _es_pie_de_pagina(line: str) -> bool:
     """Detecta líneas de pie de página de OCR incluso con espacios rotos entre caracteres."""
     line_norm = re.sub(r"\s+", " ", line).strip()
@@ -176,6 +216,10 @@ class CuerpoExtractor(BaseExtractor):
         if seccion_actual["titulo"] or seccion_actual["parrafos"]:
             secciones.append(seccion_actual)
 
+        # Aplicar reparación de palabras OCR a cada párrafo de las secciones
+        for sec in secciones:
+            sec["parrafos"] = [_limpiar_texto_cuerpo(p) for p in sec.get("parrafos", [])]
+
         exito = len(secciones) > 0 and any(len(s["parrafos"]) > 0 for s in secciones)
 
         partes_cuerpo: List[str] = []
@@ -189,7 +233,7 @@ class CuerpoExtractor(BaseExtractor):
             elif titulo:
                 partes_cuerpo.append(titulo)
 
-        cuerpo_texto = " | ".join(partes_cuerpo)
+        cuerpo_texto = _limpiar_texto_cuerpo(" | ".join(partes_cuerpo))
 
         return ResultadoBloque(
             nombre_bloque=self.nombre_bloque,
