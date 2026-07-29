@@ -93,6 +93,21 @@ def _normalizar_romano_ocr(prefix: str, texto_titulo: str) -> str | None:
     return None
 
 
+def _es_continuacion_titulo_seccion(line: str) -> bool:
+    """Verifica si una línea es la continuación en mayúsculas de un título de sección multilínea."""
+    line_clean = line.strip()
+    if not line_clean or _es_pie_de_pagina(line_clean):
+        return False
+    if re.match(r"^\d+\.\s+", line_clean) or re.match(r"^([IVXLCDM]+|l+|11+|1l|l1)\.\s+", line_clean, re.IGNORECASE):
+        return False
+    if re.match(r"^(?:Saluda|DISTRIBUCI[ÓO]N)", line_clean, re.IGNORECASE):
+        return False
+    letras = [c for c in line_clean if c.isalpha()]
+    if not letras:
+        return False
+    return (sum(1 for c in letras if c.isupper()) / len(letras)) >= 0.65
+
+
 @register_extractor
 class CuerpoExtractor(BaseExtractor):
     """Extractor para el cuerpo estructurado por secciones y párrafos."""
@@ -152,13 +167,19 @@ class CuerpoExtractor(BaseExtractor):
         seccion_actual: SeccionDDU = {"titulo": "", "parrafos": []}
         parrafo_actual = ""
 
-        for line in lines[inicio_cuerpo:]:
-            line_clean = line.strip()
+        lines_cuerpo = lines[inicio_cuerpo:]
+        total_lineas = len(lines_cuerpo)
+        curr_idx = 0
+
+        while curr_idx < total_lineas:
+            line_clean = lines_cuerpo[curr_idx].strip()
             if not line_clean:
+                curr_idx += 1
                 continue
 
             # Descartar líneas de pie de página de OCR (incluyendo espacios rotos)
             if _es_pie_de_pagina(line_clean):
+                curr_idx += 1
                 continue
 
             # Detener extracción si llegamos a la firma o distribución
@@ -174,6 +195,7 @@ class CuerpoExtractor(BaseExtractor):
                     line_clean,
                     re.IGNORECASE,
                 ) or re.match(r"^\d+\)", line_clean):
+                    curr_idx += 1
                     continue
 
             # Detectar número romano o distorsión OCR de sección (ej. "I. ANTECEDENTES", "11. NORMATIVA APLICABLE")
@@ -189,10 +211,18 @@ class CuerpoExtractor(BaseExtractor):
                     if seccion_actual["titulo"] or seccion_actual["parrafos"]:
                         secciones.append(seccion_actual)
 
+                    # Capturar líneas subsiguientes que forman parte del título de sección multilínea
+                    titulo_completo = texto_titulo
+                    next_idx = curr_idx + 1
+                    while next_idx < total_lineas and _es_continuacion_titulo_seccion(lines_cuerpo[next_idx]):
+                        titulo_completo += " " + lines_cuerpo[next_idx].strip()
+                        next_idx += 1
+
                     seccion_actual = {
-                        "titulo": f"{romano_norm} {texto_titulo}",
+                        "titulo": f"{romano_norm} {titulo_completo}",
                         "parrafos": [],
                     }
+                    curr_idx = next_idx
                     continue
 
             # Detectar número arábigo al inicio (ej. "1. De conformidad...", "2. MARCO NORMATIVO:")
@@ -202,6 +232,7 @@ class CuerpoExtractor(BaseExtractor):
                     seccion_actual["parrafos"].append(parrafo_actual)
 
                 parrafo_actual = f"{match_parrafo.group(1)}. {match_parrafo.group(2).strip()}"
+                curr_idx += 1
                 continue
 
             # Concatenar a párrafo actual
@@ -209,6 +240,8 @@ class CuerpoExtractor(BaseExtractor):
                 parrafo_actual += " " + line_clean
             else:
                 parrafo_actual = line_clean
+
+            curr_idx += 1
 
         if parrafo_actual:
             seccion_actual["parrafos"].append(parrafo_actual)
