@@ -1,6 +1,5 @@
 """Pruebas unitarias para BaseExtractor, ResultadoBloque y ExtractorRegistry."""
 
-import pytest
 from typing import List
 from scripts.extractors.base import (
     BaseExtractor,
@@ -26,8 +25,12 @@ def test_resultado_bloque_dataclass() -> None:
 
 def test_base_extractor_abstract() -> None:
     """Verifica que BaseExtractor no pueda ser instanciado directamente."""
-    with pytest.raises(TypeError):
-        BaseExtractor()  # type: ignore[abstract]
+    exception_raised = False
+    try:
+        _ = BaseExtractor()  # type: ignore[abstract]
+    except TypeError:
+        exception_raised = True
+    assert exception_raised, "BaseExtractor no debe ser instanciable directamente"
 
 
 def test_register_and_get_extractors() -> None:
