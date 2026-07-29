@@ -151,19 +151,20 @@ class DDUOrchestrator:
             {"bloque": "Fecha y Lugar", "campo": "lugar", "valor_extraido": datos.get("lugar", "Santiago")},
             {"bloque": "Destinatarios", "campo": "destinatarios", "valor_extraido": datos.get("destinatarios", "")},
             {"bloque": "Emisión", "campo": "emisor", "valor_extraido": datos["emisor"]},
-            {"bloque": "Firma", "campo": "firmante", "valor_extraido": datos.get("firmante", "")},
         ]
-
-        dist_val = datos.get("lista_distribucion", "")
-        if isinstance(dist_val, list):
-            dist_val = "; ".join(dist_val)
-        filas_csv.append({"bloque": "Distribución", "campo": "lista_distribucion", "valor_extraido": dist_val})
 
         secciones: List[SeccionDDU] = datos.get("secciones", [])
         for sec in secciones:
             titulo = sec.get("titulo", "")
             parrafos = " ".join(sec.get("parrafos", []))
             filas_csv.append({"bloque": "Cuerpo", "campo": f"seccion:{titulo}", "valor_extraido": parrafos})
+
+        filas_csv.append({"bloque": "Firma", "campo": "firmante", "valor_extraido": datos.get("firmante", "")})
+
+        dist_val = datos.get("lista_distribucion", "")
+        if isinstance(dist_val, list):
+            dist_val = "; ".join(dist_val)
+        filas_csv.append({"bloque": "Distribución", "campo": "lista_distribucion", "valor_extraido": dist_val})
 
         with open(csv_path, "w", encoding="utf-8-sig", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=["bloque", "campo", "valor_extraido"], delimiter=";")
@@ -199,25 +200,34 @@ class DDUOrchestrator:
                 master_rows.append({
                     "numero_ddu": datos["numero"],
                     "numero_ord": datos.get("numero_ord", ""),
+                    "antecedentes": datos["antecedentes"],
+                    "materia": datos["materia"],
+                    "descriptores": datos.get("descriptores", ""),
                     "fecha_emision": datos["fecha"],
                     "lugar": datos.get("lugar", "Santiago"),
-                    "emisor": datos["emisor"],
                     "destinatarios": datos.get("destinatarios", ""),
-                    "materia": datos["materia"],
-                    "antecedentes": datos["antecedentes"],
-                    "descriptores": datos.get("descriptores", ""),
+                    "emisor": datos["emisor"],
+                    "cuerpo_resumen": sec_resumen,
                     "firmante": datos.get("firmante", ""),
                     "lista_distribucion": dist_val,
-                    "cuerpo_resumen": sec_resumen,
                 })
             except Exception as e:
                 print(f"Advertencia: Error al procesar PDF '{pdf_path}' para el CSV maestro: {e}")
                 continue
 
         fieldnames = [
-            "numero_ddu", "numero_ord", "fecha_emision", "lugar", "emisor",
-            "destinatarios", "materia", "antecedentes", "descriptores",
-            "firmante", "lista_distribucion", "cuerpo_resumen"
+            "numero_ddu",
+            "numero_ord",
+            "antecedentes",
+            "materia",
+            "descriptores",
+            "fecha_emision",
+            "lugar",
+            "destinatarios",
+            "emisor",
+            "cuerpo_resumen",
+            "firmante",
+            "lista_distribucion",
         ]
 
         with open(output_path, "w", encoding="utf-8-sig", newline="") as f:

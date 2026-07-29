@@ -72,9 +72,18 @@ def test_export_master_csv(tmp_path: Path) -> None:
         reader = csv.reader(f, delimiter=";")
         header = next(reader)
         assert header == [
-            "numero_ddu", "numero_ord", "fecha_emision", "lugar", "emisor",
-            "destinatarios", "materia", "antecedentes", "descriptores",
-            "firmante", "lista_distribucion", "cuerpo_resumen"
+            "numero_ddu",
+            "numero_ord",
+            "antecedentes",
+            "materia",
+            "descriptores",
+            "fecha_emision",
+            "lugar",
+            "destinatarios",
+            "emisor",
+            "cuerpo_resumen",
+            "firmante",
+            "lista_distribucion",
         ]
 
 
