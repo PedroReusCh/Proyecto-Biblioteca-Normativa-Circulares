@@ -187,13 +187,8 @@ class DDUOrchestrator:
         for pdf_path in pdf_list:
             try:
                 datos = self.process_pdf(pdf_path)
-                dist_val = datos.get("lista_distribucion", "")
-                if isinstance(dist_val, list):
-                    dist_val = "; ".join(dist_val)
-
-                sec_resumen = " | ".join(
-                    [f"{s.get('titulo', '')}: {' '.join(s.get('parrafos', []))}" for s in datos.get("secciones", [])]
-                )
+                dist_val = str(datos.get("distribucion_texto") or "")
+                cuerpo_resumen = str(datos.get("cuerpo") or "")
 
                 master_rows.append({
                     "numero_ddu": datos["numero"],
@@ -205,7 +200,7 @@ class DDUOrchestrator:
                     "lugar": datos.get("lugar", "Santiago"),
                     "destinatarios": datos.get("destinatarios", ""),
                     "emisor": datos["emisor"],
-                    "cuerpo_resumen": sec_resumen,
+                    "cuerpo_resumen": cuerpo_resumen,
                     "firmante": datos.get("firmante", ""),
                     "lista_distribucion": dist_val,
                 })
