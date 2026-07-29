@@ -67,6 +67,9 @@ class DistribucionExtractor(BaseExtractor):
             for p, r in correcciones:
                 item = re.sub(p, r, item, flags=re.IGNORECASE)
 
+            item = re.sub(r"[\s;]+$", "", item)
+            item = re.sub(r"\s*;\s*", " ", item)
+            item = re.sub(r"\s+\.", ".", item)
             return re.sub(r"\s+", " ", item).strip()
 
         for line in lines:
