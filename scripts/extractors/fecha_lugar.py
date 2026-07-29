@@ -107,11 +107,16 @@ class FechaLugarExtractor(BaseExtractor):
                     break
 
         exito = bool(fecha)
+        fecha_lugar = f"{lugar}, {fecha}" if lugar and fecha else (fecha or lugar)
 
         return ResultadoBloque(
             nombre_bloque=self.nombre_bloque,
             exito=exito,
-            datos={"fecha": fecha, "lugar": lugar},
+            datos={
+                "fecha": fecha,
+                "lugar": lugar,
+                "fecha_lugar": fecha_lugar,
+            },
             confianza=1.0 if exito else 0.0,
             observaciones="" if exito else "No se pudo extraer la fecha de emisión.",
         )

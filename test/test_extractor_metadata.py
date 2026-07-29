@@ -120,6 +120,7 @@ def test_fecha_lugar_extractor() -> None:
     assert resultado.exito is True
     assert resultado.datos["fecha"] == "2026-02-27"
     assert resultado.datos["lugar"] == "Santiago"
+    assert resultado.datos["fecha_lugar"] == "Santiago, 2026-02-27"
     assert resultado.confianza == 1.0
 
 
