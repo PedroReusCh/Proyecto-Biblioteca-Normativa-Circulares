@@ -25,6 +25,9 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
   * Reducción de [`bcn - documentación/estructura_circular_ddu.csv`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n/estructura_circular_ddu.csv) a 6 columnas esenciales (`orden`, `bloque`, `campo`, `obligatorio`, `descripcion`, `reglas`), removiendo columnas técnicas y redundantes.
 * **Tipado Estricto de los 11 ETLs Modulares (Pylance Strict)**:
   * Resolución completa de los diagnósticos Pylance/Pyright (`reportMissingImports`, `reportUnknownVariableType`, `reportUnknownMemberType`, `reportUnknownArgumentType`) en los 11 extractores de `scripts/extractors/`.
+* **Actualización de Instrucciones Operativas (GEMINI.md)**:
+  * Inclusión formal del flujo de trabajo por fases con el plugin `superpowers` (Inicio, Ejecución, Verificación y Cierre).
+  * Explicitación del estándar obligatorio Pylance Strict Mode para todo el código en `scripts/` y `test/`.
 
 ### Removed
 
