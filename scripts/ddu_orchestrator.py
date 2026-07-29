@@ -148,7 +148,6 @@ class DDUOrchestrator:
             {"bloque": "Materia", "campo": "materia", "valor_extraido": datos["materia"]},
             {"bloque": "Descriptores", "campo": "descriptores", "valor_extraido": datos.get("descriptores", "")},
             {"bloque": "Fecha y Lugar", "campo": "fecha_emision", "valor_extraido": datos["fecha"]},
-            {"bloque": "Fecha y Lugar", "campo": "lugar", "valor_extraido": datos.get("lugar", "Santiago")},
             {"bloque": "Destinatarios", "campo": "destinatarios", "valor_extraido": datos.get("destinatarios", "")},
             {"bloque": "Emisión", "campo": "emisor", "valor_extraido": datos["emisor"]},
         ]
