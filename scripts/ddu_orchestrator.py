@@ -61,11 +61,13 @@ class DDUOrchestrator:
             except Exception as e:
                 print(f"Advertencia: Error al ejecutar extractor '{nombre_bloque}': {e}")
 
-        # Consolidar número DDU
-        numero = str(datos_consolidados.get("numero", ""))
-        if not numero or (num_filename and numero != num_filename):
-            if num_filename:
-                numero = num_filename
+        # Consolidar número DDU (garantizando prefijo 'DDU ')
+        numero = str(datos_consolidados.get("numero", "")).strip()
+        if numero:
+            if not numero.upper().startswith("DDU"):
+                numero = f"DDU {numero}"
+        elif num_filename:
+            numero = f"DDU {num_filename}"
         datos_consolidados["numero"] = numero
 
         # Garantizar emisor por defecto si no se detectó
@@ -108,23 +110,17 @@ class DDUOrchestrator:
         pypdf_mod: Any = importlib.import_module("pypdf")
         pdf_reader: Any = pypdf_mod.PdfReader(pdf_path)
         pdf_pages: Any = pdf_reader.pages
-        text_parts: List[str] = []
-        for page in pdf_pages:
-            text_fn: Any = getattr(page, "extract_text", None)
-            if callable(text_fn):
-                page_text: Any = text_fn()
-                if page_text:
-                    text_parts.append(str(page_text))
+        text_list: List[str] = [str(getattr(p, "extract_text", lambda: "")() or "") for p in pdf_pages]
+        raw_text: str = "\n".join(text_list)
 
-        raw_text = "\n".join(text_parts)
         return self.process_text(raw_text, filename=pdf_path.name)
 
     def export_individual_csv(self, pdf_path: Path, output_dir: Path) -> Path:
-        """Procesa una circular DDU y exporta un archivo CSV individual con los datos extraídos.
+        """Genera un archivo CSV individual estructurado para una circular DDU.
 
         Args:
-            pdf_path: Ruta al archivo PDF de origen.
-            output_dir: Directorio donde se guardará el CSV exportado.
+            pdf_path: Ruta al archivo PDF de entrada.
+            output_dir: Directorio de salida para guardar el CSV.
 
         Returns:
             Ruta al archivo CSV generado.
@@ -132,8 +128,8 @@ class DDUOrchestrator:
         output_dir.mkdir(parents=True, exist_ok=True)
         datos = self.process_pdf(pdf_path)
 
-        ddu_num = datos["numero"] or "desconocido"
-        csv_filename = f"DDU_{ddu_num}_extraido.csv"
+        ddu_num = datos["numero"].replace(" ", "_") or "desconocido"
+        csv_filename = f"{ddu_num}_extraido.csv"
         csv_path = output_dir / csv_filename
 
         fecha_lugar_val = str(datos.get("fecha_lugar") or "").strip()
@@ -160,7 +156,7 @@ class DDUOrchestrator:
 
         dist_val = datos.get("lista_distribucion", "")
         if isinstance(dist_val, list):
-            dist_val = "; ".join(dist_val)
+            dist_val = "\n".join(dist_val)
         filas_csv.append({"bloque": "Distribución", "campo": "lista_distribucion", "valor_extraido": dist_val})
 
         with open(csv_path, "w", encoding="utf-8-sig", newline="") as f:

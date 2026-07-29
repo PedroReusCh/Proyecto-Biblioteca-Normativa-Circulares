@@ -78,7 +78,7 @@ def test_rdf_generation() -> None:
     assert f"<http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/{datos['fecha']}/{datos['numero']}>" in rdf_str, "Falta el recurso principal de la circular."
     print("  [OK] Identificador de circular correcto.")
 
-    assert 'bcn-norms:hasNumber "533" ;' in rdf_str, "Falta o está incorrecto el número de circular."
+    assert f'bcn-norms:hasNumber "{datos["numero"]}" ;' in rdf_str, "Falta o está incorrecto el número de circular."
     print("  [OK] Propiedad bcn-norms:hasNumber correcta.")
 
     assert f'bcn-norms:publishDate "{datos["fecha"]}"^^xsd:date ;' in rdf_str, "Falta o está incorrecta la fecha de publicación."
