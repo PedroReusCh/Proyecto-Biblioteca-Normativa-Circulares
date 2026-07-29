@@ -12,6 +12,47 @@ from scripts.ddu_types import SeccionDDU
 from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
 
 
+def _es_pie_de_pagina(line: str) -> bool:
+    """Detecta líneas de pie de página de OCR incluso con espacios rotos entre caracteres."""
+    line_norm = re.sub(r"\s+", " ", line).strip()
+    patterns = [
+        r"P[áa]\s*g\s*i\s*n\s*a\s*\d+",
+        r"Minister\s*io\s+de\s+Vivienda",
+        r"Alameda\s+924",
+        r"Santiago\s*-\s*Chile",
+        r"Gobierno\s+de\s+Chile",
+    ]
+    for p in patterns:
+        if re.search(p, line_norm, re.IGNORECASE):
+            return True
+    return re.match(r"^!+$", line_norm) is not None
+
+
+def _normalizar_romano_ocr(prefix: str, texto_titulo: str) -> str | None:
+    """Diferencia entre números arábigos y romanos detectando errores de OCR (ej. 11. -> II. o l. -> I.)."""
+    prefix_clean = prefix.lower().strip()
+
+    # Si es número romano directo estricto (ej. I, II, III, IV, V, VI, VII, VIII, IX, X)
+    if re.match(r"^(?:I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII)$", prefix, re.IGNORECASE):
+        return f"{prefix.upper()}."
+
+    # Analizar si el texto del título es principalmente mayúsculas
+    letras = [c for c in texto_titulo if c.isalpha()]
+    es_mayusculas = len(letras) > 0 and (sum(1 for c in letras if c.isupper()) / len(letras) >= 0.65)
+
+    if es_mayusculas:
+        if prefix_clean in ("l", "i"):
+            return "I."
+        elif prefix_clean in ("11", "ll", "1l", "l1", "ii"):
+            return "II."
+        elif prefix_clean in ("111", "lll", "iii"):
+            return "III."
+        elif prefix_clean in ("iv", "v", "vi", "vii", "viii", "ix", "x"):
+            return f"{prefix_clean.upper()}."
+
+    return None
+
+
 @register_extractor
 class CuerpoExtractor(BaseExtractor):
     """Extractor para el cuerpo estructurado por secciones y párrafos."""
@@ -76,10 +117,8 @@ class CuerpoExtractor(BaseExtractor):
             if not line_clean:
                 continue
 
-            # Descartar líneas de pie de página de OCR
-            if re.search(r"P[áa]gina\s+\d+\s+de\s+\d+", line_clean, re.IGNORECASE) or re.search(
-                r"Ministerio\s+de\s+Vivienda\s+y\s+Urban\s*ismo", line_clean, re.IGNORECASE
-            ) or re.match(r"^!+$", line_clean):
+            # Descartar líneas de pie de página de OCR (incluyendo espacios rotos)
+            if _es_pie_de_pagina(line_clean):
                 continue
 
             # Detener extracción si llegamos a la firma o distribución
@@ -97,21 +136,24 @@ class CuerpoExtractor(BaseExtractor):
                 ) or re.match(r"^\d+\)", line_clean):
                     continue
 
-            # Detectar número romano al inicio (ej. "I. INTRODUCCIÓN", "II. MARCO NORMATIVO")
-            match_romano = re.match(r"^([IVXLCDM]+)\.\s+(.+)$", line_clean)
+            # Detectar número romano o distorsión OCR de sección (ej. "I. ANTECEDENTES", "11. NORMATIVA APLICABLE")
+            match_romano = re.match(r"^([IVXLCDM]+|l+|11+|1l|l1)\.\s+(.+)$", line_clean, re.IGNORECASE)
             if match_romano:
-                if parrafo_actual:
-                    seccion_actual["parrafos"].append(parrafo_actual)
-                    parrafo_actual = ""
+                prefijo, texto_titulo = match_romano.group(1), match_romano.group(2).strip()
+                romano_norm = _normalizar_romano_ocr(prefijo, texto_titulo)
+                if romano_norm is not None:
+                    if parrafo_actual:
+                        seccion_actual["parrafos"].append(parrafo_actual)
+                        parrafo_actual = ""
 
-                if seccion_actual["titulo"] or seccion_actual["parrafos"]:
-                    secciones.append(seccion_actual)
+                    if seccion_actual["titulo"] or seccion_actual["parrafos"]:
+                        secciones.append(seccion_actual)
 
-                seccion_actual = {
-                    "titulo": f"{match_romano.group(1)}. {match_romano.group(2).strip()}",
-                    "parrafos": [],
-                }
-                continue
+                    seccion_actual = {
+                        "titulo": f"{romano_norm} {texto_titulo}",
+                        "parrafos": [],
+                    }
+                    continue
 
             # Detectar número arábigo al inicio (ej. "1. De conformidad...", "2. MARCO NORMATIVO:")
             match_parrafo = re.match(r"^(\d+)\.\s+(.+)$", line_clean)
