@@ -95,7 +95,7 @@ class DistribucionExtractor(BaseExtractor):
                         lista_distribucion.append(_limpiar_item_distribucion(sub))
 
         exito = len(lista_distribucion) > 0
-        distribucion_texto = "\n".join(lista_distribucion)
+        distribucion_texto = "; ".join(lista_distribucion)
 
         return ResultadoBloque(
             nombre_bloque=self.nombre_bloque,
