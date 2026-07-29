@@ -103,10 +103,26 @@ class CuerpoExtractor(BaseExtractor):
 
         exito = len(secciones) > 0 and any(len(s["parrafos"]) > 0 for s in secciones)
 
+        partes_cuerpo: List[str] = []
+        for sec in secciones:
+            titulo = str(sec.get("titulo", "")).strip()
+            parrafos = " ".join(sec.get("parrafos", [])).strip()
+            if titulo and parrafos:
+                partes_cuerpo.append(f"{titulo}: {parrafos}")
+            elif parrafos:
+                partes_cuerpo.append(parrafos)
+            elif titulo:
+                partes_cuerpo.append(titulo)
+
+        cuerpo_texto = " | ".join(partes_cuerpo)
+
         return ResultadoBloque(
             nombre_bloque=self.nombre_bloque,
             exito=exito,
-            datos={"secciones": secciones},
+            datos={
+                "secciones": secciones,
+                "cuerpo": cuerpo_texto,
+            },
             confianza=1.0 if exito else 0.0,
             observaciones="" if exito else "No se extrajeron secciones del cuerpo de la circular.",
         )
