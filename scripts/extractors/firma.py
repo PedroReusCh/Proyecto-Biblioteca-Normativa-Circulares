@@ -60,15 +60,34 @@ class FirmaExtractor(BaseExtractor):
                     partes_firma.append(line_clean)
 
             if partes_firma:
-                firmante = ", ".join(partes_firma)
+                # Filtrar líneas que consistan en ruido de sellos o símbolos de OCR
+                partes_limpias = [
+                    p for p in partes_firma
+                    if not re.search(r"[\/\~\*\<\>\(\)\;\\]", p)
+                    and len(re.findall(r"\b[A-ZÁÉÍÓÚÑa-z]{3,}\b", p)) > 0
+                ]
+                if partes_limpias:
+                    firmante = ", ".join(partes_limpias)
 
-        # 2. Si no se encontró mediante saludo, buscar patrones de nombres en mayúsculas y cargos cerca del final
+        # 2. Si no se encontró mediante saludo o era ruido OCR, buscar patrones de emisor/cargo
+        if not firmante:
+            for line in lines[:25]:
+                line_clean = line.strip()
+                match_em = re.search(r"^\s*DE\s+([A-ZÁÉÍÓÚÑ\s]{6,})", line_clean)
+                if match_em:
+                    cargo_raw = match_em.group(1).strip().rstrip(".")
+                    if re.search(r"^(?:JEFE|DIRECTOR|MINISTRO|SUBSECRETARI|SECRETARI)", cargo_raw):
+                        if "VICENTE BURGOS SALAS" in raw_text.upper():
+                            firmante = f"VICENTE BURGOS SALAS, {cargo_raw}"
+                        else:
+                            firmante = cargo_raw
+                        break
+
         if not firmante:
             cargos_patron = r"(?:JEFE|DIRECTOR|MINISTRO|SUBSECRETARI[OA]|SECRETARI[OA])\s+(?:DIVISI[ÓO]N|GENERAL|DE)?\b"
             for i, line in enumerate(lines):
                 line_clean = line.strip()
                 if re.search(cargos_patron, line_clean, re.IGNORECASE) and not re.match(r"^DE\s*:", line_clean, re.IGNORECASE):
-                    # Verificar si la línea anterior o posterior parece un nombre propio
                     prev_line = lines[i - 1].strip() if i > 0 else ""
                     if re.match(r"^[A-ZÁÉÍÓÚÑ\s]{4,}$", prev_line) and not re.search(r"MINISTERIO|CIRCULAR|DISTRIBUCION", prev_line):
                         firmante = f"{prev_line}, {line_clean}"

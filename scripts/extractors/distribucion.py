@@ -32,7 +32,9 @@ class DistribucionExtractor(BaseExtractor):
         lista_distribucion: List[str] = []
         en_distribucion = False
 
-        patron_encabezado_distribucion = r"^(?:DISTRIBUCI[ÓO]N|BUCI[ÓO]N|STRIBUCI[ÓO]N)[\s:]*"
+        patron_encabezado_distribucion = (
+            r"^(?:DISTRIBUCI[OÓ\?I\s]+N|BUCI[OÓ\?I\s]+N|STRIBUCI[OÓ\?I\s]+N|D\s*STRIBUC[I\?OÓ\s]*N)[\s:]*"
+        )
 
         for line in lines:
             line_clean = line.strip()
@@ -47,16 +49,14 @@ class DistribucionExtractor(BaseExtractor):
                     continue
 
                 # Si es un elemento numerado o destinatario (ej. "1. Sr. Ministro...", "2. Sra. Subsecretaria...")
-                # o una línea perteneciente a la nómina
                 item_clean = re.sub(r"\s+", " ", line_clean).strip()
                 if item_clean:
                     lista_distribucion.append(item_clean)
             else:
                 if re.match(patron_encabezado_distribucion, line_clean, re.IGNORECASE):
                     en_distribucion = True
-                    # Comprobar si hay contenido tras los dos puntos en la misma línea
                     sub = re.sub(patron_encabezado_distribucion, "", line_clean, flags=re.IGNORECASE).strip()
-                    if sub:
+                    if sub and not re.match(r"^\d+$", sub):
                         lista_distribucion.append(sub)
 
         exito = len(lista_distribucion) > 0

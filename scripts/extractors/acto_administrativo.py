@@ -31,31 +31,31 @@ class ActoAdministrativoExtractor(BaseExtractor):
         """
         numero_ord = ""
 
-        # Patrón para capturar "CIRCULAR ORD. N° 112" o "CIRCULAR ORD. N° 088"
-        pattern_ord = re.compile(r"CIRCULAR\s+ORD\.?\s*N[°o]?\s*(\d+|\w+)", re.IGNORECASE)
-        match = pattern_ord.search(raw_text)
+        # Patrón flexible para "CIRCULAR ORD. N° 112", "CIRCULAR ORO. N ___ 0_8_, 8 ___ /", "ORD. N° 088", etc.
+        pattern_ord = re.compile(
+            r"(?:CIRCULAR\s+)?(?:ORD|ORO|OR0|OR)\.?\s*(?:N[°oº\?\s_]*\s*)?([0-9\s_l·\-,]+)",
+            re.IGNORECASE,
+        )
+        match = pattern_ord.search(raw_text[:1500])
 
         if match:
-            numero_ord = match.group(0).strip()
+            raw_val = match.group(1).strip()
+            digits = re.sub(r"[^0-9]", "", raw_val)
+            if digits:
+                numero_ord = f"CIRCULAR ORD. N° {digits}"
+            else:
+                numero_ord = match.group(0).strip()
         else:
-            # Búsqueda secundaria en primeras 15 líneas
-            pattern_sec = re.compile(r"ORD\.?\s*N[°o]?\s*(\d+|\w+)", re.IGNORECASE)
-            for line in lines[:15]:
-                match_line = pattern_sec.search(line)
-                if match_line:
-                    numero_ord = f"CIRCULAR ORD. N° {match_line.group(1)}"
+            # Búsqueda secundaria en primeras 20 líneas
+            for line in lines[:20]:
+                match_sec = pattern_ord.search(line)
+                if match_sec:
+                    digits = re.sub(r"[^0-9]", "", match_sec.group(1))
+                    if digits:
+                        numero_ord = f"CIRCULAR ORD. N° {digits}"
+                    else:
+                        numero_ord = match_sec.group(0).strip()
                     break
-
-        if numero_ord:
-            # Normalizar errores OCR comunes (ej: ORO -> 088)
-            partes = numero_ord.split("N°")
-            if len(partes) > 1:
-                val_num = partes[1].strip()
-                if not val_num.isdigit():
-                    digitos = [c if c.isdigit() else ("0" if c in "O" else "") for c in val_num]
-                    numero_ord = f"CIRCULAR ORD. N° {''.join(digitos)}"
-                else:
-                    numero_ord = match.group(0).strip() if match else numero_ord
 
         exito = bool(numero_ord)
         return ResultadoBloque(

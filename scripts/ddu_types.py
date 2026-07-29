@@ -27,6 +27,8 @@ class DatosCircularDDU(TypedDict):
     elementos_visuales: NotRequired[str]
     numero_ord: NotRequired[str]
     descriptores: NotRequired[str]
+    cuerpo: NotRequired[str]
+    fecha_lugar: NotRequired[str]
     lugar: NotRequired[str]
     destinatarios: NotRequired[str]
     firmante: NotRequired[str]

@@ -29,22 +29,37 @@ class DescriptoresExtractor(BaseExtractor):
         Returns:
             ResultadoBloque con los descriptores extraídos.
         """
-        descriptores = ""
+        desc_lineas: List[str] = []
+        en_descriptores = False
+
         for line in lines[:45]:
+            line_clean = line.strip()
+            if not line_clean:
+                continue
+
             match_exp = re.match(
                 r"^(?:DESCRIPTORES|VOCABLOS|PALABRAS\s+CLAVE)\.?(?:\s*:\s*|\s+)(.+)$",
-                line,
+                line_clean,
                 re.IGNORECASE,
             )
             if match_exp:
-                descriptores = match_exp.group(1).strip()
+                desc_lineas.append(match_exp.group(1).strip())
+                en_descriptores = True
+                continue
+
+            # Si ya estamos acumulando descriptores o detectamos líneas en MAYÚSCULAS de descriptores
+            if re.match(r"^(?:DE|A|PARA|MAT|ANT|SANTIAGO|VALPARA[ÍI]SO|CIRCULAR|MINISTERIO|ORD|DDU|\d+\.|[I|V|X]+\.)\b", line_clean, re.IGNORECASE):
+                if en_descriptores:
+                    break
+                continue
+
+            if re.match(r"^[A-ZÁÉÍÓÚÑ0-9\s;,\.-]{3,}$", line_clean):
+                desc_lineas.append(line_clean)
+                en_descriptores = True
+            elif en_descriptores:
                 break
 
-            if re.match(r"^[A-ZÁÉÍÓÚÑ0-9\s;]{3,}(?:,\s*[A-ZÁÉÍÓÚÑ0-9\s;]{3,})+\.?$", line):
-                if not re.match(r"^(?:DE|A|PARA|MAT|ANT|SANTIAGO|CIRCULAR|MINISTERIO)\b", line, re.IGNORECASE):
-                    descriptores = line.strip()
-                    break
-
+        descriptores = " ".join(desc_lineas)
         descriptores = re.sub(r"\s+", " ", descriptores).strip()
         exito = bool(descriptores)
 

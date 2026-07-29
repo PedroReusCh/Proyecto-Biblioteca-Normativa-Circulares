@@ -42,12 +42,14 @@ class FechaLugarExtractor(BaseExtractor):
             flags=re.IGNORECASE,
         )
         raw_text_norm = re.sub(
-            rf"\b([123])\s+([1-9])\s+(?={meses_regex})",
+            rf"\b([123])\s+([0-9])\s+(?={meses_regex})",
             r"\g<1>\g<2> ",
             raw_text_norm,
             flags=re.IGNORECASE,
         )
         raw_text_norm = re.sub(r"\b2325\b", "2023", raw_text_norm)
+        raw_text_norm = re.sub(r"\b([0-3])\s+([0-9])\b", r"\1\2", raw_text_norm)
+        raw_text_norm = re.sub(r"\b2[^\d\s]{1,3}(\d{2})\b", r"20\1", raw_text_norm)
 
         patron_fecha = (
             rf"(?P<lugar>Santiago|Valpara[íi]so|Concepci[óo]n)?\s*,?\s*"

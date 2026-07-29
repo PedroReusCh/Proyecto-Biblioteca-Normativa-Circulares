@@ -83,6 +83,8 @@ class DDUOrchestrator:
             "elementos_visuales": str(datos_consolidados.get("elementos_visuales", "")),
             "numero_ord": str(datos_consolidados.get("numero_ord", "")),
             "descriptores": str(datos_consolidados.get("descriptores", "")),
+            "cuerpo": str(datos_consolidados.get("cuerpo", "")),
+            "fecha_lugar": str(datos_consolidados.get("fecha_lugar", "")),
             "lugar": str(datos_consolidados.get("lugar", "Santiago")),
             "destinatarios": str(datos_consolidados.get("destinatarios", "")),
             "firmante": str(datos_consolidados.get("firmante", "")),
