@@ -91,6 +91,7 @@ class DDUOrchestrator:
             "destinatarios": str(datos_consolidados.get("destinatarios", "")),
             "firmante": str(datos_consolidados.get("firmante", "")),
             "lista_distribucion": datos_consolidados.get("lista_distribucion", []),
+            "distribucion_texto": str(datos_consolidados.get("distribucion_texto", "")),
         }
 
         return res_final
@@ -154,9 +155,7 @@ class DDUOrchestrator:
 
         filas_csv.append({"bloque": "Firma", "campo": "firmante", "valor_extraido": datos.get("firmante", "")})
 
-        dist_val = datos.get("lista_distribucion", "")
-        if isinstance(dist_val, list):
-            dist_val = "\n".join(dist_val)
+        dist_val = str(datos.get("distribucion_texto") or "")
         filas_csv.append({"bloque": "Distribución", "campo": "lista_distribucion", "valor_extraido": dist_val})
 
         with open(csv_path, "w", encoding="utf-8-sig", newline="") as f:

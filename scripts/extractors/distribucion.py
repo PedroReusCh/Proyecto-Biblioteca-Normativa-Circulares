@@ -92,11 +92,15 @@ class DistribucionExtractor(BaseExtractor):
                         lista_distribucion.append(_limpiar_item_distribucion(sub))
 
         exito = len(lista_distribucion) > 0
+        distribucion_texto = "\n".join(lista_distribucion)
 
         return ResultadoBloque(
             nombre_bloque=self.nombre_bloque,
             exito=exito,
-            datos={"lista_distribucion": lista_distribucion},
+            datos={
+                "lista_distribucion": lista_distribucion,
+                "distribucion_texto": distribucion_texto,
+            },
             confianza=1.0 if exito else 0.0,
             observaciones="" if exito else "No se encontró lista de distribución en la circular.",
         )
