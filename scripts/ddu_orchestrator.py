@@ -159,7 +159,7 @@ class DDUOrchestrator:
         filas_csv.append({"bloque": "Distribución", "campo": "lista_distribucion", "valor_extraido": dist_val})
 
         with open(csv_path, "w", encoding="utf-8-sig", newline="") as f:
-            writer = csv.DictWriter(f, fieldnames=["bloque", "campo", "valor_extraido"], delimiter=";")
+            writer = csv.DictWriter(f, fieldnames=["bloque", "campo", "valor_extraido"], delimiter=";", quoting=csv.QUOTE_ALL)
             writer.writeheader()
             writer.writerows(filas_csv)
 
@@ -223,7 +223,7 @@ class DDUOrchestrator:
         ]
 
         with open(output_path, "w", encoding="utf-8-sig", newline="") as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames, delimiter=";")
+            writer = csv.DictWriter(f, fieldnames=fieldnames, delimiter=";", quoting=csv.QUOTE_ALL)
             writer.writeheader()
             writer.writerows(master_rows)
 
