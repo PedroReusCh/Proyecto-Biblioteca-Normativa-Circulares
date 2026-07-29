@@ -4,7 +4,6 @@ import csv
 from pathlib import Path
 from typing import List
 
-import pytest
 
 from scripts.ddu_orchestrator import DDUOrchestrator
 from scripts.ddu_types import DatosCircularDDU

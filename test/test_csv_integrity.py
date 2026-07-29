@@ -1,7 +1,6 @@
 """Script de prueba para validar la integridad y alineación de columnas de los CSV de la BCN."""
 
 import csv
-import sys
 from pathlib import Path
 
 

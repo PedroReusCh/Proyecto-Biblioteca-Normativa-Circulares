@@ -1,18 +1,18 @@
 """Script de prueba para la generación de RDF/Turtle de circulares DDU."""
 
-import os
 import sys
 from pathlib import Path
-from typing import Any, Dict
 
 # Agregar scripts al path de importaciones
 proyecto_raiz = Path(__file__).resolve().parents[1]
 scripts_dir = proyecto_raiz / "scripts"
 if str(scripts_dir) not in sys.path:
     sys.path.insert(0, str(scripts_dir))
+if str(proyecto_raiz) not in sys.path:
+    sys.path.insert(0, str(proyecto_raiz))
 
-from ddu_parser import DDUParser
-from ddu_to_rdf import DDUToRDF
+from scripts.ddu_parser import DDUParser
+from scripts.ddu_to_rdf import DDUToRDF
 
 
 def test_rdf_generation() -> None:
@@ -28,11 +28,11 @@ def test_rdf_generation() -> None:
     datos = parser.parse_pdf()
 
     print("\nMetadatos extraídos:")
-    print(f"  Número: {datos.get('numero')}")
-    print(f"  Fecha: {datos.get('fecha')}")
-    print(f"  Emisor: {datos.get('emisor')}")
-    print(f"  Materia: {datos.get('materia')[:80]}...")
-    print(f"  Cantidad de secciones: {len(datos.get('secciones', []))}")
+    print(f"  Número: {datos['numero']}")
+    print(f"  Fecha: {datos['fecha']}")
+    print(f"  Emisor: {datos['emisor']}")
+    print(f"  Materia: {datos['materia'][:80]}...")
+    print(f"  Cantidad de secciones: {len(datos['secciones'])}")
 
     print("\n=== PASO 2: Generando RDF (Turtle) ===")
     generador = DDUToRDF()
@@ -65,9 +65,9 @@ def test_rdf_generation() -> None:
         "bcn-norms: <http://datos.bcn.cl/ontologies/bcn-norms#>",
         "minvu-ddu: <http://datos.bcn.cl/ontologies/minvu-ddu#>",
         "bcn-resources: <http://datos.bcn.cl/ontologies/bcn-resources#>",
-        "xsd: <http://www.w3.org/2001/XMLSchema#>"
+        "xsd: <http://www.w3.org/2001/XMLSchema#>",
     ]
-    
+
     for p in prefijos:
         assert p in rdf_str, f"Falta el prefijo: {p}"
     print("  [OK] Todos los prefijos requeridos están presentes.")

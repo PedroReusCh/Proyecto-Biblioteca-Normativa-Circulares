@@ -1,8 +1,8 @@
 """Pruebas unitarias para los extractores independientes de cuerpo, firma y distribución (ETLs 9 a 11)."""
 
-import pytest
-from typing import List
+from typing import Any, List
 
+from scripts.ddu_types import SeccionDDU
 from scripts.extractors import registrar_todos_los_extractores
 from scripts.extractors.base import ExtractorRegistry
 from scripts.extractors.cuerpo import CuerpoExtractor
@@ -61,13 +61,14 @@ def test_cuerpo_extractor() -> None:
     assert resultado.nombre_bloque == "cuerpo"
     assert resultado.exito is True
     assert "secciones" in resultado.datos
-    secciones = resultado.datos["secciones"]
+    secciones: List[SeccionDDU] = list(resultado.datos["secciones"])
     assert len(secciones) > 0
 
     # Verificar que los párrafos contengan los numerales principales de la DDU 533
-    parrafos_concatenados = " ".join(
-        [p for s in secciones for p in s.get("parrafos", [])]
-    )
+    parrafos_list: List[str] = []
+    for sec in secciones:
+        parrafos_list.extend(sec["parrafos"])
+    parrafos_concatenados = " ".join(parrafos_list)
     assert "1. De conformidad con lo previsto" in parrafos_concatenados
     assert "2. MARCO NORMATIVO: DS 33." in parrafos_concatenados
     assert "3. ÁMBITO DE APLICACIÓN DE LA PRÓRROGA" in parrafos_concatenados
@@ -79,7 +80,7 @@ def test_firma_extractor() -> None:
     resultado = extractor.extract(SAMPLE_TEXT_DDU_533_BODY, SAMPLE_LINES_DDU_533_BODY)
     assert resultado.nombre_bloque == "firma"
     assert resultado.exito is True
-    firmante = resultado.datos["firmante"]
+    firmante = str(resultado.datos["firmante"])
     assert "VICENTE BURGOS SALAS" in firmante
     assert "JEFE DIVISIÓN DE DESARROLLO URBANO" in firmante
 
@@ -90,8 +91,8 @@ def test_distribucion_extractor() -> None:
     resultado = extractor.extract(SAMPLE_TEXT_DDU_533_BODY, SAMPLE_LINES_DDU_533_BODY)
     assert resultado.nombre_bloque == "distribucion"
     assert resultado.exito is True
-    distribucion = resultado.datos["lista_distribucion"]
+    distribucion: List[Any] = list(resultado.datos["lista_distribucion"])
     assert isinstance(distribucion, list)
     assert len(distribucion) == 4
-    assert "1. Sr. Ministro de Vivienda y Urbanismo" in distribucion[0]
-    assert "4. Biblioteca del Congreso Nacional." in distribucion[3]
+    assert "1. Sr. Ministro de Vivienda y Urbanismo" in str(distribucion[0])
+    assert "4. Biblioteca del Congreso Nacional." in str(distribucion[3])

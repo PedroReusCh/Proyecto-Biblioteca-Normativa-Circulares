@@ -43,9 +43,11 @@ El objetivo principal es tomar circulares DDU (División de Desarrollo Urbano de
 * **Idioma Único**: Toda la comunicación, explicaciones, preguntas y respuestas con el usuario deben generarse exclusivamente en **español**.
 * **Mensajes de Commit**: Todos los mensajes de confirmación (commits) generados para Git por la IA deben redactarse exclusivamente en **español**.
 
-### 6. Calidad de Código y Tipado Estricto (Strict)
+### 6. Calidad de Código y Tipado Estricto (Pylance Strict Mode)
 
-* Todo el código de scripts y pruebas debe cumplir estrictamente con el estándar de tipado de Python.
+* **Cumplimiento Obligatorio en Scripts y Tests**: Todo el código de producción ([`scripts/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/)) y todos los archivos de la suite de pruebas ([`test/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/)) deben cumplir estrictamente con el estándar **Pylance Strict Mode** configurado en [`.vscode/settings.json`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/.vscode/settings.json) (`python.analysis.typeCheckingMode: strict`).
+* **Cero Advertencias o Errores de Tipado**: Ningún archivo Python del proyecto debe generar diagnósticos de Pylance/Pyright (`reportMissingImports`, `reportUnknownVariableType`, `reportUnknownMemberType`, `reportUnknownArgumentType`, `reportRedeclaration`, etc.).
+* **Preferencia de Código Limpio**: Se debe dar preferencia a importaciones estructuradas, tipados explícitos mediante `typing` y librerías nativas por sobre el uso de comentarios de supresión estática (`# pyright: ignore`).
 
 ### 7. Trazabilidad y Evidencia
 

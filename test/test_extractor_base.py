@@ -1,7 +1,7 @@
 """Pruebas unitarias para BaseExtractor, ResultadoBloque y ExtractorRegistry."""
 
 import pytest
-from typing import List, Dict, Any
+from typing import List
 from scripts.extractors.base import (
     BaseExtractor,
     ResultadoBloque,

@@ -1,6 +1,5 @@
 """Pruebas unitarias para los 8 extractores independientes de metadatos (ETLs 1 a 8)."""
 
-import pytest
 from typing import List
 
 from scripts.extractors import registrar_todos_los_extractores
