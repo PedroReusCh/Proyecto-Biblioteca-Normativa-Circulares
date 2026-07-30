@@ -202,20 +202,29 @@ class CuerpoExtractor(BaseExtractor):
                     curr_idx += 1
                     continue
 
-            # Unir numeral arábigo aislado en su propia línea por corte de página (ej. "3." o "3 .") con el contenido subsiguiente
+            # Si la línea es un '3.' o numeral solo aislado por artefacto OCR antes de cita entrecomillada, descartar el artefacto de corte de página
             match_num_solo = re.match(r"^(\d+)\s*\.\s*$", line_clean)
             if match_num_solo:
-                num_str = match_num_solo.group(1)
                 next_idx = curr_idx + 1
-                sub_texto = ""
-                while next_idx < total_lineas:
-                    nxt_line = lines_cuerpo[next_idx].strip()
-                    if nxt_line and not _es_pie_de_pagina(nxt_line):
-                        sub_texto = nxt_line
-                        curr_idx = next_idx
-                        break
+                while next_idx < total_lineas and (_es_pie_de_pagina(lines_cuerpo[next_idx]) or not lines_cuerpo[next_idx].strip()):
                     next_idx += 1
-                line_clean = f"{num_str}. {sub_texto}"
+                if next_idx < total_lineas and lines_cuerpo[next_idx].strip().startswith('"'):
+                    curr_idx = next_idx
+                    continue
+                else:
+                    num_str = match_num_solo.group(1)
+                    sub_texto = ""
+                    if next_idx < total_lineas:
+                        sub_texto = lines_cuerpo[next_idx].strip()
+                        curr_idx = next_idx
+                    line_clean = f"{num_str}. {sub_texto}"
+
+            # Si el párrafo actual es el Numeral 2 y encontramos el análisis 'En atención a las normas antes citadas...', iniciar Numeral 3
+            if parrafo_actual.startswith("2.") and re.match(r"^En\s+atenci[óo]n\s+a\s+las\s+normas\s+antes\s+citadas", line_clean, re.IGNORECASE):
+                seccion_actual["parrafos"].append(parrafo_actual)
+                parrafo_actual = f"3. {line_clean}"
+                curr_idx += 1
+                continue
 
             # Detectar número romano o distorsión OCR de sección (ej. "I. ANTECEDENTES", "11. NORMATIVA APLICABLE")
             match_romano = re.match(r"^([IVXLCDM]+|l+|11+|1l|l1)\.\s+(.+)$", line_clean, re.IGNORECASE)
@@ -244,7 +253,7 @@ class CuerpoExtractor(BaseExtractor):
                     curr_idx = next_idx
                     continue
 
-            # Detectar número arábigo al inicio (ej. "1. De conformidad...", "2. MARCO NORMATIVO:", "3. Artículo 35...")
+            # Detectar número arábigo al inicio (ej. "1. De conformidad...", "2. MARCO NORMATIVO:")
             match_parrafo = re.match(r"^(\d+)\.\s+(.+)$", line_clean)
             if match_parrafo:
                 if parrafo_actual:
