@@ -198,7 +198,7 @@ def test_cuerpo_extractor_exclusion_notas_al_pie() -> None:
 
 
 def test_distribucion_extractor_ddu_546_ocr() -> None:
-    """Verifica la extracción limpia de la lista de distribución en DDU 546 con OCR distorsionado."""
+    """Verifica la extracción limpia de la lista de distribución en DDU 546 con OCR distorsionado y sin banners de pie de página."""
     lines = [
         "Saluda atentamente a Ud.,",
         "N DIEGO ZQUIERDO HEVIA",
@@ -209,6 +209,7 @@ def test_distribucion_extractor_ddu_546_ocr() -> None:
         "Sr. Ministro de Vivienda y Urbanismo",
         ",2. Sra. Subsecretaria de Vivienda y Urbanismo",
         "3. Sra. Contralora General de la República",
+        "=::::= ========= GOBIERNO DE CHILE ====== ==-== = :-=",
     ]
 
     extractor = DistribucionExtractor()
@@ -220,3 +221,4 @@ def test_distribucion_extractor_ddu_546_ocr() -> None:
     assert distribucion[0] == "1. Sr. Ministro de Vivienda y Urbanismo"
     assert distribucion[1] == "2. Sra. Subsecretaria de Vivienda y Urbanismo"
     assert distribucion[2] == "3. Sra. Contralora General de la República"
+    assert not any("GOBIERNO DE CHILE" in d for d in distribucion)
