@@ -1,8 +1,7 @@
 | Estado | Tarea |
 | :--- | :--- |
-| ✅ Completado | 1. Explorar el contexto y aparición de llamadas a notas al pie en cuerpo.py |
-| ✅ Completado | 2. Formular pregunta de clarificación sobre el formato preferido para llamadas a notas al pie |
-| ✅ Completado | 3. Proponer 2-3 enfoques de formateo/limpieza de números de llamada a nota al pie |
-| ✅ Completado | 4. Presentar diseño técnico y obtener aprobación del usuario |
-| ✅ Completado | 5. Escribir documento de diseño `docs/plans/2026-07-30-llamadas-nota-al-pie-cuerpo-design.md` y realizar commit |
-| ✅ Completado | 6. Invocar skill `writing-plans` para el plan de implementación |
+| ✅ Completado | 1. Explorar el contexto y las líneas de notas al pie que filtrará cuerpo.py |
+| ✅ Completado | 2. Formular pregunta de clarificación / proponer enfoques de filtrado de notas al pie en el cuerpo |
+| 🔄 En progreso | 3. Presentar diseño técnico para exclusión de notas al pie en `cuerpo.py` y obtener aprobación |
+| ⏳ Pendiente | 4. Escribir documento de diseño `docs/plans/2026-07-30-exclusión-notas-al-pie-cuerpo-design.md` y realizar commit |
+| ⏳ Pendiente | 5. Invocar skill `writing-plans` para el plan de implementación |
