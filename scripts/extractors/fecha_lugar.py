@@ -11,6 +11,18 @@ from typing import Any, List
 from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
 
 
+def _reparar_digitos_anio_ocr(anio_str: str) -> str:
+    """Repara confusiones tipográficas genéricas de OCR en dígitos de año (siglo XXI: 2000-2099)."""
+    s = anio_str.strip()
+    if len(s) == 4 and s.startswith("2"):
+        d1 = "2"
+        d2 = "0" if s[1] in ("3", "o", "O", "Q", "b") else s[1]
+        d3 = "2" if s[2] in ("2", "l", "I", "|") else s[2]
+        d4 = "6" if (s[3] == "5" and s[1] in ("3", "o", "O")) else s[3]
+        return f"{d1}{d2}{d3}{d4}"
+    return s
+
+
 @register_extractor
 class FechaLugarExtractor(BaseExtractor):
     """Extractor para la fecha (YYYY-MM-DD) y lugar de emisión de la circular DDU."""
@@ -47,12 +59,18 @@ class FechaLugarExtractor(BaseExtractor):
             raw_text_norm,
             flags=re.IGNORECASE,
         )
-        # Normalizar distorsiones genéricas de OCR en años de 4 dígitos tras un mes (ej. 2326 -> 2026, 2l23 -> 2023)
+        # Normalizar distorsiones genéricas de OCR en años de 4 dígitos tras un mes
         pattern_anio_ocr = re.compile(
-            rf"(\b{meses_regex}\.?\s*(?:de\s+)?)(2[3oO])([0-9])([0-9])\b",
+            rf"(\b{meses_regex}\.?\s*(?:de\s+)?)([0-9lI\|oO3b]{{4}})\b",
             re.IGNORECASE,
         )
-        raw_text_norm = pattern_anio_ocr.sub(r"\g<1>20\3\4", raw_text_norm)
+
+        def _fix_match(m: re.Match[str]) -> str:
+            prefix = m.group(1)
+            anio_clean = _reparar_digitos_anio_ocr(m.group(2))
+            return f"{prefix}{anio_clean}"
+
+        raw_text_norm = pattern_anio_ocr.sub(_fix_match, raw_text_norm)
         raw_text_norm = re.sub(r"\b([0-3])\s+([0-9])\b", r"\1\2", raw_text_norm)
         raw_text_norm = re.sub(r"\b2[^\d\s]{1,3}(\d{2})\b", r"20\1", raw_text_norm)
 
@@ -89,7 +107,7 @@ class FechaLugarExtractor(BaseExtractor):
             if match:
                 dd = int(match.group("dia"))
                 mes_str = match.group("mes").lower().strip(".")
-                yyyy_str = match.group("anio")
+                yyyy_str = _reparar_digitos_anio_ocr(match.group("anio"))
                 yyyy = 2000 + int(yyyy_str) if len(yyyy_str) == 2 else int(yyyy_str)
                 mm = mes_map.get(mes_str, "00")
                 fecha = f"{yyyy:04d}-{mm}-{dd:02d}"
@@ -105,7 +123,7 @@ class FechaLugarExtractor(BaseExtractor):
                 if match:
                     dd = int(match.group("dia"))
                     mes_str = match.group("mes").lower().strip(".")
-                    yyyy_str = match.group("anio")
+                    yyyy_str = _reparar_digitos_anio_ocr(match.group("anio"))
                     yyyy = 2000 + int(yyyy_str) if len(yyyy_str) == 2 else int(yyyy_str)
                     mm = mes_map.get(mes_str, "00")
                     fecha = f"{yyyy:04d}-{mm}-{dd:02d}"
