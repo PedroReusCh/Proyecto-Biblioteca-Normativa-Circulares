@@ -72,27 +72,57 @@ class DistribucionExtractor(BaseExtractor):
             item = re.sub(r"\s+\.", ".", item)
             return re.sub(r"\s+", " ", item).strip()
 
-        for line in lines:
+        idx_auto = 1
+        total_lineas = len(lines)
+
+        for i, line in enumerate(lines):
             line_clean = line.strip()
             if not line_clean:
                 continue
 
+            # Encabezado explícito DISTRIBUCIÓN: tiene prioridad absoluta y resetea cualquier captura previa
+            if re.match(patron_encabezado_distribucion, line_clean, re.IGNORECASE):
+                lista_distribucion.clear()
+                en_distribucion = True
+                idx_auto = 1
+                sub = re.sub(patron_encabezado_distribucion, "", line_clean, flags=re.IGNORECASE).strip()
+                if sub and not re.match(r"^\d+$", sub):
+                    item_clean = _limpiar_item_distribucion(sub)
+                    if item_clean:
+                        if not re.match(r"^\d+\.", item_clean):
+                            item_clean = f"{idx_auto}. {item_clean}"
+                            idx_auto += 1
+                        lista_distribucion.append(item_clean)
+                continue
+
+            if not en_distribucion:
+                if re.search(r"Saluda\s+atent", line_clean, re.IGNORECASE):
+                    en_distribucion = True
+                    continue
+                elif i >= total_lineas - 50 and re.match(r"^(?:Sr\.|Sra\.|1\.|1!)\b", line_clean, re.IGNORECASE):
+                    en_distribucion = True
+
             if en_distribucion:
-                # Omitir pie de página de OCR o marcas de corte
-                if re.search(r"P[áa]gina\s+\d+\s+de\s+\d+", line_clean, re.IGNORECASE) or re.search(
-                    r"Ministerio\s+de\s+Vivienda\s+y\s+Urban\s*ismo", line_clean, re.IGNORECASE
-                ) or re.match(r"^!+$", line_clean):
+                # Omitir pie de página de OCR, marcas de corte y firma de emisor
+                if (
+                    re.search(r"P[áa]gina\s+\d+\s+de\s+\d+", line_clean, re.IGNORECASE)
+                    or re.search(r"Ministerio\s+de\s+Vivienda\s+y\s+Urban\s*ismo", line_clean, re.IGNORECASE)
+                    or re.match(r"^!+$", line_clean)
+                    or re.match(r"^(?:VICENTE|BURGOS|SALAS|JEFE\s+DIVISI[ÓO]N)\b", line_clean, re.IGNORECASE)
+                ):
                     continue
 
                 item_clean = _limpiar_item_distribucion(line_clean)
                 if item_clean:
+                    if not re.match(r"^\d+\.", item_clean):
+                        item_clean = f"{idx_auto}. {item_clean}"
+                        idx_auto += 1
+                    else:
+                        m_num = re.match(r"^(\d+)\.", item_clean)
+                        if m_num:
+                            idx_auto = int(m_num.group(1)) + 1
+
                     lista_distribucion.append(item_clean)
-            else:
-                if re.match(patron_encabezado_distribucion, line_clean, re.IGNORECASE):
-                    en_distribucion = True
-                    sub = re.sub(patron_encabezado_distribucion, "", line_clean, flags=re.IGNORECASE).strip()
-                    if sub and not re.match(r"^\d+$", sub):
-                        lista_distribucion.append(_limpiar_item_distribucion(sub))
 
         exito = len(lista_distribucion) > 0
         distribucion_texto = "; ".join(lista_distribucion)
