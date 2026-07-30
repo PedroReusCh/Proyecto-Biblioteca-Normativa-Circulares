@@ -187,8 +187,8 @@ class CuerpoExtractor(BaseExtractor):
                 continue
 
             # Detener extracción si llegamos a la firma o distribución
-            if re.match(r"^Saluda\s+atentamente\s+a\s+Ud", line_clean, re.IGNORECASE) or re.match(
-                r"^(?:DISTRIBUCI[ÓO]N|BUCI[ÓO]N|STRIBUCI[ÓO]N)[\s:]*", line_clean, re.IGNORECASE
+            if re.search(r"Saluda\s+atent", line_clean, re.IGNORECASE) or re.match(
+                r"^(?:DISTRIBUCI[ÓO\?I\s]+N|BUCI[ÓO\?I\s]+N|STRIBUCI[ÓO\?I\s]+N)[\s:]*", line_clean, re.IGNORECASE
             ):
                 break
 
@@ -201,6 +201,21 @@ class CuerpoExtractor(BaseExtractor):
                 ) or re.match(r"^\d+\)", line_clean):
                     curr_idx += 1
                     continue
+
+            # Unir numeral arábigo aislado en su propia línea por corte de página (ej. "3." o "3 .") con el contenido subsiguiente
+            match_num_solo = re.match(r"^(\d+)\s*\.\s*$", line_clean)
+            if match_num_solo:
+                num_str = match_num_solo.group(1)
+                next_idx = curr_idx + 1
+                sub_texto = ""
+                while next_idx < total_lineas:
+                    nxt_line = lines_cuerpo[next_idx].strip()
+                    if nxt_line and not _es_pie_de_pagina(nxt_line):
+                        sub_texto = nxt_line
+                        curr_idx = next_idx
+                        break
+                    next_idx += 1
+                line_clean = f"{num_str}. {sub_texto}"
 
             # Detectar número romano o distorsión OCR de sección (ej. "I. ANTECEDENTES", "11. NORMATIVA APLICABLE")
             match_romano = re.match(r"^([IVXLCDM]+|l+|11+|1l|l1)\.\s+(.+)$", line_clean, re.IGNORECASE)
@@ -229,7 +244,7 @@ class CuerpoExtractor(BaseExtractor):
                     curr_idx = next_idx
                     continue
 
-            # Detectar número arábigo al inicio (ej. "1. De conformidad...", "2. MARCO NORMATIVO:")
+            # Detectar número arábigo al inicio (ej. "1. De conformidad...", "2. MARCO NORMATIVO:", "3. Artículo 35...")
             match_parrafo = re.match(r"^(\d+)\.\s+(.+)$", line_clean)
             if match_parrafo:
                 if parrafo_actual:
