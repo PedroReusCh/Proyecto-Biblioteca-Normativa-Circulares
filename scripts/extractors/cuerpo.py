@@ -83,6 +83,20 @@ def _normalizar_llamadas_nota_al_pie(line: str) -> str:
     return line
 
 
+def _es_inicio_nota_al_pie(line: str) -> bool:
+    """Detecta si una línea corresponde al inicio de una nota al pie explicativa."""
+    line_clean = line.strip()
+    match = re.match(r"^(\d{1,2})\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñA-ZÁÉÍÓÚÑ\s\.,\(\)\"\'-].+)$", line_clean)
+    if match:
+        num = match.group(1)
+        texto = match.group(2).strip()
+        if int(num) <= 20 and not line_clean.startswith(f"{num}. "):
+            if not re.match(r"^\d+\s+(?:de\s+la|de\s+los|del|en\s+la|con\s+la|que|por|para)\b", line_clean, re.IGNORECASE):
+                if re.search(r"(?:Art[íi]culo|Circular|Orientaci[óo]n|Gu[íi]a|Decreto|Ley|Construcci[óo]n|Edificaci[óo]n|OGUC|LGUC)\b", texto, re.IGNORECASE):
+                    return True
+    return False
+
+
 def _es_pie_de_pagina(line: str) -> bool:
     """Detecta líneas de pie de página de OCR incluso con espacios rotos entre caracteres."""
     line_norm = re.sub(r"\s+", " ", line).strip()
@@ -197,6 +211,7 @@ class CuerpoExtractor(BaseExtractor):
         secciones: List[SeccionDDU] = []
         seccion_actual: SeccionDDU = {"titulo": "", "parrafos": []}
         parrafo_actual = ""
+        omitiendo_nota_al_pie = False
 
         lines_cuerpo = lines[inicio_cuerpo:]
         total_lineas = len(lines_cuerpo)
@@ -217,6 +232,22 @@ class CuerpoExtractor(BaseExtractor):
             line_clean = _normalizar_prefijo_numeral_ocr(line_clean)
             # Aplicar formateo de llamadas a notas al pie [1], [2], [3]
             line_clean = _normalizar_llamadas_nota_al_pie(line_clean)
+
+            # Detectar e ignorar bloques de notas al pie dentro del cuerpo
+            if _es_inicio_nota_al_pie(line_clean):
+                if parrafo_actual:
+                    seccion_actual["parrafos"].append(parrafo_actual.strip())
+                    parrafo_actual = ""
+                omitiendo_nota_al_pie = True
+                curr_idx += 1
+                continue
+
+            if omitiendo_nota_al_pie:
+                if re.match(r"^\d+\.\s+", line_clean) or re.match(r"^[I|V|X]+\.\s+", line_clean, re.IGNORECASE):
+                    omitiendo_nota_al_pie = False
+                else:
+                    curr_idx += 1
+                    continue
 
             # Detener extracción si llegamos a la firma o distribución
             if re.search(r"Saluda\s+atent", line_clean, re.IGNORECASE) or re.match(
