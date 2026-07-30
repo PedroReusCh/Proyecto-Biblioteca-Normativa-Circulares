@@ -121,10 +121,14 @@ class DistribucionExtractor(BaseExtractor):
                     en_distribucion = True
 
             if en_distribucion:
-                # Omitir pie de página de OCR, marcas de corte y firma de emisor
+                # Omitir pie de página de OCR, marcas de corte, firma de emisor y banners institucionales
                 if (
-                    re.search(r"P[áa]gina\s+\d+\s+de\s+\d+", line_clean, re.IGNORECASE)
+                    re.search(r"P[áa]gina\s+\d+", line_clean, re.IGNORECASE)
                     or re.search(r"Ministerio\s+de\s+Vivienda\s+y\s+Urban\s*ismo", line_clean, re.IGNORECASE)
+                    or re.search(r"GOBIERNO\s+DE\s+CHILE", line_clean, re.IGNORECASE)
+                    or re.search(r"Alameda\s+924", line_clean, re.IGNORECASE)
+                    or re.search(r"Santiago\s*-\s*Chile", line_clean, re.IGNORECASE)
+                    or re.match(r"^[\=\:\-\~\s]{4,}$", line_clean)
                     or re.match(r"^!+$", line_clean)
                     or re.match(r"^(?:VICENTE|BURGOS|SALAS|JEFE\s+DIVISI[ÓO]N)\b", line_clean, re.IGNORECASE)
                 ):
