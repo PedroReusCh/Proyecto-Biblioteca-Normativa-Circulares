@@ -171,3 +171,27 @@ def test_cuerpo_extractor_llamadas_nota_al_pie() -> None:
     assert "Nº97 /2007 [1]" in texto_completo
     assert "carácter de construcción [2]" in texto_completo
     assert "artículo 38 [1]" in texto_completo
+
+
+def test_cuerpo_extractor_exclusion_notas_al_pie() -> None:
+    """Verifica que el extractor de cuerpo excluya las notas explicativas al pie de página."""
+    lines = [
+        "1. De conformidad a lo dispuesto en el artículo 4°...",
+        "7. Por lo tanto, las pérgolas que cumplan...",
+        "1 En dicha circular se indica que el citado artículo 5.1.2...",
+        "2 En el artículo 1.1.2. de la OGUC se define...",
+        "8. Con todo, debe advertirse que la circunstancia...",
+        "Saluda atentamente a Ud.,",
+    ]
+
+    extractor = CuerpoExtractor()
+    resultado = extractor.extract("\n".join(lines), lines)
+
+    assert resultado.exito is True
+    secciones: List[Any] = list(resultado.datos.get("secciones", []))
+    texto_completo = " ".join([p for s in secciones for p in s.get("parrafos", [])])
+
+    assert "7. Por lo tanto, las pérgolas que cumplan..." in texto_completo
+    assert "8. Con todo, debe advertirse que la circunstancia..." in texto_completo
+    assert "1 En dicha circular se indica" not in texto_completo
+    assert "2 En el artículo 1.1.2. de la OGUC" not in texto_completo
