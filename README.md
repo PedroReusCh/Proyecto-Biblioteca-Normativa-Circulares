@@ -13,19 +13,19 @@ El proyecto se estructura en los siguientes directorios clave:
 * [`circulares/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/circulares): Colección de circulares DDU originales en formato PDF (por ejemplo, DDU 531, 533, 537 y 546).
 * [`scripts/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts): Módulos funcionales de procesamiento y conversión:
   * [`ddu_types.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_types.py): Declaraciones de tipado estricto `DatosCircularDDU` y `SeccionDDU`.
-  * [`extractors/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors): Paquete de 11 ETLs modulares e independientes (`encabezado.py`, `acto_administrativo.py`, `antecedentes.py`, `materia.py`, `descriptores.py`, `fecha_lugar.py`, `destinatarios.py`, `emisor.py`, `cuerpo.py`, `firma.py`, `distribucion.py`) derivados de la interfaz base `BaseExtractor`.
+  * [`extractors/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors): Paquete de 12 ETLs modulares e independientes (`encabezado.py`, `acto_administrativo.py`, `antecedentes.py`, `materia.py`, `descriptores.py`, `fecha_lugar.py`, `destinatarios.py`, `emisor.py`, `cuerpo.py`, `nota_al_pie.py`, `firma.py`, `distribucion.py`) derivados de la interfaz base `BaseExtractor`.
   * [`ddu_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_orchestrator.py): Orquestador central (`DDUOrchestrator`) que coordina los extractores registrados y exporta CSVs (individual por circular y dataset acumulado maestro).
   * [`ddu_parser.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_parser.py): Wrapper de retrocompatibilidad apuntando al orquestador.
   * [`ddu_to_xml.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_xml.py): Generador estructurado XML bajo el estándar Akoma Ntoso v2.0 BCN.
   * [`ddu_to_rdf.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_rdf.py): Transformador a grafos semánticos RDF/Turtle.
   * [`leychile_api.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/leychile_api.py): Integración oficial con la API de Ley Chile de la BCN.
-* [`test/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test): Suite plana de pruebas automatizadas locales (`test_extractor_base.py`, `test_extractor_metadata.py`, `test_extractor_body.py`, `test_orchestrator.py`, `test_csv_integrity.py`, `test_spec_coverage.py`, `test_xml_generation.py`, `test_rdf_generation.py`, `test_xsd_structural_validation.py`) ejecutables con `pytest`.
+* [`test/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test): Suite plana de pruebas automatizadas locales (`test_extractor_base.py`, `test_extractor_metadata.py`, `test_extractor_body.py`, `test_extractor_nota_al_pie.py`, `test_orchestrator.py`, `test_csv_integrity.py`, `test_spec_coverage.py`, `test_xml_generation.py`, `test_rdf_generation.py`, `test_xsd_structural_validation.py`) ejecutables con `pytest`.
 
 ---
 
 ## Mapeo Estandarizado de la Estructura (CSV -> ETLs)
 
-La suite de los 11 ETLs modulares deriva exactamente del contrato de especificación documentado en [`bcn - documentación/estructura_circular_ddu.csv`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n/estructura_circular_ddu.csv), simplificado a **6 columnas esenciales** (`orden`, `bloque`, `campo`, `obligatorio`, `descripcion`, `reglas`):
+La suite de los 12 ETLs modulares deriva exactamente del contrato de especificación documentado en [`bcn - documentación/estructura_circular_ddu.csv`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n/estructura_circular_ddu.csv), simplificado a **6 columnas esenciales** (`orden`, `bloque`, `campo`, `obligatorio`, `descripcion`, `reglas`):
 
 | Bloque CSV | Campo Parser | Módulo ETL (`scripts/extractors/`) | Descripción |
 | :--- | :--- | :--- | :--- |
@@ -38,6 +38,7 @@ La suite de los 11 ETLs modulares deriva exactamente del contrato de especificac
 | **Destinatarios** | `destinatarios` | `destinatarios.py` | Destinatario formal del oficio (A:) |
 | **Emisión** | `emisor` | `emisor.py` | Cargo del emisor (DE:) |
 | **Cuerpo** | `secciones` | `cuerpo.py` | Estructura de secciones romanas, numerales y listas |
+| **Nota al Pie** | `notas_al_pie` | `nota_al_pie.py` | Notas aclaratorias o referencias normativas al pie de página |
 | **Firma** | `firmante` | `firma.py` | Firma del Jefe de División |
 | **Distribución** | `lista_distribucion` | `distribucion.py` | Nómina de receptores al cierre del documento |
 
@@ -62,13 +63,14 @@ graph TD
         Base --> Ext7[destinatarios.py]
         Base --> Ext8[emisor.py]
         Base --> Ext9[cuerpo.py]
-        Base --> Ext10[firma.py]
-        Base --> Ext11[distribucion.py]
+        Base --> Ext10[nota_al_pie.py]
+        Base --> Ext11[firma.py]
+        Base --> Ext12[distribucion.py]
     end
 
     subgraph "Orquestación y Salidas (scripts/ddu_orchestrator.py)"
         PDF --> Orch[DDUOrchestrator]
-        Ext1 & Ext2 & Ext3 & Ext4 & Ext5 & Ext6 & Ext7 & Ext8 & Ext9 & Ext10 & Ext11 --> Orch
+        Ext1 & Ext2 & Ext3 & Ext4 & Ext5 & Ext6 & Ext7 & Ext8 & Ext9 & Ext10 & Ext11 & Ext12 --> Orch
         Orch --> Data[DatosCircularDDU]
         Data --> CSVInd[CSV Individual Circular]
         Data --> CSVMaster[Dataset CSV Acumulado Master]
@@ -125,4 +127,4 @@ Para garantizar que el sistema y sus modelos semánticos de datos cumplen al 100
 pytest -v
 ```
 
-Actualmente, **26 de 26 pruebas pasan exitosamente** (100% de cobertura de la suite en estructura plana).
+Actualmente, **32 de 32 pruebas pasan exitosamente** (100% de cobertura de la suite en estructura plana).

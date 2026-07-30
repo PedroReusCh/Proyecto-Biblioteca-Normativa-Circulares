@@ -48,6 +48,7 @@ Para garantizar la correcta ejecución y orden lógico durante el ciclo de vida 
   - [`test/test_extractor_base.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_extractor_base.py): Pruebas de la interfaz base `BaseExtractor` y `ExtractorRegistry`.
   - [`test/test_extractor_metadata.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_extractor_metadata.py): Pruebas unitarias de los 8 extractores de metadatos.
   - [`test/test_extractor_body.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_extractor_body.py): Pruebas unitarias de los extractores de cuerpo, firma y distribución.
+  - [`test/test_extractor_nota_al_pie.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_extractor_nota_al_pie.py): Pruebas unitarias del extractor del metadato Nota al Pie.
   - [`test/test_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_orchestrator.py): Pruebas de integración del orquestador DDU y exportadores CSV.
   - [`test/test_csv_integrity.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_csv_integrity.py): Valida la coherencia columnar de los archivos CSV locales.
   - [`test/test_spec_coverage.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_spec_coverage.py): Mapea elementos XSD contra el diccionario y contra el archivo de cobertura local.
