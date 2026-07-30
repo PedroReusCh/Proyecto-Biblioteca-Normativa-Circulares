@@ -36,6 +36,7 @@ _EXTRACTOR_MODULES: List[str] = [
     "cuerpo",
     "firma",
     "distribucion",
+    "nota_al_pie",
 ]
 
 
