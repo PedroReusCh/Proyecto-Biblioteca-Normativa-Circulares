@@ -34,3 +34,4 @@ class DatosCircularDDU(TypedDict):
     firmante: NotRequired[str]
     lista_distribucion: NotRequired[List[str]]
     distribucion_texto: NotRequired[str]
+    notas_al_pie: NotRequired[str]

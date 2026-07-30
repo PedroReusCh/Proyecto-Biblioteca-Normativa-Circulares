@@ -1,0 +1,13 @@
+orden,bloque,campo,obligatorio,descripcion,reglas
+1,Encabezado,numero_ddu,si,Número identificador de la circular DDU,Secuencial y permite singularizar la circular
+2,Acto Administrativo,numero_ord,si,Número del acto de emisión de la DDU,Número de acto administrativo diferente al número DDU
+3,Antecedentes,antecedentes,no,Documentos o definiciones en los que se basó para construir la circular,Campo implícito del oficio chileno
+4,Materia,materia,si,Descripción del tema abordado,Descripción del tema o norma abordada
+5,Descriptores,descriptores,no,Expresiones y vocablos asignados,No relevante para la aplicación de la circular
+6,Fecha y Lugar,fecha_emision,si,Fecha de emisión de la circular,Permite singularizar junto con el número DDU
+7,Destinatarios,destinatarios,si,A quién va dirigida formalmente la circular,A quién va dirigida formalmente la circular
+8,Emisión,emisor,si,Identifica al emisor de la circular DDU,Identifica al emisor de la circular DDU
+9,Cuerpo,cuerpo,si,Contenido estructurado del cuerpo de la circular,Secciones numeradas en romano o arábigos y listas anidadas
+10,Nota al Pie,notas_al_pie,no,Notas aclaratorias o referencias normativas al pie de página,Notas explicativas o referencias numeradas al pie de las páginas de la circular
+11,Firma,firmante,si,Firma del jefe de división respectivo,Jefe de división del periodo de emisión
+12,Distribución,lista_distribucion,si,Lista de personas que reciben copia de la circular,Lista de distribución de la circular
