@@ -195,3 +195,28 @@ def test_cuerpo_extractor_exclusion_notas_al_pie() -> None:
     assert "8. Con todo, debe advertirse que la circunstancia..." in texto_completo
     assert "1 En dicha circular se indica" not in texto_completo
     assert "2 En el artículo 1.1.2. de la OGUC" not in texto_completo
+
+
+def test_distribucion_extractor_ddu_546_ocr() -> None:
+    """Verifica la extracción limpia de la lista de distribución en DDU 546 con OCR distorsionado."""
+    lines = [
+        "Saluda atentamente a Ud.,",
+        "N DIEGO ZQUIERDO HEVIA",
+        "D VISIÓN DE DESARROLLO URBANO",
+        "tl ' .",
+        "RA/4l ¡ ~ /O M",
+        "RIBuc)óN:",
+        "Sr. Ministro de Vivienda y Urbanismo",
+        ",2. Sra. Subsecretaria de Vivienda y Urbanismo",
+        "3. Sra. Contralora General de la República",
+    ]
+
+    extractor = DistribucionExtractor()
+    resultado = extractor.extract("\n".join(lines), lines)
+
+    assert resultado.exito is True
+    distribucion: List[str] = list(resultado.datos.get("lista_distribucion", []))
+    assert len(distribucion) == 3
+    assert distribucion[0] == "1. Sr. Ministro de Vivienda y Urbanismo"
+    assert distribucion[1] == "2. Sra. Subsecretaria de Vivienda y Urbanismo"
+    assert distribucion[2] == "3. Sra. Contralora General de la República"
