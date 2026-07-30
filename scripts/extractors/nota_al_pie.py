@@ -38,22 +38,45 @@ class NotaAlPieExtractor(BaseExtractor):
             ResultadoBloque con la cadena de notas al pie extraídas.
         """
         notas: List[str] = []
+        nota_actual_lines: List[str] = []
+
+        def _guardar_nota_actual() -> None:
+            if nota_actual_lines:
+                texto_completo = " ".join(nota_actual_lines).strip()
+                texto_completo = re.sub(r"\s+", " ", texto_completo)
+                if texto_completo:
+                    notas.append(texto_completo)
+                nota_actual_lines.clear()
+
         for line in lines:
             line_clean = line.strip()
             if not line_clean:
                 continue
 
-            # Detectar notas numeradas de pie de página (ej. "1 Artículo 38...", "2 La orientación técnica...")
+            # Detener si llegamos al pie institucional o firma/cierre de página
+            if re.search(r"P[áa]gina\s+\d+\s+de\s+\d+", line_clean, re.IGNORECASE) or re.search(
+                r"(?:Saluda\s+atent|DISTRIBUCI[ÓO\?I\s]+N|GOBIERNO\s+DE\s+CHILE)", line_clean, re.IGNORECASE
+            ):
+                _guardar_nota_actual()
+                continue
+
             match_nota = re.match(r"^(\d{1,2})\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñA-ZÁÉÍÓÚÑ\s\.,\(\)\"\'-].+)$", line_clean)
             if match_nota:
                 num_nota = match_nota.group(1)
                 texto_nota = match_nota.group(2).strip()
-                # Filtrar falsos positivos de pie de página institucional, números altos o numerales "1. "
-                if int(num_nota) <= 20 and not re.search(r"P[áa]gina\s+\d+", line_clean, re.IGNORECASE) and not line_clean.startswith(f"{num_nota}. "):
-                    # Filtrar fragmentos que cortan frases a mitad de renglón (ej. "36 de la Ley", "35 de la Ley")
+
+                if int(num_nota) <= 20 and not line_clean.startswith(f"{num_nota}. "):
                     if not re.match(r"^\d+\s+(?:de\s+la|de\s+los|del|en\s+la|con\s+la|que|por|para)\b", line_clean, re.IGNORECASE):
-                        if re.search(r"(?:Art[íi]culo|Circular|Orientaci[óo]n|Gu[íi]a|Decreto|Ley)\b", texto_nota, re.IGNORECASE):
-                            notas.append(f"{num_nota} {texto_nota}")
+                        if re.search(r"(?:Art[íi]culo|Circular|Orientaci[óo]n|Gu[íi]a|Decreto|Ley|Construcci[óo]n|Edificaci[óo]n|OGUC|LGUC)\b", texto_nota, re.IGNORECASE):
+                            _guardar_nota_actual()
+                            nota_actual_lines.append(f"{num_nota} {texto_nota}")
+                            continue
+
+            # Si hay una nota en curso, acumular las líneas continuas
+            if nota_actual_lines:
+                nota_actual_lines.append(line_clean)
+
+        _guardar_nota_actual()
 
         notas_texto = " | ".join(notas) if notas else ""
         exito = bool(notas_texto)
