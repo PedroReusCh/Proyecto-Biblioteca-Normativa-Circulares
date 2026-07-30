@@ -47,7 +47,12 @@ class FechaLugarExtractor(BaseExtractor):
             raw_text_norm,
             flags=re.IGNORECASE,
         )
-        raw_text_norm = re.sub(r"\b2325\b", "2026", raw_text_norm)
+        # Normalizar distorsiones genéricas de OCR en años de 4 dígitos tras un mes (ej. 2326 -> 2026, 2l23 -> 2023)
+        pattern_anio_ocr = re.compile(
+            rf"(\b{meses_regex}\.?\s*(?:de\s+)?)(2[3oO])([0-9])([0-9])\b",
+            re.IGNORECASE,
+        )
+        raw_text_norm = pattern_anio_ocr.sub(r"\g<1>20\3\4", raw_text_norm)
         raw_text_norm = re.sub(r"\b([0-3])\s+([0-9])\b", r"\1\2", raw_text_norm)
         raw_text_norm = re.sub(r"\b2[^\d\s]{1,3}(\d{2})\b", r"20\1", raw_text_norm)
 
