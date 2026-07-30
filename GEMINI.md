@@ -25,9 +25,8 @@ Para garantizar la correcta ejecución y orden lógico durante el ciclo de vida 
 
 1. **`/executing-plans`**: Contenedor principal. Inicia la ejecución del plan. Dentro de la ejecución aplicas:
    - **`/test-driven-development`**: Metodología paso a paso para desarrollar cada característica del plan.
-   - *Condicionales (solo si el plan tiene tareas independientes paralelizables):*
-     - **`/subagent-driven-development`**: Para delegar tareas independientes a subagentes.
-     - **`/dispatching-parallel-agents`**: Para lanzar tareas concurrentes sin estado compartido.
+   - *Condicionales:*
+     - **`/single-flow-task-execution`**: Descomposición de tareas ordenadas con puntos de revisión.
    *Reactivo:* Ante errores inesperados o fallos en tests durante la ejecución, interrumpir e invocar **`/systematic-debugging`**.
 
 ### Fase 3: Verificación y Calidad
