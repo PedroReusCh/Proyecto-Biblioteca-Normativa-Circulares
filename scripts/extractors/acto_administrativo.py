@@ -51,21 +51,33 @@ class ActoAdministrativoExtractor(BaseExtractor):
                 return f"CIRCULAR ORD. N° {digits}"
             return ""
 
-        match = pattern_ord.search(raw_text[:1500])
+        for line in lines[:25]:
+            if re.search(r"\b(?:CIRCULAR\s+)?(?:ORD|ORO|OR0|OR)\b", line, re.IGNORECASE):
+                s_clean = re.sub(r"[\"\']", "", line)
+                s_clean = re.sub(r"(?<=[0-9_\s°º\?])l(?=[0-9_\s°º\?,/\-]|$)", "1", s_clean, flags=re.IGNORECASE)
+                s_clean = re.sub(r"^l(?=[0-9_\s°º\?,/\-])", "1", s_clean, flags=re.IGNORECASE)
+                s_clean = re.sub(r"(?<=\s)l(?=\s)", "1", s_clean, flags=re.IGNORECASE)
+                s_clean = re.sub(r"(?<=\s)I(?=\s)", "1", s_clean)
+                s_clean = re.sub(r"(?<=\s)\|(?=\s)", "1", s_clean)
 
-        if match:
-            numero_ord = _limpiar_digitos_ord(match.group(1).strip())
-            if not numero_ord:
-                numero_ord = match.group(0).strip()
-        else:
-            # Búsqueda secundaria en primeras 20 líneas
-            for line in lines[:20]:
-                match_sec = pattern_ord.search(line)
-                if match_sec:
-                    numero_ord = _limpiar_digitos_ord(match_sec.group(1))
-                    if not numero_ord:
-                        numero_ord = match_sec.group(0).strip()
+                match_post = pattern_ord.search(s_clean)
+                if match_post:
+                    digits = re.sub(r"[^0-9]", "", match_post.group(1))
+                    if digits:
+                        numero_ord = f"CIRCULAR ORD. N° {digits}"
+                        break
+
+                digits_line = re.sub(r"[^0-9]", "", s_clean)
+                if digits_line:
+                    numero_ord = f"CIRCULAR ORD. N° {digits_line}"
                     break
+
+        if not numero_ord:
+            match = pattern_ord.search(raw_text[:1500])
+            if match:
+                numero_ord = _limpiar_digitos_ord(match.group(1).strip())
+                if not numero_ord:
+                    numero_ord = match.group(0).strip()
 
         exito = bool(numero_ord)
         return ResultadoBloque(
