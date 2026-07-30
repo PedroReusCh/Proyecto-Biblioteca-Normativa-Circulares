@@ -21,3 +21,25 @@ def test_nota_al_pie_extractor_ddu_537() -> None:
     notas: str = str(resultado.datos.get("notas_al_pie", ""))
     assert "1 Artículo 38" in notas
     assert "2 La orientación técnica" in notas
+
+
+def test_nota_al_pie_extractor_ddu_546_multiline() -> None:
+    """Verifica la extracción multilínea de notas al pie en la DDU 546."""
+    lines = [
+        "7. Por lo tanto, las pérgolas que cumplan...",
+        "1 En dicha circular se indica que el citado artículo 5.1.2, que define los casos para los cuales no será necesario",
+        "el permiso de edificación, en su N° 2 se refiere a elementos exteriores sobrepuestos complementarios a una",
+        "edificación, como pueden ser terrazas, parrones, glorietas, u otros...",
+        "2 En el artículo 1.1.2. de la OGUC se define \"Construcción\" como \"obras de edificación o de urbanización\".",
+        "--========== GOBIERNO DE CHILE ====== ====~",
+        "Ministerio de Vivienda y Urbanismo - Alameda 924 - Santiago - Chile Página 2 de 3",
+    ]
+
+    extractor = NotaAlPieExtractor()
+    resultado = extractor.extract("\n".join(lines), lines)
+
+    assert resultado.nombre_bloque == "nota_al_pie"
+    assert resultado.exito is True
+    notas: str = str(resultado.datos.get("notas_al_pie", ""))
+    assert "el permiso de edificación, en su N° 2" in notas
+    assert "2 En el artículo 1.1.2." in notas
