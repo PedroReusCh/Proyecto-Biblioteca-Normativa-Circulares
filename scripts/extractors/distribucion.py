@@ -41,7 +41,12 @@ class DistribucionExtractor(BaseExtractor):
             item = re.sub(r"^(\d+)[\!\;\:\,\_\-]+\s*", r"\1. ", item)
             item = re.sub(r"^(\d+)\s*\.\s*", r"\1. ", item)
 
-            # 2. Corregir palabras divididas erróneamente por OCR
+            # 2. Corregir siglas y palabras divididas erróneamente por OCR
+            item = re.sub(r"\bMI\s+NVU\b", "MINVU", item, flags=re.IGNORECASE)
+            item = re.sub(r"\bSERE\s+MI\b", "SEREMI", item, flags=re.IGNORECASE)
+            item = re.sub(r"\bSER\s+VIU\b", "SERVIU", item, flags=re.IGNORECASE)
+            item = re.sub(r"\b([a-záéíóúñA-ZÁÉÍÓÚÑ]{3,})\s+([lsn])\b", r"\1\2", item)
+
             correcciones = [
                 (r"\bUrban\s+ismo\b", "Urbanismo"),
                 (r"\bRegio\s+nales\b", "Regionales"),
@@ -51,18 +56,29 @@ class DistribucionExtractor(BaseExtractor):
                 (r"\bSecreta\s+rios\b", "Secretarios"),
                 (r"\bSubsecreta\s+ria\b", "Subsecretaria"),
                 (r"\bDesarro\s+llo\b", "Desarrollo"),
+                (r"\bdesarro\s+lladores\b", "desarrolladores"),
+                (r"\binmobiliar\s+ios\b", "inmobiliarios"),
                 (r"\bTerr\s+itorial\b", "Territorial"),
+                (r"\bTerri\s+torial\b", "Territorial"),
                 (r"\bDirecto\s+res\b", "Directores"),
                 (r"\bReviso\s+res\b", "Revisores"),
                 (r"\bI\s+ndependientes\b", "Independientes"),
                 (r"\bBibliot\s+eca\b", "Biblioteca"),
                 (r"\bMiniste\s+rio\b", "Ministerio"),
+                (r"\bMinisteria\s+les\b", "Ministeriales"),
                 (r"\bInstitu\s+to\b", "Instituto"),
+                (r"\bInst\s+ituto\b", "Instituto"),
                 (r"\bPlanificac\s+i[óo]n\b", "Planificación"),
                 (r"\bOrdenamien\s+to\b", "Ordenamiento"),
+                (r"\bOrdenam\s+iento\b", "Ordenamiento"),
                 (r"\bAmbie\s+nte\b", "Ambiente"),
                 (r"\bDivisi[óo]\s+n\b", "División"),
                 (r"\bNaciona\s+l\b", "Nacional"),
+                (r"\bContra\s+lora\b", "Contralora"),
+                (r"\bUrbanis\s+tas\b", "Urbanistas"),
+                (r"\bEjecut\s+ivo\b", "Ejecutivo"),
+                (r"\bMunicipa\s+lidades\b", "Municipalidades"),
+                (r"\bDocumentaci[óo]\s+n\b", "Documentación"),
             ]
             for p, r in correcciones:
                 item = re.sub(p, r, item, flags=re.IGNORECASE)
