@@ -11,6 +11,24 @@ from typing import Any, List
 from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
 
 
+def _es_inicio_descriptores(line: str) -> bool:
+    """Verifica si una línea marca el inicio del bloque de descriptores/vocablos en mayúsculas."""
+    line_clean = line.strip()
+    if re.match(
+        r"^(?:PERMISOS|VIGENCIA|RECEPCIONES|DE LA PLANIFICACI[ÓO]N|MODIFICACI[ÓO]N|APROBACIONES|ESTUDIOS DE RIESGO|PLAN REGULADOR)\b",
+        line_clean,
+        re.IGNORECASE,
+    ):
+        return True
+    letras = [c for c in line_clean if c.isalpha()]
+    if len(letras) >= 5:
+        es_mayus = (sum(1 for c in letras if c.isupper()) / len(letras)) >= 0.75
+        kw = ("PLANIFICACION", "PLANIFICACIÓN", "REGULADOR", "SECCIONAL", "PERMISOS", "RECEPCIONES", "RIESGO", "APROBACIONES", "MODIFICACION", "MODIFICACIÓN")
+        if es_mayus and any(k in line_clean.upper() for k in kw):
+            return True
+    return False
+
+
 @register_extractor
 class MateriaExtractor(BaseExtractor):
     """Extractor para la materia o tema de la circular (MAT:)."""
@@ -46,8 +64,9 @@ class MateriaExtractor(BaseExtractor):
                     or re.match(r"^DE\s+(?:JEFE|MINISTRO|DIRECTOR|DIVISI[ÓO]N)\b", line_clean, re.IGNORECASE)
                     or re.match(r"^A\s*:\s*", line_clean, re.IGNORECASE)
                     or re.match(r"^A\s+SEGÚN\b", line_clean, re.IGNORECASE)
-                    or re.match(r"^(?:CIRCULAR|SANTIAGO|VALPARAÍSO|CONCEPCIÓN|I\.)\b", line_clean, re.IGNORECASE)
+                    or re.match(r"^(?:SANTIAGO|VALPARAÍSO|CONCEPCIÓN|I\.)\b", line_clean, re.IGNORECASE)
                     or re.match(r"^[A-ZÁÉÍÓÚÑ0-9\s;]{3,}(?:,\s*[A-ZÁÉÍÓÚÑ0-9\s;]{3,})+\.?$", line_clean)
+                    or _es_inicio_descriptores(line_clean)
                 ):
                     en_materia = False
                 else:
