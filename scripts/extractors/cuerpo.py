@@ -56,6 +56,19 @@ def _limpiar_texto_cuerpo(texto: str) -> str:
     return res
 
 
+def _normalizar_prefijo_numeral_ocr(line: str) -> str:
+    """Normaliza distorsiones de caracteres OCR al inicio de numerales de párrafo."""
+    # 1. Normalizar 'l.', 'I.', 'i.', '|.' -> '1. '
+    line = re.sub(r"^[lIi\|]\.\s+", "1. ", line)
+    # 2. Normalizar 'S.', 's.', '§.' -> '5. '
+    line = re.sub(r"^(?:S|s|§)\.\s+", "5. ", line)
+    # 3. Normalizar 'B.' -> '8. '
+    line = re.sub(r"^B\.\s+", "8. ", line)
+    # 4. Normalizar 'Z.' -> '2. '
+    line = re.sub(r"^Z\.\s+", "2. ", line)
+    return line
+
+
 def _es_pie_de_pagina(line: str) -> bool:
     """Detecta líneas de pie de página de OCR incluso con espacios rotos entre caracteres."""
     line_norm = re.sub(r"\s+", " ", line).strip()
@@ -185,6 +198,9 @@ class CuerpoExtractor(BaseExtractor):
             if _es_pie_de_pagina(line_clean):
                 curr_idx += 1
                 continue
+
+            # Aplicar normalización de numerales distorsionados por OCR (l. -> 1., S. -> 5., B. -> 8.)
+            line_clean = _normalizar_prefijo_numeral_ocr(line_clean)
 
             # Detener extracción si llegamos a la firma o distribución
             if re.search(r"Saluda\s+atent", line_clean, re.IGNORECASE) or re.match(
