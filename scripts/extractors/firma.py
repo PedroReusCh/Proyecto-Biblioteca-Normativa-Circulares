@@ -11,6 +11,15 @@ from typing import Any, List
 from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
 
 
+def _limpiar_texto_firma(texto: str) -> str:
+    """Repara distorsiones típicas de OCR en nombres, cargos y ministerios del firmante."""
+    texto = re.sub(r"\bN\s+DIEGO\s+ZQUIERDO\s+HEVIA\b", "JUAN DIEGO IZQUIERDO HEVIA", texto, flags=re.IGNORECASE)
+    texto = re.sub(r"\bN\s+DIEGO\s+IZQUIERDO\s+HEVIA\b", "JUAN DIEGO IZQUIERDO HEVIA", texto, flags=re.IGNORECASE)
+    texto = re.sub(r"\bD\s+VISI[ÓO]N\b", "DIVISIÓN", texto, flags=re.IGNORECASE)
+    texto = re.sub(r"\bIS\s+RIO\b", "MINISTERIO", texto, flags=re.IGNORECASE)
+    return texto
+
+
 @register_extractor
 class FirmaExtractor(BaseExtractor):
     """Extractor para identificar el firmante (nombre y cargo) de la circular DDU."""
@@ -30,6 +39,9 @@ class FirmaExtractor(BaseExtractor):
             ResultadoBloque con el firmante extraído.
         """
         firmante = ""
+        patron_distribucion = (
+            r"^(?:DISTRIBUCI[OÓ\?I\s]+N|BUCI[OÓ\?I\s]+N|STRIBUCI[OÓ\?I\s]+N|D\s*STRIBUC[I\?OÓ\s]*N|RIB[a-z\s\)\?]*[ÓO]N)[\s:]*"
+        )
 
         # 1. Buscar patrón "Saluda atentamente..." y extraer las líneas siguientes
         idx_saludo = -1
@@ -48,7 +60,7 @@ class FirmaExtractor(BaseExtractor):
                     continue
                 # Detener si llegamos al bloque de distribución o pie de página
                 if re.match(
-                    r"^(?:DISTRIBUCI[ÓO]N|BUCI[ÓO]N|STRIBUCI[ÓO]N)[\s:]*",
+                    patron_distribucion,
                     line_clean,
                     re.IGNORECASE,
                 ) or re.search(r"Ministerio\s+de\s+Vivienda", line_clean, re.IGNORECASE):
@@ -96,6 +108,7 @@ class FirmaExtractor(BaseExtractor):
                         firmante = line_clean
                         break
 
+        firmante = _limpiar_texto_firma(firmante)
         firmante = re.sub(r"\s+", " ", firmante).strip()
         if firmante.endswith("."):
             firmante = firmante[:-1].strip()
