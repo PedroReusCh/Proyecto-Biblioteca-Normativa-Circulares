@@ -33,11 +33,12 @@ class DistribucionExtractor(BaseExtractor):
         en_distribucion = False
 
         patron_encabezado_distribucion = (
-            r"^(?:DISTRIBUCI[OÓ\?I\s]+N|BUCI[OÓ\?I\s]+N|STRIBUCI[OÓ\?I\s]+N|D\s*STRIBUC[I\?OÓ\s]*N)[\s:]*"
+            r"^(?:DISTRIBUCI[OÓ\?I\s]+N|BUCI[OÓ\?I\s]+N|STRIBUCI[OÓ\?I\s]+N|D\s*STRIBUC[I\?OÓ\s]*N|RIB[a-z\s\)\?]*[ÓO]N)[\s:]*"
         )
 
         def _limpiar_item_distribucion(item: str) -> str:
-            # 1. Normalizar prefijo numérico ruidoso o confundido por OCR (ej: "l.", "I.", "1!", "1 !", "2 .") -> "1. ", "2. ", "4. "
+            # 1. Normalizar prefijo numérico ruidoso o confundido por OCR (ej: ",2.", "l.", "I.", "1!", "1 !", "2 .") -> "1. ", "2. ", "4. "
+            item = re.sub(r"^[\,\!\;\:\_\-\s]+(\d+)", r"\1", item)
             item = re.sub(r"^[lIi\|][\.\!\;\:\,\_\-\s]+\s*", r"1. ", item)
             item = re.sub(r"^(\d+)[\!\;\:\,\_\-]+\s*", r"\1. ", item)
             item = re.sub(r"^(\d+)\s*\.\s*", r"\1. ", item)
