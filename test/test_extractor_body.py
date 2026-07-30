@@ -150,3 +150,24 @@ def test_cuerpo_orden_invertido() -> None:
     assert "CIRCULAR ORD" not in parrafos_concatenados
     assert "SEÑORES INTENDENTES" not in parrafos_concatenados
     assert "JEFE DIVISIÓN" not in parrafos_concatenados or "Saluda" not in parrafos_concatenados
+
+
+def test_cuerpo_extractor_llamadas_nota_al_pie() -> None:
+    """Verifica la normalización de llamadas a notas al pie al formato [N]."""
+    lines = [
+        "1. De conformidad con lo dispuesto...",
+        "DDU ESPECÍFICA Nº97 /2007 1.",
+        "a) Que la pérgola consista en un elemento -es decir que no tenga el carácter de construcción 2- y que además sea exterior.",
+        "3. Conforme al artículo 381 del referido DS 86.",
+    ]
+
+    extractor = CuerpoExtractor()
+    resultado = extractor.extract("\n".join(lines), lines)
+
+    assert resultado.exito is True
+    secciones: List[Any] = list(resultado.datos.get("secciones", []))
+    texto_completo = " ".join([p for s in secciones for p in s.get("parrafos", [])])
+
+    assert "Nº97 /2007 [1]" in texto_completo
+    assert "carácter de construcción [2]" in texto_completo
+    assert "artículo 38 [1]" in texto_completo
