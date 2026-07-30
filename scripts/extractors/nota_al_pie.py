@@ -6,9 +6,17 @@ import importlib
 import json
 from pathlib import Path
 import re
+import sys
 from typing import Any, List
 
-from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
+_PROYECTO_RAIZ = Path(__file__).resolve().parents[2]
+if str(_PROYECTO_RAIZ) not in sys.path:
+    sys.path.insert(0, str(_PROYECTO_RAIZ))
+
+try:
+    from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
+except ImportError:
+    from extractors.base import BaseExtractor, ResultadoBloque, register_extractor
 
 
 @register_extractor
@@ -36,15 +44,16 @@ class NotaAlPieExtractor(BaseExtractor):
                 continue
 
             # Detectar notas numeradas de pie de página (ej. "1 Artículo 38...", "2 La orientación técnica...")
-            match_nota = re.match(r"^(\d+)\s+([A-ZÁÉÍÓÚÑa-záéíóúñ].+)$", line_clean)
+            match_nota = re.match(r"^(\d{1,2})\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñA-ZÁÉÍÓÚÑ\s\.,\(\)\"\'-].+)$", line_clean)
             if match_nota:
-                # Filtrar falsos positivos de pie de página institucional o numeración de numerales
-                if not re.search(r"P[áa]gina\s+\d+", line_clean, re.IGNORECASE) and not line_clean.startswith("1. "):
-                    num_nota = match_nota.group(1)
-                    texto_nota = match_nota.group(2).strip()
-                    # Asegurar que sea una nota al pie de página de referencia normativa o explicativa
-                    if re.search(r"(?:Art[íi]culo|Circular|Orientaci[óo]n|Gu[íi]a|Decreto|Ley)\b", texto_nota, re.IGNORECASE):
-                        notas.append(f"{num_nota} {texto_nota}")
+                num_nota = match_nota.group(1)
+                texto_nota = match_nota.group(2).strip()
+                # Filtrar falsos positivos de pie de página institucional, números altos o numerales "1. "
+                if int(num_nota) <= 20 and not re.search(r"P[áa]gina\s+\d+", line_clean, re.IGNORECASE) and not line_clean.startswith(f"{num_nota}. "):
+                    # Filtrar fragmentos que cortan frases a mitad de renglón (ej. "36 de la Ley", "35 de la Ley")
+                    if not re.match(r"^\d+\s+(?:de\s+la|de\s+los|del|en\s+la|con\s+la|que|por|para)\b", line_clean, re.IGNORECASE):
+                        if re.search(r"(?:Art[íi]culo|Circular|Orientaci[óo]n|Gu[íi]a|Decreto|Ley)\b", texto_nota, re.IGNORECASE):
+                            notas.append(f"{num_nota} {texto_nota}")
 
         notas_texto = " | ".join(notas) if notas else ""
         exito = bool(notas_texto)
