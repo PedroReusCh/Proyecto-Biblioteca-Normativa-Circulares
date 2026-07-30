@@ -47,8 +47,7 @@ class FechaLugarExtractor(BaseExtractor):
             raw_text_norm,
             flags=re.IGNORECASE,
         )
-        raw_text_norm = re.sub(r"\b2325\b", "2025", raw_text_norm)
-        raw_text_norm = re.sub(r"\b232(\d)\b", r"202\1", raw_text_norm)
+        raw_text_norm = re.sub(r"\b2325\b", "2026", raw_text_norm)
         raw_text_norm = re.sub(r"\b([0-3])\s+([0-9])\b", r"\1\2", raw_text_norm)
         raw_text_norm = re.sub(r"\b2[^\d\s]{1,3}(\d{2})\b", r"20\1", raw_text_norm)
 
