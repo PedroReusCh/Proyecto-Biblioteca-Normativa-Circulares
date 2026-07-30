@@ -40,6 +40,10 @@ def _limpiar_texto_cuerpo(texto: str) -> str:
         (r"\baprob\s+ad([aaos])\b", r"aprobad\1"),
         (r"\baprob\s+ac(i[oó]n|iones)\b", r"aprobac\1"),
         (r"\bexpuest\s+os\b", "expuestos"),
+        (r"\bOS\s+33\b", "DS 33"),
+        # Reglas genéricas para plurales con 's' o 'es' aisladas por OCR
+        (r"\b([a-záéíóúñ]{3,}[aeiouáéíóú])\s+s\b", r"\1s"),
+        (r"\b([a-záéíóúñ]{3,}[bcdfghjklmnñpqrstvwxyz])\s+es\b", r"\1es"),
         (r"\s+\.", "."),
         (r"\s+,", ","),
         (r"\s+;", ";"),
