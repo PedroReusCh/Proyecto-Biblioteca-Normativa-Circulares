@@ -33,27 +33,37 @@ class ActoAdministrativoExtractor(BaseExtractor):
 
         # Patrón flexible para "CIRCULAR ORD. N° 112", "CIRCULAR ORO. N ___ 0_8_, 8 ___ /", "ORD. N° 088", etc.
         pattern_ord = re.compile(
-            r"(?:CIRCULAR\s+)?(?:ORD|ORO|OR0|OR)\.?\s*(?:N[°oº\?\s_]*\s*)?([0-9\s_l·\-,]+)",
+            r"(?:CIRCULAR\s+)?(?:ORD|ORO|OR0|OR)\.?\s*(?:N[°oº\?\s_]*\s*)?([0-9\s_lI\|·\-,°º]+)",
             re.IGNORECASE,
         )
+
+        def _limpiar_digitos_ord(raw_val: str) -> str:
+            # Reemplazar confusiones OCR de dígito 1 (l, I, i, |)
+            s = raw_val
+            s = re.sub(r"(?<=[0-9_\s°º\?])l(?=[0-9_\s°º\?,/\-]|$)", "1", s, flags=re.IGNORECASE)
+            s = re.sub(r"^l(?=[0-9_\s°º\?,/\-])", "1", s, flags=re.IGNORECASE)
+            s = re.sub(r"(?<=\s)l(?=\s)", "1", s, flags=re.IGNORECASE)
+            s = re.sub(r"(?<=\s)I(?=\s)", "1", s)
+            s = re.sub(r"(?<=\s)\|(?=\s)", "1", s)
+
+            digits = re.sub(r"[^0-9]", "", s)
+            if digits:
+                return f"CIRCULAR ORD. N° {digits}"
+            return ""
+
         match = pattern_ord.search(raw_text[:1500])
 
         if match:
-            raw_val = match.group(1).strip()
-            digits = re.sub(r"[^0-9]", "", raw_val)
-            if digits:
-                numero_ord = f"CIRCULAR ORD. N° {digits}"
-            else:
+            numero_ord = _limpiar_digitos_ord(match.group(1).strip())
+            if not numero_ord:
                 numero_ord = match.group(0).strip()
         else:
             # Búsqueda secundaria en primeras 20 líneas
             for line in lines[:20]:
                 match_sec = pattern_ord.search(line)
                 if match_sec:
-                    digits = re.sub(r"[^0-9]", "", match_sec.group(1))
-                    if digits:
-                        numero_ord = f"CIRCULAR ORD. N° {digits}"
-                    else:
+                    numero_ord = _limpiar_digitos_ord(match_sec.group(1))
+                    if not numero_ord:
                         numero_ord = match_sec.group(0).strip()
                     break
 
