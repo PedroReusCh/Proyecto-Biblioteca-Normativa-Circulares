@@ -222,3 +222,25 @@ def test_distribucion_extractor_ddu_546_ocr() -> None:
     assert distribucion[1] == "2. Sra. Subsecretaria de Vivienda y Urbanismo"
     assert distribucion[2] == "3. Sra. Contralora General de la República"
     assert not any("GOBIERNO DE CHILE" in d for d in distribucion)
+
+
+def test_firma_extractor_ddu_546_ocr() -> None:
+    """Verifica la extracción limpia y normalizada del firmante en DDU 546."""
+    lines = [
+        "Saluda atentamente a Ud.,",
+        "N DIEGO ZQUIERDO HEVIA",
+        "D VISIÓN DE DESARROLLO URBANO",
+        "IS RIO DE VIVIENDA Y URBANISMO",
+        "tl ' .",
+        "RA/4l ¡ ~ /O M",
+        "RIBuc)óN:",
+        "Sr. Ministro de Vivienda y Urbanismo",
+    ]
+
+    extractor = FirmaExtractor()
+    resultado = extractor.extract("\n".join(lines), lines)
+
+    assert resultado.exito is True
+    firmante = resultado.datos.get("firmante", "")
+    assert firmante == "JUAN DIEGO IZQUIERDO HEVIA, DIVISIÓN DE DESARROLLO URBANO, MINISTERIO DE VIVIENDA Y URBANISMO"
+    assert "Sr. Ministro" not in firmante
