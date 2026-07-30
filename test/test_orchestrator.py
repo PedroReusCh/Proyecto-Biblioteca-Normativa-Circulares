@@ -82,6 +82,7 @@ def test_export_master_csv(tmp_path: Path) -> None:
             "destinatarios",
             "emisor",
             "cuerpo_resumen",
+            "notas_al_pie",
             "firmante",
             "lista_distribucion",
         ]

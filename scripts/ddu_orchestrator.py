@@ -92,6 +92,7 @@ class DDUOrchestrator:
             "firmante": str(datos_consolidados.get("firmante", "")),
             "lista_distribucion": datos_consolidados.get("lista_distribucion", []),
             "distribucion_texto": str(datos_consolidados.get("distribucion_texto", "")),
+            "notas_al_pie": str(datos_consolidados.get("notas_al_pie", "")),
         }
 
         return res_final
@@ -153,6 +154,9 @@ class DDUOrchestrator:
         cuerpo_val = str(datos.get("cuerpo") or "").strip()
         filas_csv.append({"bloque": "Cuerpo", "campo": "cuerpo", "valor_extraido": cuerpo_val})
 
+        notas_val = str(datos.get("notas_al_pie") or "").strip()
+        filas_csv.append({"bloque": "Nota al Pie", "campo": "notas_al_pie", "valor_extraido": notas_val})
+
         filas_csv.append({"bloque": "Firma", "campo": "firmante", "valor_extraido": datos.get("firmante", "")})
 
         dist_val = str(datos.get("distribucion_texto") or "")
@@ -201,6 +205,7 @@ class DDUOrchestrator:
                     "destinatarios": datos.get("destinatarios", ""),
                     "emisor": datos["emisor"],
                     "cuerpo_resumen": cuerpo_resumen,
+                    "notas_al_pie": datos.get("notas_al_pie", ""),
                     "firmante": datos.get("firmante", ""),
                     "lista_distribucion": dist_val,
                 })
@@ -219,6 +224,7 @@ class DDUOrchestrator:
             "destinatarios",
             "emisor",
             "cuerpo_resumen",
+            "notas_al_pie",
             "firmante",
             "lista_distribucion",
         ]
