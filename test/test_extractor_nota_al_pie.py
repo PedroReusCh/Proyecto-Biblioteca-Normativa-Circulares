@@ -1,7 +1,5 @@
 """Pruebas unitarias para el extractor del metadato Nota al Pie (NotaAlPieExtractor)."""
 
-from typing import Any, List
-
 from scripts.extractors.nota_al_pie import NotaAlPieExtractor
 
 
