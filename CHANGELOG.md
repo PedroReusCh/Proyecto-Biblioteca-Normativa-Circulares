@@ -15,8 +15,9 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ### Changed
 
-* **Normalización de Llamadas a Notas al Pie en Cuerpo (`CuerpoExtractor`)**:
+* **Normalización y Exclusión de Notas al Pie en Cuerpo (`CuerpoExtractor`)**:
   * Integración del helper `_normalizar_llamadas_nota_al_pie` en [`scripts/extractors/cuerpo.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/cuerpo.py) para convertir superíndices extraídos en corchetes formales `[1]`, `[2]`, `[3]`, evitando distorsiones en citas legales (ej. `artículo 38 [1]`).
+  * Implementación de la función `_es_inicio_nota_al_pie` y la máquina de descarte en `cuerpo.py` para filtrar y omitir los bloques de notas al pie dentro de la extracción del cuerpo normativo.
 
 ---
 
