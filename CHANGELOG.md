@@ -4,6 +4,20 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/) y este proyecto se adhiere a las prácticas de control de versiones semántico.
 
+## [0.6.0] - 2026-07-30
+
+### Added
+
+* **Componente Normativo Nota al Pie (`NotaAlPieExtractor`)**:
+  * Creación del extractor modular [`scripts/extractors/nota_al_pie.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/nota_al_pie.py) para capturar notas aclaratorias y referencias normativas al pie de página.
+  * Implementación de una Máquina de Estados de acumulación multilínea y delimitación dinámica para capturar notas completas multirrenglón (ej. DDU 546).
+  * Inclusión del bloque `Nota al Pie` (`notas_al_pie`) en el orden 10 de [`bcn - documentación/estructura_circular_ddu.csv`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n/estructura_circular_ddu.csv) y extensión de `DatosCircularDDU` en `ddu_types.py`.
+
+### Changed
+
+* **Normalización de Llamadas a Notas al Pie en Cuerpo (`CuerpoExtractor`)**:
+  * Integración del helper `_normalizar_llamadas_nota_al_pie` en [`scripts/extractors/cuerpo.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/cuerpo.py) para convertir superíndices extraídos en corchetes formales `[1]`, `[2]`, `[3]`, evitando distorsiones en citas legales (ej. `artículo 38 [1]`).
+
 ---
 
 ## [0.5.0] - 2026-07-28
