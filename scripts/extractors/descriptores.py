@@ -32,7 +32,28 @@ class DescriptoresExtractor(BaseExtractor):
         desc_lineas: List[str] = []
         en_descriptores = False
 
-        for line in lines[:45]:
+        # Iniciar escaneo tras la materia / antecedentes / circular para omitir ruido de membrete
+        idx_inicio = 0
+        for i in range(min(30, len(lines))):
+            if re.match(r"^(?:MAT\s*:|ANT\s*:|CIRCULAR|DDU|ORD\b)", lines[i].strip(), re.IGNORECASE):
+                idx_inicio = i + 1
+
+        def _es_linea_descriptor(line_clean: str) -> bool:
+            # Excluir remitentes, destinatarios, fechas, materias y encabezados institucionales
+            if re.match(r"^(?:A\b|DE\s+(?:JEFE|MINISTRO|SUBSECRETARI|DIRECTOR|SECRETARI|DIVISI[ÓO]N)|DE\s*:)\b", line_clean, re.IGNORECASE):
+                return False
+            if re.match(r"^(?:DDU|CIRCULAR|ORD\b|ORO\b|ANT\b|MAT\b|SANTIAGO|VALPARA[ÍI]SO|COMPLEMENTA|TRABAJANDO|GOBIERNO|MINISTERIO)\b", line_clean, re.IGNORECASE):
+                return False
+            if re.match(r"^\d+", line_clean):
+                return False
+
+            letras = [c for c in line_clean if c.isalpha()]
+            if not letras:
+                return False
+            prop_mayus = sum(1 for c in letras if c.isupper()) / len(letras)
+            return prop_mayus >= 0.65
+
+        for line in lines[idx_inicio:45]:
             line_clean = line.strip()
             if not line_clean:
                 continue
@@ -47,17 +68,12 @@ class DescriptoresExtractor(BaseExtractor):
                 en_descriptores = True
                 continue
 
-            # Si ya estamos acumulando descriptores o detectamos líneas en MAYÚSCULAS de descriptores
-            if re.match(r"^(?:DE|A|PARA|MAT|ANT|SANTIAGO|VALPARA[ÍI]SO|CIRCULAR|MINISTERIO|ORD|DDU|\d+\.|[I|V|X]+\.)\b", line_clean, re.IGNORECASE):
-                if en_descriptores:
-                    break
-                continue
-
-            if re.match(r"^[A-ZÁÉÍÓÚÑ0-9\s;,\.-]{3,}$", line_clean):
+            if _es_linea_descriptor(line_clean):
                 desc_lineas.append(line_clean)
                 en_descriptores = True
             elif en_descriptores:
-                break
+                if re.match(r"^(?:DE\s+(?:JEFE|MINISTRO|SUBSECRETARI|DIRECTOR|SECRETARI|DIVISI[ÓO]N)|DE\s*:|SANTIAGO|VALPARA[ÍI]SO)\b", line_clean, re.IGNORECASE):
+                    break
 
         descriptores = " ".join(desc_lineas)
         descriptores = re.sub(r"\s+", " ", descriptores).strip()
