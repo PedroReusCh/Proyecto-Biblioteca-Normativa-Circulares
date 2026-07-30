@@ -69,6 +69,17 @@ def _normalizar_prefijo_numeral_ocr(line: str) -> str:
     return line
 
 
+def _normalizar_llamadas_nota_al_pie(line: str) -> str:
+    """Formatea dígitos de llamada a notas al pie en corchetes [1], [2], [3]."""
+    # 1. Separar citas de artículos con llamadas pegadas (ej. "artículo 381" -> "artículo 38 [1]")
+    line = re.sub(r"\bart[íi]culo\s+(\d{1,3})([1-9])\b", r"artículo \1 [\2]", line, flags=re.IGNORECASE)
+
+    # 2. Formatear dígitos sueltos al final de palabra o fecha (ej. "Nº97 /2007 1." -> "Nº97 /2007 [1].", "construcción 2-" -> "construcción [2]-")
+    line = re.sub(r"([a-záéíóúñA-ZÁÉÍÓÚÑ\)\/0-9])\s+([1-9])([\s\.,\-\)\;]|$)", r"\1 [\2]\3", line)
+
+    return line
+
+
 def _es_pie_de_pagina(line: str) -> bool:
     """Detecta líneas de pie de página de OCR incluso con espacios rotos entre caracteres."""
     line_norm = re.sub(r"\s+", " ", line).strip()
@@ -201,6 +212,8 @@ class CuerpoExtractor(BaseExtractor):
 
             # Aplicar normalización de numerales distorsionados por OCR (l. -> 1., S. -> 5., B. -> 8.)
             line_clean = _normalizar_prefijo_numeral_ocr(line_clean)
+            # Aplicar formateo de llamadas a notas al pie [1], [2], [3]
+            line_clean = _normalizar_llamadas_nota_al_pie(line_clean)
 
             # Detener extracción si llegamos a la firma o distribución
             if re.search(r"Saluda\s+atent", line_clean, re.IGNORECASE) or re.match(
