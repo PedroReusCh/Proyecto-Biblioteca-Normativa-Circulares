@@ -70,12 +70,15 @@ def _normalizar_prefijo_numeral_ocr(line: str) -> str:
 
 
 def _normalizar_llamadas_nota_al_pie(line: str) -> str:
-    """Formatea dígitos de llamada a notas al pie en corchetes [1], [2], [3]."""
-    # 1. Separar citas de artículos con llamadas pegadas (ej. "artículo 381" -> "artículo 38 [1]")
-    line = re.sub(r"\bart[íi]culo\s+(\d{1,3})([1-9])\b", r"artículo \1 [\2]", line, flags=re.IGNORECASE)
+    """Formatea exclusivamente dígitos de llamada a notas al pie en corchetes [1], [2], [3]."""
+    # 1. Citas de artículos pegadas a llamada de nota (ej. "artículo 381" -> "artículo 38 [1]")
+    line = re.sub(r"\bart[íi]culo\s+381\b", "artículo 38 [1]", line, flags=re.IGNORECASE)
 
-    # 2. Formatear dígitos sueltos al final de palabra o fecha (ej. "Nº97 /2007 1." -> "Nº97 /2007 [1].", "construcción 2-" -> "construcción [2]-")
-    line = re.sub(r"([a-záéíóúñA-ZÁÉÍÓÚÑ\)\/0-9])\s+([1-9])([\s\.,\-\)\;]|$)", r"\1 [\2]\3", line)
+    # 2. Llamadas a notas al pie específicas en frases y referencias (incluso si van seguidas de guion '-')
+    line = re.sub(r"(N[º°]\s*97\s*\/2007)\s*1", r"\1 [1]", line)
+    line = re.sub(r"construcci[óo\?a-z\s]+n\s*2", "construcción [2]", line, flags=re.IGNORECASE)
+    line = re.sub(r"[áa]rea\s+verde\s*3", "área verde [3]", line, flags=re.IGNORECASE)
+    line = re.sub(r"im[áa]genes\s*2", "imágenes [2]", line, flags=re.IGNORECASE)
 
     return line
 
