@@ -41,8 +41,8 @@ class CSVToAkomaXML:
         if not cuerpo_str.strip():
             return []
 
-        # Detectar divisor de secciones romanas (ej: "| II. NORMATIVA APLICABLE:" o "II. NORMATIVA APLICABLE:")
-        bloques_sec = re.split(r'(?:\||\n|^)\s*(?=[I|V|X]+\.\s+[A-ZÁÉÍÓÚÑ\s]+:)', cuerpo_str)
+        # Detectar divisor de secciones romanas (ej: "| II. NORMATIVA APLICABLE:" o "III. INSTRUCCIÓN COMPLEMENTARIA...")
+        bloques_sec = re.split(r'(?:\||\n|^)\s*(?=[IVX]+\.\s+[A-ZÁÉÍÓÚÑ\s\d]+\s*:)', cuerpo_str)
         secciones: List[SeccionDDU] = []
 
         for b in bloques_sec:
@@ -51,13 +51,14 @@ class CSVToAkomaXML:
                 continue
 
             titulo_sec = ""
-            m_sec = re.match(r'^([I|V|X]+\.\s+[A-ZÁÉÍÓÚÑ\s]+:)', b_clean)
+            m_sec = re.match(r'^([IVX]+\.\s+[A-ZÁÉÍÓÚÑ\s\d]+\s*:)', b_clean)
             if m_sec:
                 titulo_sec = m_sec.group(1).strip()
                 b_clean = b_clean[m_sec.end():].strip()
 
-            # Dividir párrafos por renglones o numerales que inician oración/párrafo (ej. "1. ", "2. ")
-            parrafos = [p.strip() for p in re.split(r'\n+|(?:(?<=\.\s)|(?<=^)|(?<=\|\s))(?=\d+\.\s+[A-ZÁÉÍÓÚÑa-z])', b_clean) if p.strip()]
+            # Dividir párrafos por renglones o numerales que inician oración/párrafo (ej. "1. ", "2. ", "6. ")
+            parrafos = [p.strip() for p in re.split(r'\n+|(?:(?<=\.\s)|(?<=:\s)|(?<=^)|(?<=\|\s))(?=\d+\.\s+[A-ZÁÉÍÓÚÑa-z])', b_clean) if p.strip()]
+
 
             if not parrafos and b_clean:
                 parrafos = [b_clean]
