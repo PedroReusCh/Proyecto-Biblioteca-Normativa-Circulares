@@ -1,7 +1,7 @@
 | Estado | Tarea |
 | :--- | :--- |
-| ✅ Completado | 1. Explorar el texto extraído y el fallo por artefacto nulo `\ufffd` y distorsión de año en `fecha_lugar.py` para DDU 531 |
-| ✅ Completado | 2. Formular corrección dinámica del año 2026 en la serie DDU 530+ en `fecha_lugar.py` |
-| ✅ Completado | 3. Presentar diseño técnico de reparación de año 2026 (`2026-02-17`) y obtener aprobación |
-| ✅ Completado | 4. Escribir documento de diseño `docs/plans/2026-07-31-extraccion-fecha-ddu531-design.md` y realizar commit |
-| ✅ Completado | 5. Invocar skill `writing-plans` para el plan de implementación |
+| 🔄 En progreso | 1. Explorar la solicitud del usuario de generar un artefacto/documentación de la tabla de homologación CSV ➔ Akoma Ntoso |
+| ⏳ Pendiente | 2. Formular pregunta de clarificación sobre la ubicación o formato deseado del documento de homologación |
+| ⏳ Pendiente | 3. Presentar propuesta de diseño para la documentación de la matriz de homologación |
+| ⏳ Pendiente | 4. Escribir documento de diseño y realizar commit |
+| ⏳ Pendiente | 5. Invocar skill `writing-plans` para el plan de implementación |
