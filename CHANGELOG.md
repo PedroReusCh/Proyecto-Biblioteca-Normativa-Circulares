@@ -4,7 +4,30 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/) y este proyecto se adhiere a las prácticas de control de versiones semántico.
 
+## [0.7.0] - 2026-07-31
+
+### Added
+
+* **ETL Independiente CSV ➔ RDF Turtle (`CSVToRDF`)**:
+  * Creación del módulo especializado [`scripts/csv_to_rdf.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/csv_to_rdf.py) para transformar cualquier archivo CSV de circulares DDU a grafos semánticos RDF Turtle (`.ttl`) compatibles con la ontología BCN.
+  * CLI ejecutable para procesamiento individual (`--csv`) o por lote (`--csv-dir`).
+  * Creación del directorio `salidas_rdf/` con los grafos generados para todas las circulares de prueba (`DDU_531_rdf.ttl`, `DDU_533_rdf.ttl`, `DDU_537_rdf.ttl`, `DDU_546_rdf.ttl`).
+  * Suite de pruebas unitarias y por lote en [`test/test_csv_to_rdf.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_csv_to_rdf.py).
+
+### Changed
+
+* **Segmentación Atómica de Numerales y Secciones XML BCN (`CSVToAkomaXML`)**:
+  * Implementación del helper `_parsear_cuerpo_a_secciones` en [`scripts/csv_to_akoma_xml.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/csv_to_akoma_xml.py) para segmentar automáticamente la celda `cuerpo` del CSV en numerales arábigos (`<num>1.</num>`, `<num>2.</num>`) y secciones romanas (`<heading>I. ANTECEDENTES</heading>`).
+  * Cumplimiento estricto con el tipo XSD `basehierarchy` del esquema de la BCN.
+* **Resguardo de Lista de Distribución y Cumplimiento XSD en `DDUToXML`**:
+  * Incorporado el atributo `id` obligatorio a todas las citas normativas `<ref id="ref_X">`.
+  * Reemplazada la etiqueta no estándar `<br/>` por la etiqueta nativa Akoma Ntoso `<eol/>`.
+  * Ajustada la lectura en `DDUToXML` para renderizar completamente la nómina de distribución desde `distribucion_texto` y `lista_distribucion`.
+
+---
+
 ## [0.6.0] - 2026-07-30
+
 
 ### Added
 
