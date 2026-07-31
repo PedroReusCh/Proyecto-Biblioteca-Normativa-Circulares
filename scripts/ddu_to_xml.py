@@ -224,9 +224,10 @@ class DDUToXML:
         if descriptores:
             builder.add('<classification source="#minvu-ddu">')
             builder.indent()
-            builder.add(f'<keyword value="{self._xml_escape(descriptores)}" showAs="Descriptores"/>')
+            builder.add(f'<keyword value="{self._xml_escape(descriptores)}" showAs="Descriptores" dictionary="http://datos.bcn.cl/recurso/cl/descriptores"/>')
             builder.dedent()
             builder.add('</classification>')
+
 
         # 3. references
         builder.add('<references source="#redactor">')
