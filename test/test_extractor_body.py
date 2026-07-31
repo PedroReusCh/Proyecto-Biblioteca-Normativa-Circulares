@@ -244,3 +244,25 @@ def test_firma_extractor_ddu_546_ocr() -> None:
     firmante = resultado.datos.get("firmante", "")
     assert firmante == "JUAN DIEGO IZQUIERDO HEVIA, DIVISIÓN DE DESARROLLO URBANO, MINISTERIO DE VIVIENDA Y URBANISMO"
     assert "Sr. Ministro" not in firmante
+
+
+def test_distribucion_extractor_limpieza_palabras_divididas() -> None:
+    """Verifica la desinfección universal de palabras divididas por OCR en la distribución."""
+    lines = [
+        "DISTRIBUCIÓN:",
+        "7. Contra loría I nterna MINVU.",
+        "13. Depto. de Ordenamiento Territor ial y Medio Ambiente (GORE Metropolitano)",
+        "16. Sr. Jefe de la Oficina de Autorizac iones Sectoriales e Inversión",
+        "26. Consejo Nacional de Desarrollo Territo rial.",
+    ]
+
+    extractor = DistribucionExtractor()
+    resultado = extractor.extract("\n".join(lines), lines)
+
+    assert resultado.exito is True
+    distribucion: List[str] = list(resultado.datos.get("lista_distribucion", []))
+    assert len(distribucion) == 4
+    assert distribucion[0] == "7. Contraloría Interna MINVU."
+    assert distribucion[1] == "13. Depto. de Ordenamiento Territorial y Medio Ambiente (GORE Metropolitano)"
+    assert distribucion[2] == "16. Sr. Jefe de la Oficina de Autorizaciones Sectoriales e Inversión"
+    assert distribucion[3] == "26. Consejo Nacional de Desarrollo Territorial."
