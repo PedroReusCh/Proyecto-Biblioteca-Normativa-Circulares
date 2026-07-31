@@ -286,12 +286,15 @@ class DDUToXML:
                     num_par = ""
                     texto_par = parrafo_texto_str
 
-                # Intentamos extraer subtítulo en mayúsculas dentro del numeral
+                # Intentamos extraer subtítulo en mayúsculas dentro del numeral (ej: MARCO NORMATIVO: o CRITERIO DE CÓMPUTO: "...")
                 heading_par = ""
-                match_sub = re.match(r"^([A-ZÁÉÍÓÚÑ\s\d\"'()]+[:.])\s+(.+)$", texto_par)
+                match_sub = re.match(r"^([A-ZÁÉÍÓÚÑ\s\d\"'()\─\-–—:]+\.)\s+(.+)$", texto_par)
+                if not match_sub:
+                    match_sub = re.match(r"^([A-ZÁÉÍÓÚÑ\s\d\"'()\─\-–—:]+:)\s+(.+)$", texto_par)
                 if match_sub:
                     heading_par = match_sub.group(1).strip()
                     texto_par = match_sub.group(2).strip()
+
 
                 par_id = f"par_{idx_sec}_{idx_par}"
                 texto_escapado: str = self._xml_escape(texto_par)
