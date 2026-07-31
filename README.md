@@ -23,6 +23,19 @@ El proyecto se estructura en los siguientes directorios clave:
 
 ---
 
+## Modelo de Datos de Dominio y Extensibilidad Evolutiva
+
+El proyecto adopta una **arquitectura en capas con separación clara de responsabilidades**:
+
+1. **Capa de Dominio Plano e Intuitivo (CSV)**:
+   Los datos extraídos se organizan bajo términos de dominio claros y legibles para analistas e ingenieros de datos (`numero_ddu`, `fecha_emision`, `cuerpo`, `firmante`, etc.) en formato CSV. Esto preserva la claridad humana y evita sobrecargar la extracción con nombres técnicos abstractos del estándar XML.
+2. **Capa de Interoperabilidad Semántica (Akoma Ntoso XML & RDF)**:
+   Los módulos [`scripts/ddu_to_xml.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_xml.py) y [`scripts/ddu_to_rdf.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_rdf.py) actúan como traductores que mapean automáticamente los campos de dominio a la taxonomía XML Akoma Ntoso v2.0 BCN (`FRBRWork`, `FRBRnumber`, `docDate`, `mainBody`, `authorialNote`) y a grafos semánticos RDF/Turtle.
+3. **Extensibilidad Evolutiva del Pipeline ETL**:
+   A medida que las circulares DDU evolucionen o incorporen nuevos bloques normativos en el futuro, es posible registrar nuevos extractores en [`scripts/extractors/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors) mediante el decorador `@register_extractor`. El orquestador [`scripts/ddu_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_orchestrator.py) incorporará las nuevas columnas al CSV sin alterar el código existente ni romper la generación Akoma Ntoso.
+
+---
+
 ## Mapeo Estandarizado de la Estructura (CSV -> ETLs)
 
 La suite de los 12 ETLs modulares deriva exactamente del contrato de especificación documentado en [`bcn - documentación/estructura_circular_ddu.csv`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n/estructura_circular_ddu.csv), simplificado a **6 columnas esenciales** (`orden`, `bloque`, `campo`, `obligatorio`, `descripcion`, `reglas`):
@@ -127,4 +140,4 @@ Para garantizar que el sistema y sus modelos semánticos de datos cumplen al 100
 pytest -v
 ```
 
-Actualmente, **32 de 32 pruebas pasan exitosamente** (100% de cobertura de la suite en estructura plana).
+Actualmente, **40 de 40 pruebas pasan exitosamente** (100% de cobertura de la suite en estructura plana).
