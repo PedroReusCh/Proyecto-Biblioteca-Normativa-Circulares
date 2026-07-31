@@ -114,7 +114,12 @@ class DDUToXML:
             re.IGNORECASE
         )
 
+        ref_idx = 0
+
         def reemplazar_cita(m: re.Match[str]) -> str:
+            nonlocal ref_idx
+            ref_idx += 1
+            ref_id = f"ref_{ref_idx}"
             gd = m.groupdict()
             if gd.get("art_oguc"):
                 num_oguc = gd["num_oguc"]
@@ -122,23 +127,24 @@ class DDUToXML:
                     num_oguc_clean = num_oguc.strip(".").strip()
                     num_normalizado = num_oguc_clean.lower().replace(" ", "-")
                     uri = f"http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-{num_normalizado}"
-                    return f'<ref href="{uri}">{m.group(0)}</ref>'
+                    return f'<ref id="{ref_id}" href="{uri}">{m.group(0)}</ref>'
             elif gd.get("art_lguc"):
                 num_lguc = gd["num_lguc"]
                 if num_lguc:
                     num_lguc_clean = num_lguc.strip(".").strip()
                     num_normalizado = num_lguc_clean.lower().replace(" ", "-")
                     uri = f"http://datos.bcn.cl/recurso/cl/dfl/ministerio-de-vivienda-y-urbanismo/1976-04-13/458/seccion/articulo-{num_normalizado}"
-                    return f'<ref href="{uri}">{m.group(0)}</ref>'
+                    return f'<ref id="{ref_id}" href="{uri}">{m.group(0)}</ref>'
             elif gd.get("oguc_completa"):
                 uri = "http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47"
-                return f'<ref href="{uri}">{m.group(0)}</ref>'
+                return f'<ref id="{ref_id}" href="{uri}">{m.group(0)}</ref>'
             elif gd.get("lguc_completa"):
                 uri = "http://datos.bcn.cl/recurso/cl/dfl/ministerio-de-vivienda-y-urbanismo/1976-04-13/458"
-                return f'<ref href="{uri}">{m.group(0)}</ref>'
+                return f'<ref id="{ref_id}" href="{uri}">{m.group(0)}</ref>'
             return m.group(0)
 
         return patron_citas.sub(reemplazar_cita, texto)
+
 
     def generar_xml(self, datos: DatosCircularDDU) -> str:
         """Genera un documento XML Akoma Ntso v2.0 BCN a partir de los datos estructurados.
@@ -289,9 +295,10 @@ class DDUToXML:
                 texto_escapado: str = self._xml_escape(texto_par)
                 texto_procesado: str = self._aplicar_referencias_citas(texto_escapado)
 
-                # Identificar y formatear listas multinivel del cuerpo con saltos de línea <br/>
-                # ej: "a) Que se encuentren..." -> "<br/>a) Que se encuentren..."
-                texto_procesado = re.sub(r"\s+([a-z\d]+\)\s+)", r"<br/>\1", texto_procesado)
+                # Identificar y formatear listas multinivel del cuerpo con saltos de línea <eol/>
+                # ej: "a) Que se encuentren..." -> "<eol/>a) Que se encuentren..."
+                texto_procesado = re.sub(r"\s+([a-z\d]+\)\s+)", r"<eol/>\1", texto_procesado)
+
 
                 par_id = f"par_{idx_sec}_{idx_par}"
 
