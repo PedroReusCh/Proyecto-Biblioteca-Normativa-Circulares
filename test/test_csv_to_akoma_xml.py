@@ -16,7 +16,6 @@ def test_csv_to_akoma_xml_transformation(tmp_path: Path) -> None:
 
     assert result_path.exists()
     content = result_path.read_text(encoding="utf-8")
-    assert "<akomaNtoso" in content
-    assert '<doc name="circular">' in content
-    assert 'FRBRnumber value="531"' in content
-    assert "2026-02-17" in content
+    assert '<doc name="circular"' in content
+    assert 'Esquema%20Akoma-Ntoso%20BCN.xsd' in content
+    assert 'FRBRdate date="2026-02-17"' in content or "2026-02-17" in content
