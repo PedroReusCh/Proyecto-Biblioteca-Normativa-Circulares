@@ -33,13 +33,13 @@ except ImportError:
 class DDUParser:
     """Clase para extraer y estructurar el contenido y metadatos de circulares DDU en PDF."""
 
-    def __init__(self, pdf_path: Path) -> None:
+    def __init__(self, pdf_path: Path | str) -> None:
         """Inicializa el parser con la ruta del archivo PDF.
 
         Args:
             pdf_path: Ruta del archivo PDF a parsear.
         """
-        self.pdf_path: Path = pdf_path
+        self.pdf_path: Path = Path(pdf_path) if isinstance(pdf_path, str) else pdf_path
         self.orchestrator: DDUOrchestrator = DDUOrchestrator()
 
     def extract_raw_text(self) -> str:

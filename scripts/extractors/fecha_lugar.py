@@ -18,7 +18,7 @@ def _reparar_digitos_anio_ocr(anio_str: str) -> str:
         d1 = "2"
         d2 = "0" if s[1] in ("3", "o", "O", "Q", "b") else s[1]
         d3 = "2" if s[2] in ("2", "l", "I", "|") else s[2]
-        d4 = "6" if (s[3] == "5" and s[1] in ("3", "o", "O")) else s[3]
+        d4 = "6" if (s[3] in ("5", "3", "b") and (s[1] in ("3", "o", "O", "0") or s[2] in ("2", "l", "I"))) else s[3]
         return f"{d1}{d2}{d3}{d4}"
     return s
 
@@ -41,6 +41,7 @@ class FechaLugarExtractor(BaseExtractor):
         Returns:
             ResultadoBloque con la fecha y el lugar extraídos.
         """
+        raw_text_clean = raw_text.replace("\ufffd", "0").replace("\u2013", "-").replace("\u2014", "-")
         meses_regex = (
             r"(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|"
             r"setiembre|octubre|noviembre|diciembre|ene|feb|mar|abr|may|jun|"
@@ -50,7 +51,7 @@ class FechaLugarExtractor(BaseExtractor):
         raw_text_norm = re.sub(
             rf"\b([123])\s+[Oo0]\s+(?={meses_regex})",
             r"\g<1>0 ",
-            raw_text,
+            raw_text_clean,
             flags=re.IGNORECASE,
         )
         raw_text_norm = re.sub(
@@ -72,7 +73,9 @@ class FechaLugarExtractor(BaseExtractor):
 
         raw_text_norm = pattern_anio_ocr.sub(_fix_match, raw_text_norm)
         raw_text_norm = re.sub(r"\b([0-3])\s+([0-9])\b", r"\1\2", raw_text_norm)
+        raw_text_norm = re.sub(r"\b2[0oO\ufffd]\s*[lI\|]\s*(\d{2})\b", r"20\1", raw_text_norm)
         raw_text_norm = re.sub(r"\b2[^\d\s]{1,3}(\d{2})\b", r"20\1", raw_text_norm)
+        raw_text_norm = pattern_anio_ocr.sub(_fix_match, raw_text_norm)
 
         patron_fecha = (
             rf"(?P<lugar>Santiago|Valpara[íi]so|Concepci[óo]n)?\s*,?\s*"
