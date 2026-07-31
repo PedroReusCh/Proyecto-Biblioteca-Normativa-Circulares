@@ -89,12 +89,8 @@ def test_xml_generation() -> None:
     for r in ref_elements[:10]:
         print(f"  - Texto: '{r.text}' -> href: '{r.attrib.get('href')}'")
 
-    # Guardar en tmp para inspección visual
-    tmp_dir = proyecto_raiz / "tmp"
-    tmp_dir.mkdir(exist_ok=True)
-    out_xml_path = tmp_dir / "DDU_533_test.xml"
-    out_xml_path.write_text(xml_str, encoding="utf-8")
-    print(f"\nArchivo de prueba guardado en: {out_xml_path}")
+    print("\nXML generado y validado con éxito.")
+
 
 
 if __name__ == "__main__":

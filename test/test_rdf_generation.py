@@ -48,12 +48,8 @@ def test_rdf_generation() -> None:
     print(rdf_str)
     print("-" * 60)
 
-    # Guardar en tmp para inspección visual y auditoría
-    tmp_dir = proyecto_raiz / "tmp"
-    tmp_dir.mkdir(exist_ok=True)
-    out_rdf_path = tmp_dir / "DDU_533_test.ttl"
-    out_rdf_path.write_text(rdf_str, encoding="utf-8")
-    print(f"\nArchivo RDF guardado en: {out_rdf_path}")
+    print("\nRDF generado con éxito.")
+
 
     # Validar que los prefijos y elementos estén presentes
     print("\n=== PASO 3: Validando contenido del RDF ===")
