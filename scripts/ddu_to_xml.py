@@ -164,7 +164,8 @@ class DDUToXML:
         builder.indent()
         builder.add('xmlns="http://www.akomantoso.org/2.0"')
         builder.add('xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"')
-        builder.add('xsi:schemaLocation="http://www.akomantoso.org/2.0 Esquema%20Akoma-Ntoso%20BCN.xsd">')
+        builder.add('xsi:schemaLocation="http://www.akomantoso.org/2.0 ../bcn%20-%20documentaci%C3%B3n/Esquema%20Akoma-Ntoso%20BCN.xsd">')
+
         builder.dedent()
 
         # Bloque <meta>
