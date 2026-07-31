@@ -47,7 +47,24 @@ class DistribucionExtractor(BaseExtractor):
             item = re.sub(r"\bMI\s+NVU\b", "MINVU", item, flags=re.IGNORECASE)
             item = re.sub(r"\bSERE\s+MI\b", "SEREMI", item, flags=re.IGNORECASE)
             item = re.sub(r"\bSER\s+VIU\b", "SERVIU", item, flags=re.IGNORECASE)
-            item = re.sub(r"\b([a-záéíóúñA-ZÁÉÍÓÚÑ]{3,})\s+([lsn])\b", r"\1\2", item)
+            item = re.sub(r"\bI\s+nterna\b", "Interna", item, flags=re.IGNORECASE)
+
+            # 3. Re-ensamblar sufijos en '-ial', '-rial', '-loría' (ej: Territor ial -> Territorial, Contra loría -> Contraloría)
+            item = re.sub(r"\b([a-záéíóúñA-ZÁÉÍÓÚÑ]{2,})\s+(ial|rial|loría)\b", r"\1\2", item, flags=re.IGNORECASE)
+
+            # 4. Re-ensamblar sufijos terminados en '-ción' / '-ciones' (ej: Autorizac iones -> Autorizaciones)
+            item = re.sub(r"\b([a-záéíóúñA-ZÁÉÍÓÚÑ]+c)\s+(i[óo]n|iones)\b", r"\1\2", item, flags=re.IGNORECASE)
+
+            # 5. Re-ensamblar plurales y terminaciones comunes
+            item = re.sub(
+                r"\b([a-záéíóúñA-ZÁÉÍÓÚÑ]{3,})\s+(res|les|nes|dos|das|tos|tas|ria|rias|rios|tiva|tivas)\b",
+                r"\1\2",
+                item,
+                flags=re.IGNORECASE,
+            )
+
+            # 6. Letra aislada al final de palabra
+            item = re.sub(r"\b([a-záéíóúñA-ZÁÉÍÓÚÑ]{3,}[a-záéíóúñ])\s+([rlns])\b", r"\1\2", item, flags=re.IGNORECASE)
 
             correcciones = [
                 (r"\bUrban\s+ismo\b", "Urbanismo"),

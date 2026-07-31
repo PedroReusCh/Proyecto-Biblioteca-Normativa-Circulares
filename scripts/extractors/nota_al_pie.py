@@ -27,7 +27,7 @@ def _limpiar_palabras_divididas_ocr(texto: str) -> str:
     texto = re.sub(r"\bcontain\s+ers\b", "containers", texto, flags=re.IGNORECASE)
 
     # 2. Sufijos terminados en 'ción' / 'ciones' (ej: edificac ión -> edificación)
-    texto = re.sub(r"\b([a-záéíóúñA-ZÁÉÍÓÚÑ]+c)\s+i([óo]n|iones)\b", r"\1i\2", texto)
+    texto = re.sub(r"\b([a-záéíóúñA-ZÁÉÍÓÚÑ]+c)\s+(i[óo]n|iones)\b", r"\1\2", texto, flags=re.IGNORECASE)
 
     # 3. Sufijos terminados en 'lo' / 'los' (ej: artícu lo -> artículo)
     texto = re.sub(r"\b([a-záéíóúñA-ZÁÉÍÓÚÑ]+tícu)\s+(lo|los)\b", r"\1\2", texto)
