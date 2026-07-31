@@ -19,3 +19,19 @@ def test_csv_to_akoma_xml_transformation(tmp_path: Path) -> None:
     assert '<doc name="circular"' in content
     assert 'Esquema%20Akoma-Ntoso%20BCN.xsd' in content
     assert 'FRBRdate date="2026-02-17"' in content or "2026-02-17" in content
+
+
+def test_csv_to_akoma_xml_batch_dir(tmp_path: Path) -> None:
+    """Verifica la transformación por lote de un directorio de CSVs."""
+    csv_dir = Path("salidas_csv")
+    assert csv_dir.exists()
+
+    converter = CSVToAkomaXML()
+    generated = converter.transform_dir(csv_dir, tmp_path)
+
+    assert len(generated) >= 4
+    for xml_file in generated:
+        assert xml_file.exists()
+        text = xml_file.read_text(encoding="utf-8")
+        assert '<doc name="circular"' in text
+

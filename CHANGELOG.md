@@ -8,6 +8,11 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ### Added
 
+* **Transformador Independiente CSV ➔ Akoma Ntoso XML (`CSVToAkomaXML`)**:
+  * Creación del módulo especializado [`scripts/csv_to_akoma_xml.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/csv_to_akoma_xml.py) para convertir archivos CSV de circulares a documentos XML Akoma Ntoso v2.0 BCN conformes.
+  * Soporte de interfaz CLI ejecutable independiente para procesamiento por archivo individual (`--csv`) o por lote de directorio (`--csv-dir`).
+  * Inclusión de la suite de pruebas unitarias y por lote en [`test/test_csv_to_akoma_xml.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_csv_to_akoma_xml.py).
+  * Generación en lote de archivos XML de salida para todas las circulares de prueba en `salidas_xml/` (`DDU_531_akoma.xml`, `DDU_533_akoma.xml`, `DDU_537_akoma.xml`, `DDU_546_akoma.xml`).
 * **Componente Normativo Nota al Pie (`NotaAlPieExtractor`)**:
   * Creación del extractor modular [`scripts/extractors/nota_al_pie.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/nota_al_pie.py) para capturar notas aclaratorias y referencias normativas al pie de página.
   * Implementación de una Máquina de Estados de acumulación multilínea y delimitación dinámica para capturar notas completas multirrenglón (ej. DDU 546).
