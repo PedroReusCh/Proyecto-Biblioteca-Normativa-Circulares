@@ -291,3 +291,18 @@ def test_cuerpo_extractor_ddu_537_exclusion_notas_al_pie() -> None:
     assert "4. Si bien la utilizac" in cuerpo
     assert "1 Art" not in cuerpo
     assert "2 La orientac" not in cuerpo
+
+
+def test_cuerpo_extractor_llamada_nota_imagenes_ocr() -> None:
+    """Verifica que 'imá genes 2' se convierta correctamente a 'imágenes [2]'."""
+    lines = [
+        "DE: JEFE DIVISIÓN DE DESARROLLO URBANO",
+        "4. Es decir, deberán ser sometidos a un procesamiento de las imá genes 2 para la conversión...",
+    ]
+
+    extractor = CuerpoExtractor()
+    resultado = extractor.extract("\n".join(lines), lines)
+
+    assert resultado.exito is True
+    cuerpo = str(resultado.datos.get("cuerpo", ""))
+    assert "imágenes [2]" in cuerpo
