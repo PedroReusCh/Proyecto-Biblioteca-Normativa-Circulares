@@ -219,7 +219,16 @@ class DDUToXML:
         builder.dedent()
         builder.add('</identification>')
 
-        # 2. references
+        # 2. classification (Descriptores)
+        descriptores: str = str(datos.get("descriptores", "")).strip()
+        if descriptores:
+            builder.add('<classification source="#minvu-ddu">')
+            builder.indent()
+            builder.add(f'<keyword value="{self._xml_escape(descriptores)}" showAs="Descriptores"/>')
+            builder.dedent()
+            builder.add('</classification>')
+
+        # 3. references
         builder.add('<references source="#redactor">')
         builder.indent()
         builder.add('<TLCOrganization id="redactor" href="http://datos.bcn.cl/recurso/cl/organismo/biblioteca-del-congreso-nacional" showAs="Biblioteca del Congreso Nacional"/>')
@@ -241,8 +250,11 @@ class DDUToXML:
         builder.add(f'<p><docNumber>DDU {numero}</docNumber></p>')
         builder.add(f'<p><docDate date="{fecha}">{fecha_legible}</docDate></p>')
         builder.add(f'<p><docTitle>{materia_escapada}</docTitle></p>')
+        if descriptores:
+            builder.add(f'<p>Descriptores: {self._xml_escape(descriptores)}</p>')
         builder.dedent()
         builder.add('</preface>')
+
 
         # Bloque <mainBody>
         builder.add('<mainBody>')
@@ -329,24 +341,27 @@ class DDUToXML:
         builder.dedent()
         builder.add('</mainBody>')
 
-        # Bloque <conclusions> (opcional, para firma y lista de distribución)
+        # Bloque <conclusions> (opcional, para firma, notas al pie y lista de distribución)
         firmante: str = str(datos.get("firmante", "")).strip()
+        notas_al_pie: str = str(datos.get("notas_al_pie", "")).strip()
         distribucion_raw = datos.get("distribucion_texto") or datos.get("lista_distribucion") or ""
         if isinstance(distribucion_raw, list):
             lista_distribucion: str = "; ".join([str(item) for item in distribucion_raw if str(item).strip()]).strip()
         else:
             lista_distribucion: str = str(distribucion_raw).strip()
 
-
-        if firmante or lista_distribucion:
+        if firmante or lista_distribucion or notas_al_pie:
             builder.add('<conclusions>')
             builder.indent()
             if firmante:
                 builder.add(f'<p><span refersTo="#jefe-division-desarrollo-urbano">{self._xml_escape(firmante)}</span></p>')
+            if notas_al_pie:
+                builder.add(f'<p><authorialNote id="fn_1" placement="bottom"><p>Notas al Pie: {self._xml_escape(notas_al_pie)}</p></authorialNote></p>')
             if lista_distribucion:
                 builder.add(f'<p>Distribución: {self._xml_escape(lista_distribucion)}</p>')
             builder.dedent()
             builder.add('</conclusions>')
+
 
 
         builder.add('</doc>')
