@@ -36,3 +36,17 @@ def test_csv_to_akoma_xml_batch_dir(tmp_path: Path) -> None:
         text = xml_file.read_text(encoding="utf-8")
         assert '<doc name="circular"' in text
 
+
+def test_csv_to_akoma_xml_numeral_segmentation(tmp_path: Path) -> None:
+    """Verifica que la transformación desde CSV extraiga numerales <num> e identificadores <paragraph>."""
+    csv_input = Path("salidas_csv/DDU_531_extraido.csv")
+    out_xml = tmp_path / "DDU_531_num_test.xml"
+
+    converter = CSVToAkomaXML()
+    result_path = converter.transform(csv_input, out_xml)
+
+    content = result_path.read_text(encoding="utf-8")
+    assert "<num>1.</num>" in content or "<num>1</num>" in content
+    assert '<paragraph id="' in content
+
+

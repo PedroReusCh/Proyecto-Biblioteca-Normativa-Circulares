@@ -8,7 +8,9 @@ la matriz de homologación.
 import argparse
 import csv
 from pathlib import Path
+import re
 import sys
+
 from typing import Dict, List
 
 _PROYECTO_RAIZ = Path(__file__).resolve().parents[1]
@@ -33,8 +35,42 @@ class CSVToAkomaXML:
         """Inicializa el transformador."""
         self.xml_builder: DDUToXML = DDUToXML()
 
+    def _parsear_cuerpo_a_secciones(self, cuerpo_str: str) -> List[SeccionDDU]:
+
+        """Divide el texto corrido del cuerpo en secciones y párrafos con numerales."""
+        if not cuerpo_str.strip():
+            return []
+
+        # Detectar divisor de secciones romanas (ej: "| II. NORMATIVA APLICABLE:" o "II. NORMATIVA APLICABLE:")
+        bloques_sec = re.split(r'(?:\||\n|^)\s*(?=[I|V|X]+\.\s+[A-ZÁÉÍÓÚÑ\s]+:)', cuerpo_str)
+        secciones: List[SeccionDDU] = []
+
+        for b in bloques_sec:
+            b_clean = b.strip()
+            if not b_clean:
+                continue
+
+            titulo_sec = ""
+            m_sec = re.match(r'^([I|V|X]+\.\s+[A-ZÁÉÍÓÚÑ\s]+:)', b_clean)
+            if m_sec:
+                titulo_sec = m_sec.group(1).strip()
+                b_clean = b_clean[m_sec.end():].strip()
+
+            # Dividir párrafos por renglones o numerales (ej. "1. ", "2. ")
+            parrafos = [p.strip() for p in re.split(r'\n+|(?=\b\d+\.\s+)', b_clean) if p.strip()]
+            if not parrafos and b_clean:
+                parrafos = [b_clean]
+
+            secciones.append({
+                "titulo": titulo_sec,
+                "parrafos": parrafos
+            })
+
+        return secciones if secciones else [{"titulo": "", "parrafos": [cuerpo_str]}]
+
     def read_csv(self, csv_path: Path) -> DatosCircularDDU:
         """Lee un CSV de circular DDU y reconstruye el diccionario DatosCircularDDU.
+
 
         Args:
             csv_path: Ruta al archivo CSV individual de la circular.
@@ -53,9 +89,8 @@ class CSVToAkomaXML:
 
         # Extraer campos de la matriz de homologación
         cuerpo_str = raw_data.get("cuerpo", "")
-        secciones: List[SeccionDDU] = []
-        if cuerpo_str:
-            secciones.append({"titulo": "", "parrafos": [cuerpo_str]})
+        secciones: List[SeccionDDU] = self._parsear_cuerpo_a_secciones(cuerpo_str)
+
 
         fecha_lugar_val = raw_data.get("fecha_emision", "")
         fecha_val = ""
