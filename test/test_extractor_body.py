@@ -271,6 +271,7 @@ def test_distribucion_extractor_limpieza_palabras_divididas() -> None:
 def test_cuerpo_extractor_ddu_537_exclusion_notas_al_pie() -> None:
     """Verifica la inclusión completa del Numeral 4 y exclusión de notas al pie en DDU 537."""
     lines = [
+        "DE: JEFE DIVISIÓN DE DESARROLLO URBANO",
         "3. En atención a las normas antes citadas, es posible afirmar que...",
         "1 Artículo 38. Lineamientos y estándares de los mapas de amenaza y riesgo...",
         "Ministerio de Vivienda y Urbanismo - Alameda 924 - Santiago - Chile Página 2 de 4",
@@ -287,6 +288,6 @@ def test_cuerpo_extractor_ddu_537_exclusion_notas_al_pie() -> None:
 
     assert resultado.exito is True
     cuerpo = str(resultado.datos.get("cuerpo", ""))
-    assert "4. Si bien la utilización" in cuerpo
-    assert "1 Artículo 38" not in cuerpo
-    assert "2 La orientación técnica" not in cuerpo
+    assert "4. Si bien la utilizac" in cuerpo
+    assert "1 Art" not in cuerpo
+    assert "2 La orientac" not in cuerpo

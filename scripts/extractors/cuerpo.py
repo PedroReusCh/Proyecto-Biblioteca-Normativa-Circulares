@@ -58,6 +58,8 @@ def _limpiar_texto_cuerpo(texto: str) -> str:
 
 def _normalizar_prefijo_numeral_ocr(line: str) -> str:
     """Normaliza distorsiones de caracteres OCR al inicio de numerales de párrafo."""
+    # 0. Normalizar espacios entre dígito y punto (ej. "4 . ", "7 . ") -> "4. "
+    line = re.sub(r"^(\d+)\s+\.\s*", r"\1. ", line)
     # 1. Normalizar 'l.', 'I.', 'i.', '|.' -> '1. '
     line = re.sub(r"^[lIi\|]\.\s+", "1. ", line)
     # 2. Normalizar 'S.', 's.', '§.' -> '5. '
@@ -182,8 +184,16 @@ class CuerpoExtractor(BaseExtractor):
 
         for i in range(scan_limit):
             line = lines[i]
-            if idx_a == -1 and re.match(r"^(?:A(?:\s|:)|PARA\s*:)\s*.+$", line, re.IGNORECASE):
-                m_check = re.match(r"^(?:A(?:\s|:)|PARA\s*:)\s*:?\s*(.+)$", line, re.IGNORECASE)
+            if idx_a == -1 and (
+                re.match(r"^A\s*:\s*.+$", line, re.IGNORECASE)
+                or re.match(r"^PARA\s*:\s*.+$", line, re.IGNORECASE)
+                or re.match(
+                    r"^A\s+((?:SEGÚN|TODOS|TODAS|LOS|LAS|SRES|SRA|SR|DIRECTOR|SECRETARIO|GOBERNA|CONTRALO|BIBLIO)\b.+)$",
+                    line,
+                    re.IGNORECASE,
+                )
+            ):
+                m_check = re.match(r"^(?:A\s*:?|PARA\s*:)\s*:?\s*(.+)$", line, re.IGNORECASE)
                 if m_check and not re.match(r"^LA\s+FECHA", m_check.group(1).strip(), re.IGNORECASE):
                     idx_a = i
             if idx_de == -1:
@@ -223,8 +233,9 @@ class CuerpoExtractor(BaseExtractor):
                 curr_idx += 1
                 continue
 
-            # Descartar líneas de pie de página de OCR (incluyendo espacios rotos)
+            # Descartar líneas de pie de página de OCR (incluyendo espacios rotos) y resetear estado de descarte
             if _es_pie_de_pagina(line_clean):
+                omitiendo_nota_al_pie = False
                 curr_idx += 1
                 continue
 
@@ -256,9 +267,9 @@ class CuerpoExtractor(BaseExtractor):
                 break
 
             # Omitir metadatos de cabecera si aún no hemos comenzado ningún párrafo/sección
-            if not parrafo_actual and not secciones and not seccion_actual["titulo"]:
+            if not parrafo_actual and not secciones and not seccion_actual["titulo"] and not seccion_actual["parrafos"]:
                 if re.match(
-                    r"^(?:DDU|CIRCULAR|ORD\.|ORO\.|ANT|MAT|DE|A|PARA|SANTIAGO|VALPARA[ÍI]SO|PERMISOS)\b",
+                    r"^(?:DDU|CIRCULAR|ORD\.|ORO\.|ANT|MAT|DE|A\s*:|PARA\s*:|SANTIAGO|VALPARA[ÍI]SO|PERMISOS)\b",
                     line_clean,
                     re.IGNORECASE,
                 ) or re.match(r"^\d+\)", line_clean):
