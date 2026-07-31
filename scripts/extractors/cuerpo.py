@@ -61,8 +61,9 @@ def _normalizar_prefijo_numeral_ocr(line: str) -> str:
     """Normaliza distorsiones de caracteres OCR al inicio de numerales de párrafo."""
     # 0. Normalizar espacios entre dígito y punto (ej. "4 . ", "7 . ") -> "4. "
     line = re.sub(r"^(\d+)\s+\.\s*", r"\1. ", line)
-    # 1. Normalizar 'l.', 'I.', 'i.', '|.' -> '1. '
-    line = re.sub(r"^[lIi\|]\.\s+", "1. ", line)
+    # 1. Normalizar 'l.', '|.' -> '1. ' (sin alterar el número romano I. o i.)
+    line = re.sub(r"^[l\|]\.\s+", "1. ", line)
+
     # 2. Normalizar 'S.', 's.', '§.' -> '5. '
     line = re.sub(r"^(?:S|s|§)\.\s+", "5. ", line)
     # 3. Normalizar 'B.' -> '8. '
@@ -129,8 +130,9 @@ def _normalizar_romano_ocr(prefix: str, texto_titulo: str) -> str | None:
     es_mayusculas = len(letras) > 0 and (sum(1 for c in letras if c.isupper()) / len(letras) >= 0.65)
 
     if es_mayusculas:
-        if prefix_clean in ("l", "i"):
+        if prefix_clean in ("l", "i", "1"):
             return "I."
+
         elif prefix_clean in ("11", "ll", "1l", "l1", "ii"):
             return "II."
         elif prefix_clean in ("111", "lll", "iii"):
@@ -301,8 +303,9 @@ class CuerpoExtractor(BaseExtractor):
                 curr_idx += 1
                 continue
 
-            # Detectar número romano o distorsión OCR de sección (ej. "I. ANTECEDENTES", "11. NORMATIVA APLICABLE")
-            match_romano = re.match(r"^([IVXLCDM]+|l+|11+|1l|l1)\.\s+(.+)$", line_clean, re.IGNORECASE)
+            # Detectar número romano o distorsión OCR de sección (ej. "I. ANTECEDENTES", "1. ANTECEDENTES", "11. NORMATIVA APLICABLE")
+            match_romano = re.match(r"^([IVXLCDM]+|l+|\d+)\.\s+(.+)$", line_clean, re.IGNORECASE)
+
             if match_romano:
                 prefijo, texto_titulo = match_romano.group(1), match_romano.group(2).strip()
                 romano_norm = _normalizar_romano_ocr(prefijo, texto_titulo)
