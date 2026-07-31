@@ -83,10 +83,11 @@ class CSVToAkomaXML:
             "lugar": lugar_val,
             "destinatarios": raw_data.get("destinatarios", ""),
             "firmante": raw_data.get("firmante", ""),
-            "lista_distribucion": [],
+            "lista_distribucion": [d.strip() for d in raw_data.get("lista_distribucion", "").split(";") if d.strip()],
             "distribucion_texto": raw_data.get("lista_distribucion", ""),
             "notas_al_pie": raw_data.get("notas_al_pie", ""),
         }
+
         return datos
 
     def transform(self, csv_path: Path, output_xml_path: Path) -> Path:

@@ -328,7 +328,12 @@ class DDUToXML:
 
         # Bloque <conclusions> (opcional, para firma y lista de distribución)
         firmante: str = str(datos.get("firmante", "")).strip()
-        lista_distribucion: str = str(datos.get("lista_distribucion", "")).strip()
+        distribucion_raw = datos.get("distribucion_texto") or datos.get("lista_distribucion") or ""
+        if isinstance(distribucion_raw, list):
+            lista_distribucion: str = "; ".join([str(item) for item in distribucion_raw if str(item).strip()]).strip()
+        else:
+            lista_distribucion: str = str(distribucion_raw).strip()
+
 
         if firmante or lista_distribucion:
             builder.add('<conclusions>')
@@ -339,6 +344,7 @@ class DDUToXML:
                 builder.add(f'<p>Distribución: {self._xml_escape(lista_distribucion)}</p>')
             builder.dedent()
             builder.add('</conclusions>')
+
 
         builder.add('</doc>')
 
