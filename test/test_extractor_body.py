@@ -266,3 +266,27 @@ def test_distribucion_extractor_limpieza_palabras_divididas() -> None:
     assert distribucion[1] == "13. Depto. de Ordenamiento Territorial y Medio Ambiente (GORE Metropolitano)"
     assert distribucion[2] == "16. Sr. Jefe de la Oficina de Autorizaciones Sectoriales e Inversión"
     assert distribucion[3] == "26. Consejo Nacional de Desarrollo Territorial."
+
+
+def test_cuerpo_extractor_ddu_537_exclusion_notas_al_pie() -> None:
+    """Verifica la inclusión completa del Numeral 4 y exclusión de notas al pie en DDU 537."""
+    lines = [
+        "3. En atención a las normas antes citadas, es posible afirmar que...",
+        "1 Artículo 38. Lineamientos y estándares de los mapas de amenaza y riesgo...",
+        "Ministerio de Vivienda y Urbanismo - Alameda 924 - Santiago - Chile Página 2 de 4",
+        "4 . Si bien la utilización de estos mapas de amenazas resulta obligatoria para la elaboración de los IPT...",
+        "5. Sin embargo, en caso de no existir los mapas de amenazas...",
+        "2 La orientación técnica específica para estas materias está contenida en el punto 2.3...",
+        "Ministerio de Vivienda y Urbanismo - Alameda 924 - Santiago - Chile Página 3 de 4",
+        "a lo establecido en el artículo 29 del Decreto N° 32 de 2015...",
+        "8. Por su parte, respecto del artículo 36 de la Ley N° 21.364...",
+    ]
+
+    extractor = CuerpoExtractor()
+    resultado = extractor.extract("\n".join(lines), lines)
+
+    assert resultado.exito is True
+    cuerpo = str(resultado.datos.get("cuerpo", ""))
+    assert "4. Si bien la utilización" in cuerpo
+    assert "1 Artículo 38" not in cuerpo
+    assert "2 La orientación técnica" not in cuerpo
