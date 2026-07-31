@@ -46,7 +46,7 @@ tmp/
 *.pdf
 *.docx
 *.doc
-/bcn - circulares - csv/
+*.xml
 
 # --- Editores y Entornos de Desarrollo (IDEs) ---
 .vscode/
@@ -57,9 +57,6 @@ tmp/
 *.sln
 *.swp
 *~
-
-# --- Herramientas de IA y Antigravity ---
-.superpowers/
 
 # --- Sistema Operativo y Office ---
 Thumbs.db
