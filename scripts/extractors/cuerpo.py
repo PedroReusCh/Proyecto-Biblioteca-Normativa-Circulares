@@ -40,6 +40,7 @@ def _limpiar_texto_cuerpo(texto: str) -> str:
         (r"\baprob\s+ad([aaos])\b", r"aprobad\1"),
         (r"\baprob\s+ac(i[oó]n|iones)\b", r"aprobac\1"),
         (r"\bexpuest\s+os\b", "expuestos"),
+        (r"\bim[áa]\s+genes\b", "imágenes"),
         (r"\bOS\s+33\b", "DS 33"),
         # Reglas genéricas para plurales con 's' o 'es' aisladas por OCR
         (r"\b([a-záéíóúñ]{3,}[aeiouáéíóú])\s+s\b", r"\1s"),
@@ -80,7 +81,7 @@ def _normalizar_llamadas_nota_al_pie(line: str) -> str:
     line = re.sub(r"(N[º°]\s*97\s*\/2007)\s*1", r"\1 [1]", line)
     line = re.sub(r"construcci[óo\?a-z\s]+n\s*2", "construcción [2]", line, flags=re.IGNORECASE)
     line = re.sub(r"[áa]rea\s+verde\s*3", "área verde [3]", line, flags=re.IGNORECASE)
-    line = re.sub(r"im[áa]genes\s*2", "imágenes [2]", line, flags=re.IGNORECASE)
+    line = re.sub(r"im[áa]\s*genes\s*2\b", "imágenes [2]", line, flags=re.IGNORECASE)
 
     return line
 
