@@ -19,6 +19,32 @@ except ImportError:
     from extractors.base import BaseExtractor, ResultadoBloque, register_extractor
 
 
+def _limpiar_palabras_divididas_ocr(texto: str) -> str:
+    """Re-ensambla palabras fragmentadas por espacios de escaneo/OCR."""
+    # 1. Anglicismos y palabras compuestas específicas
+    texto = re.sub(r"\bcon\s+tain\s+ers\b", "containers", texto, flags=re.IGNORECASE)
+    texto = re.sub(r"\bcon\s+tainers\b", "containers", texto, flags=re.IGNORECASE)
+    texto = re.sub(r"\bcontain\s+ers\b", "containers", texto, flags=re.IGNORECASE)
+
+    # 2. Sufijos terminados en 'ción' / 'ciones' (ej: edificac ión -> edificación)
+    texto = re.sub(r"\b([a-záéíóúñA-ZÁÉÍÓÚÑ]+c)\s+i([óo]n|iones)\b", r"\1i\2", texto)
+
+    # 3. Sufijos terminados en 'lo' / 'los' (ej: artícu lo -> artículo)
+    texto = re.sub(r"\b([a-záéíóúñA-ZÁÉÍÓÚÑ]+tícu)\s+(lo|los)\b", r"\1\2", texto)
+
+    # 4. Plurales y terminaciones comunes en 'res', 'les', 'nes', 'dos', 'das', 'tos', 'tas', 'nicos', 'mente'
+    texto = re.sub(
+        r"\b([a-záéíóúñA-ZÁÉÍÓÚÑ]{3,})\s+(res|les|nes|dos|das|tos|tas|mente|nicos|nica|nicas)\b",
+        r"\1\2",
+        texto,
+    )
+
+    # 5. Letra aislada al final de palabra (ej: carácte r -> carácter)
+    texto = re.sub(r"\b([a-záéíóúñA-ZÁÉÍÓÚÑ]{3,}[a-záéíóúñ])\s+([rlns])\b", r"\1\2", texto)
+
+    return re.sub(r"\s+", " ", texto).strip()
+
+
 @register_extractor
 class NotaAlPieExtractor(BaseExtractor):
     """Extractor de notas aclaratorias y referencias normativas al pie de página."""
@@ -43,7 +69,7 @@ class NotaAlPieExtractor(BaseExtractor):
         def _guardar_nota_actual() -> None:
             if nota_actual_lines:
                 texto_completo = " ".join(nota_actual_lines).strip()
-                texto_completo = re.sub(r"\s+", " ", texto_completo)
+                texto_completo = _limpiar_palabras_divididas_ocr(texto_completo)
                 if texto_completo:
                     notas.append(texto_completo)
                 nota_actual_lines.clear()
@@ -79,6 +105,7 @@ class NotaAlPieExtractor(BaseExtractor):
         _guardar_nota_actual()
 
         notas_texto = " | ".join(notas) if notas else ""
+        notas_texto = _limpiar_palabras_divididas_ocr(notas_texto)
         exito = bool(notas_texto)
 
         return ResultadoBloque(
