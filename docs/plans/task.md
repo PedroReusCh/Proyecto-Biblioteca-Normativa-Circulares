@@ -1,7 +1,7 @@
 | Estado | Tarea |
 | :--- | :--- |
-| ✅ Completado | 1. Explorar la fuga de la nota 2 ("las imágenes 2 para la conversión...") en DDU 537 |
-| ✅ Completado | 2. Formular pregunta de clarificación / proponer enfoques de desinfección universal de notas en `cuerpo.py` |
-| ✅ Completado | 3. Presentar diseño técnico para depurar notas al pie internas en `cuerpo.py` y obtener aprobación |
-| ✅ Completado | 4. Escribir documento de diseño `docs/plans/2026-07-31-limpieza-notas-internas-cuerpo-design.md` y realizar commit |
-| ✅ Completado | 5. Invocar skill `writing-plans` para el plan de implementación |
+| ✅ Completado | 1. Explorar el texto extraído y el fallo por artefacto nulo `\ufffd` y distorsión de año en `fecha_lugar.py` para DDU 531 |
+| ✅ Completado | 2. Formular corrección dinámica del año 2026 en la serie DDU 530+ en `fecha_lugar.py` |
+| 🔄 En progreso | 3. Presentar diseño técnico de reparación de año 2026 (`2026-02-17`) y obtener aprobación |
+| ⏳ Pendiente | 4. Escribir documento de diseño `docs/plans/2026-07-31-extraccion-fecha-ddu531-design.md` y realizar commit |
+| ⏳ Pendiente | 5. Invocar skill `writing-plans` para el plan de implementación |
