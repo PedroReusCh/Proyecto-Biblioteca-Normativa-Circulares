@@ -43,3 +43,24 @@ def test_nota_al_pie_extractor_ddu_546_multiline() -> None:
     notas: str = str(resultado.datos.get("notas_al_pie", ""))
     assert "el permiso de edificación, en su N° 2" in notas
     assert "2 En el artículo 1.1.2." in notas
+
+
+def test_nota_al_pie_extractor_limpieza_palabras_divididas() -> None:
+    """Verifica la desinfección de palabras divididas por OCR en notas al pie."""
+    lines = [
+        "1 En dicha circular se indica pero no a recintos que tengan el carácte r de local habitable, como es el caso para los 'con tain ers'.",
+        "3 En el artículo 1.1.2. de la OGUC se define Edificaciones con destinos complementarios al área verde como construcciones complementarias a la recreación, tales como sombreaderos, pérgolas, mirado res, juegos infantiles, servicios higié nicos, paño les para herramien tas... Por su parte, en el literal b) del artícu lo 1.6.3. de la OGUC...",
+    ]
+
+    extractor = NotaAlPieExtractor()
+    resultado = extractor.extract("\n".join(lines), lines)
+
+    assert resultado.exito is True
+    notas = str(resultado.datos.get("notas_al_pie", ""))
+    assert "carácter de local" in notas
+    assert "containers" in notas
+    assert "miradores" in notas
+    assert "higiénicos" in notas
+    assert "pañoles" in notas
+    assert "herramientas" in notas
+    assert "artículo 1.6.3." in notas
