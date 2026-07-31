@@ -18,8 +18,8 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 * **Normalización y Exclusión de Notas al Pie en Cuerpo (`CuerpoExtractor`)**:
   * Integración del helper `_normalizar_llamadas_nota_al_pie` en [`scripts/extractors/cuerpo.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/cuerpo.py) para convertir superíndices extraídos en corchetes formales `[1]`, `[2]`, `[3]`, evitando distorsiones en citas legales (ej. `artículo 38 [1]`).
   * Implementación de la función `_es_inicio_nota_al_pie` y la máquina de descarte en `cuerpo.py` para filtrar y omitir los bloques de notas al pie dentro de la extracción del cuerpo normativo.
-* **Desinfección Universal de Palabras Divididas por OCR (`NotaAlPieExtractor`)**:
-  * Integración de la función `_limpiar_palabras_divididas_ocr` en [`scripts/extractors/nota_al_pie.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/nota_al_pie.py) para re-ensamblar automáticamente sufijos y anglicismos fragmentados por el escáner (ej: `carácter`, `'containers'`, `miradores`, `higiénicos`, `pañoles`, `herramientas`, `artículo`).
+* **Desinfección Universal de Palabras Divididas por OCR (`DistribucionExtractor` & `NotaAlPieExtractor`)**:
+  * Potenciación de `_limpiar_item_distribucion` en [`scripts/extractors/distribucion.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/distribucion.py) y `_limpiar_palabras_divididas_ocr` en [`scripts/extractors/nota_al_pie.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/nota_al_pie.py) para re-ensamblar automáticamente sufijos, nombres institucionales y anglicismos fragmentados por el escáner (ej: `Contraloría Interna MINVU`, `Territorial`, `Autorizaciones`, `carácter`, `'containers'`, `miradores`, `higiénicos`, `pañoles`, `herramientas`, `artículo`).
 
 ---
 
