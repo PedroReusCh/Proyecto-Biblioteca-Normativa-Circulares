@@ -56,8 +56,9 @@ class CSVToAkomaXML:
                 titulo_sec = m_sec.group(1).strip()
                 b_clean = b_clean[m_sec.end():].strip()
 
-            # Dividir párrafos por renglones o numerales (ej. "1. ", "2. ")
-            parrafos = [p.strip() for p in re.split(r'\n+|(?=\b\d+\.\s+)', b_clean) if p.strip()]
+            # Dividir párrafos por renglones o numerales que inician oración/párrafo (ej. "1. ", "2. ")
+            parrafos = [p.strip() for p in re.split(r'\n+|(?:(?<=\.\s)|(?<=^)|(?<=\|\s))(?=\d+\.\s+[A-ZÁÉÍÓÚÑa-z])', b_clean) if p.strip()]
+
             if not parrafos and b_clean:
                 parrafos = [b_clean]
 

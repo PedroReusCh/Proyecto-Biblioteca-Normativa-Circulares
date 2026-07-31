@@ -97,14 +97,15 @@ class DDUToXML:
         except ValueError:
             return f"{dd} de {mes_str} de {yyyy}"
 
-    def _aplicar_referencias_citas(self, texto: str) -> str:
-        """Identifica dinámicamente citas a la OGUC/LGUC y las envuelve en tags <ref>.
+    def _aplicar_referencias_citas(self, texto: str, prefix_id: str = "ref") -> str:
+        """Identifica menciones de normas (OGUC, LGUC) en el texto y las envuelve en etiquetas <ref>.
 
         Args:
-            texto: Texto de párrafo ya escapado para XML.
+            texto: Texto en el cual buscar citas normativas.
+            prefix_id: Prefijo único para generar atributos id válidos e irrepetibles.
 
         Returns:
-            Texto con las citas envueltas en tags <ref>.
+            Texto con las citas transformadas a elementos <ref>.
         """
         patron_citas = re.compile(
             r'(?P<art_oguc>\bart(?:[ií]culo|[ií]c)?\.?\s+(?P<num_oguc>\d+\.\d+\.\d+(?:\.\d+)*)\.?(?:\s+de\s+la\s+OGUC|\s+de\s+la\s+Ordenanza\s+General\s+de\s+Urbanismo\s+y\s+Construcciones)?\b)|'
@@ -119,7 +120,7 @@ class DDUToXML:
         def reemplazar_cita(m: re.Match[str]) -> str:
             nonlocal ref_idx
             ref_idx += 1
-            ref_id = f"ref_{ref_idx}"
+            ref_id = f"{prefix_id}_{ref_idx}"
             gd = m.groupdict()
             if gd.get("art_oguc"):
                 num_oguc = gd["num_oguc"]
@@ -292,15 +293,14 @@ class DDUToXML:
                     heading_par = match_sub.group(1).strip()
                     texto_par = match_sub.group(2).strip()
 
+                par_id = f"par_{idx_sec}_{idx_par}"
                 texto_escapado: str = self._xml_escape(texto_par)
-                texto_procesado: str = self._aplicar_referencias_citas(texto_escapado)
+                texto_procesado: str = self._aplicar_referencias_citas(texto_escapado, prefix_id=f"ref_{par_id}")
 
                 # Identificar y formatear listas multinivel del cuerpo con saltos de línea <eol/>
                 # ej: "a) Que se encuentren..." -> "<eol/>a) Que se encuentren..."
                 texto_procesado = re.sub(r"\s+([a-z\d]+\)\s+)", r"<eol/>\1", texto_procesado)
 
-
-                par_id = f"par_{idx_sec}_{idx_par}"
 
                 builder.add(f'<paragraph id="{par_id}">')
                 builder.indent()
