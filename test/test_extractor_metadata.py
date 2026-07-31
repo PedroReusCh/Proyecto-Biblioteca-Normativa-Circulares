@@ -125,6 +125,25 @@ def test_fecha_lugar_extractor() -> None:
     assert resultado.confianza == 1.0
 
 
+def test_fecha_lugar_extractor_ddu_531_ocr() -> None:
+    """Verifica la extracción de fecha '2026-02-17' con artefactos nulos OCR en DDU 531."""
+    lines = [
+        "A SEGÚN DISTRIBUCIÓN.",
+        "DDU 531",
+        "CIRCULAR ORD. N° 0088 /",
+        "SANTIAGO, 1 7 FEB 2\ufffdl23",
+        "DE JEFE DIVISIÓ N DE DESARROLLO URBANO.",
+    ]
+
+    extractor = FechaLugarExtractor()
+    resultado = extractor.extract("\n".join(lines), lines)
+
+    assert resultado.exito is True
+    assert resultado.datos["fecha"] == "2026-02-17"
+    assert resultado.datos["lugar"] == "Santiago"
+    assert resultado.datos["fecha_lugar"] == "Santiago, 2026-02-17"
+
+
 def test_destinatarios_extractor() -> None:
     """Prueba la extracción de destinatarios (A:)."""
     extractor = DestinatariosExtractor()
