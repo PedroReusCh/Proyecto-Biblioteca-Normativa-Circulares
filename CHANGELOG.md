@@ -4,7 +4,18 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/) y este proyecto se adhiere a las prácticas de control de versiones semántico.
 
+## [0.7.1] - 2026-08-06
+
+### Added
+
+* **Estándar de Diagramación Mermaid AI Skills (`AGENTS.md`)**:
+  * Integración formal de la regla de diagramación y modelos visuales basada en [`.github/instructions/mermaid.instructions.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/.github/instructions/mermaid.instructions.md) y [`.github/copilot-instructions.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/.github/copilot-instructions.md) en [`AGENTS.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/AGENTS.md).
+  * Exigencia de persistencia en archivos `.mmd` y validación sintáctica obligatoria para diagramas de secuencia, arquitectura y flujos del proyecto.
+
+---
+
 ## [0.7.0] - 2026-07-31
+
 
 ### Added
 
