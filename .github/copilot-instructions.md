@@ -4,6 +4,8 @@
 
 Repositorio para procesar circulares DDU desde PDF y convertirlas a CSV, XML Akoma Ntoso BCN y RDF/Turtle. La cadena principal es: extractores modulares en `scripts/extractors/` → `scripts/ddu_orchestrator.py` → `scripts/ddu_parser.py` → `scripts/ddu_to_xml.py` / `scripts/ddu_to_rdf.py`.
 
+El sistema parte con un conjunto base de ETLs independientes, pero la estructura es evolutiva: a medida que se incorporen nuevas circulares, pueden agregarse, ajustarse o reemplazarse extractores sin romper el orquestador ni el contrato de datos de dominio.
+
 ## Comandos
 
 - Pruebas completas: `pytest -v`
@@ -16,9 +18,10 @@ Repositorio para procesar circulares DDU desde PDF y convertirlas a CSV, XML Ako
 ## Arquitectura
 
 - Los PDFs se leen con extractores independientes registrados dinámicamente.
-- `DDUOrchestrator` arma el resultado tabular y coordina exportaciones.
+- `DDUOrchestrator` arma el resultado tabular, consolida metadatos y coordina exportaciones.
 - `DDUParser` conserva compatibilidad y delega en el orquestador.
 - La capa de dominio es plana; luego se traduce a Akoma Ntoso XML y RDF/Turtle.
+- El conjunto de extractores no es cerrado: el repositorio debe admitir nuevos ETLs modulares cuando cambie la estructura real de las circulares.
 
 ## Convenciones
 
@@ -28,6 +31,16 @@ Repositorio para procesar circulares DDU desde PDF y convertirlas a CSV, XML Ako
 - Mantener tipado estricto compatible con Pylance en `scripts/` y `test/`.
 - No versionar `.csv`, `.xlsx`, `.xls` ni `.pdf`.
 - Toda solicitud de cambio debe actualizar `README.md`, `CHANGELOG.md` y, si aplica, `\.github\copilot-instructions.md`.
-- Toda modificación o creación debe quedar comiteada y respaldada en GitHub.
+- La documentación y los tests deben reflejar que los extractores son ampliables y que la cantidad de ETLs puede variar según nuevas circulares y nuevos bloques normativos.
 - Todo comentario al usuario y mensajes de commit van en español.
 - Los diagramas Mermaid deben guardarse como `.mmd` y validarse antes de mostrarse.
+
+## Flujo de Trabajo (Trazabilidad y Persistencia)
+
+**Por cada tarea completada:**
+
+1. **Realizar commit en la rama**: Usar mensajes de commit descriptivos en español que resuman los cambios realizados. Incluir el trailer `Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>` al final del mensaje.
+2. **Respaldar en GitHub**: Hacer push de los cambios al repositorio remoto para asegurar trazabilidad y sincronización con el repositorio principal.
+3. **Actualizar documentación**: Toda modificación debe reflejarse inmediatamente en `README.md` (arquitectura/cambios técnicos), `CHANGELOG.md` (historial versionado) y `\.github\copilot-instructions.md` (instrucciones operativas).
+
+**Nota**: La trazabilidad completa requiere que commit, push y actualización de documentación estén sincronizados en cada ciclo de trabajo.

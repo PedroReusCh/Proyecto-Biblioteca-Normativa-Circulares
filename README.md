@@ -16,7 +16,7 @@ El proyecto se estructura en los siguientes directorios clave:
 * [`salidas_rdf/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/salidas_rdf): Grafos semánticos RDF en sintaxis Turtle (`.ttl`) generados desde los CSVs.
 * [`scripts/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts): Módulos funcionales de procesamiento y conversión:
   * [`ddu_types.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_types.py): Declaraciones de tipado estricto `DatosCircularDDU` y `SeccionDDU`.
-  * [`extractors/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors): Paquete de 12 ETLs modulares e independientes (`encabezado.py`, `acto_administrativo.py`, `antecedentes.py`, `materia.py`, `descriptores.py`, `fecha_lugar.py`, `destinatarios.py`, `emisor.py`, `cuerpo.py`, `nota_al_pie.py`, `firma.py`, `distribucion.py`) derivados de la interfaz base `BaseExtractor`.
+  * [`extractors/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors): Paquete de ETLs modulares e independientes (`encabezado.py`, `acto_administrativo.py`, `antecedentes.py`, `materia.py`, `descriptores.py`, `fecha_lugar.py`, `destinatarios.py`, `emisor.py`, `cuerpo.py`, `nota_al_pie.py`, `firma.py`, `distribucion.py`) derivados de la interfaz base `BaseExtractor`. Este conjunto es evolutivo y puede ampliarse o ajustarse según nuevas circulares y nuevos bloques normativos.
   * [`ddu_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_orchestrator.py): Orquestador central (`DDUOrchestrator`) que coordina los extractores registrados y exporta CSVs.
   * [`ddu_parser.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_parser.py): Wrapper de retrocompatibilidad apuntando al orquestador.
   * [`ddu_to_xml.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_xml.py): Generador estructurado XML bajo el estándar Akoma Ntoso v2.0 BCN.
@@ -39,13 +39,13 @@ El proyecto adopta una **arquitectura en capas con separación clara de responsa
 2. **Capa de Interoperabilidad Semántica (Akoma Ntoso XML & RDF)**:
    Los módulos [`scripts/ddu_to_xml.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_xml.py) y [`scripts/ddu_to_rdf.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_rdf.py) actúan como traductores que mapean automáticamente los campos de dominio a la taxonomía XML Akoma Ntoso v2.0 BCN (`FRBRWork`, `FRBRnumber`, `docDate`, `mainBody`, `authorialNote`) y a grafos semánticos RDF/Turtle.
 3. **Extensibilidad Evolutiva del Pipeline ETL**:
-   A medida que las circulares DDU evolucionen o incorporen nuevos bloques normativos en el futuro, es posible registrar nuevos extractores en [`scripts/extractors/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors) mediante el decorador `@register_extractor`. El orquestador [`scripts/ddu_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_orchestrator.py) incorporará las nuevas columnas al CSV sin alterar el código existente ni romper la generación Akoma Ntoso.
+   A medida que las circulares DDU evolucionen o incorporen nuevos bloques normativos en el futuro, es posible registrar nuevos extractores en [`scripts/extractors/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors) mediante el decorador `@register_extractor`. El orquestador [`scripts/ddu_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_orchestrator.py) incorporará los nuevos campos al CSV sin alterar el código existente ni romper la generación Akoma Ntoso. La cantidad de ETLs no se considera cerrada.
 
 ---
 
 ## Mapeo Estandarizado de la Estructura (CSV -> ETLs)
 
-La suite de los 12 ETLs modulares deriva exactamente del contrato de especificación documentado en [`bcn - documentación/estructura_circular_ddu.csv`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n/estructura_circular_ddu.csv), simplificado a **6 columnas esenciales** (`orden`, `bloque`, `campo`, `obligatorio`, `descripcion`, `reglas`):
+La suite base de ETLs modulares deriva exactamente del contrato de especificación documentado en [`bcn - documentación/estructura_circular_ddu.csv`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/bcn%20-%20documentaci%C3%B3n/estructura_circular_ddu.csv), simplificado a **6 columnas esenciales** (`orden`, `bloque`, `campo`, `obligatorio`, `descripcion`, `reglas`). Ese contrato describe el núcleo actual, pero el pipeline admite extensión con nuevos ETLs cuando una circular lo exija:
 
 | Bloque CSV | Campo Parser | Módulo ETL (`scripts/extractors/`) | Descripción |
 | :--- | :--- | :--- | :--- |
@@ -148,3 +148,23 @@ pytest -v
 ```
 
 Actualmente, **42 de 42 pruebas pasan exitosamente** (100% de cobertura de la suite en estructura plana).
+
+---
+
+## Flujo de Trabajo y Trazabilidad
+
+Este proyecto exige **trazabilidad completa** de todas las modificaciones realizadas:
+
+1. **Commit Local**: Toda tarea completada debe registrarse con un mensaje de commit descriptivo en español.
+2. **Push a GitHub**: Los cambios se respaldan en el repositorio remoto para sincronización y auditoría.
+3. **Actualización de Documentación**: Cada modificación se refleja inmediatamente en:
+   - **`README.md`**: cambios arquitectónicos, estructurales y técnicos.
+   - **`CHANGELOG.md`**: historial versionado según [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
+   - **`.github/copilot-instructions.md`**: reglas operativas y convenciones.
+
+El commit incluirá el trailer de co-autoría:
+```
+Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
+```
+
+**La ausencia de commit, push o actualización de documentación indica que la tarea está incompleta.**

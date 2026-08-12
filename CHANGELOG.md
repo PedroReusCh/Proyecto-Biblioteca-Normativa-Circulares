@@ -4,6 +4,16 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/) y este proyecto se adhiere a las prácticas de control de versiones semántico.
 
+## [0.7.2] - 2026-08-12
+
+### Added
+
+* **Formalización de Flujo de Trabajo y Trazabilidad**:
+  * Documentación explícita del ciclo requerido: commit local → push a GitHub → actualización de `README.md`, `CHANGELOG.md` y `.github/copilot-instructions.md`.
+  * Inclusión del trailer de co-autoría en commits: `Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>`.
+  * Clarificación de que la ausencia de commit, push o actualización de documentación indica incompletitud de la tarea.
+  * Nueva sección en [`README.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/README.md) y nuevo bloque de convenciones en [`.github/copilot-instructions.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/.github/copilot-instructions.md) para garantizar trazabilidad.
+
 ## [0.7.1] - 2026-08-06
 
 ### Added
@@ -11,6 +21,9 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 * **Estándar de Diagramación Mermaid AI Skills (`AGENTS.md`)**:
   * Integración formal de la regla de diagramación y modelos visuales basada en [`.github/instructions/mermaid.instructions.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/.github/instructions/mermaid.instructions.md) y [`.github/copilot-instructions.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/.github/copilot-instructions.md) en [`AGENTS.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/AGENTS.md).
   * Exigencia de persistencia en archivos `.mmd` y validación sintáctica obligatoria para diagramas de secuencia, arquitectura y flujos del proyecto.
+* **Aclaración de extensibilidad ETL y documentación operativa**:
+  * Se precisó que el conjunto de extractores base es evolutivo y puede ampliarse o ajustarse según nuevas circulares, manteniendo el orquestador como punto de integración.
+  * Se actualizó la instrucción de Copilot y la documentación principal para reflejar que la cantidad de ETLs no es cerrada y que el pipeline admite nuevos bloques normativos sin romper el contrato de dominio.
 
 ---
 
