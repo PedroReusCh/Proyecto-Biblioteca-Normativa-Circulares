@@ -37,7 +37,7 @@ una sección de resumen con totales.
 |-------------|----------------------------|---------------------|
 | antecedentes | antecedentes | etl_referencias |
 | referencias | antecedentes | etl_referencias |
-| elementos_visuales | esquema_ilustrativo (estructura nueva) | ETL gráfico / OCR (esquema pág. 3) |
+| elementos_visuales | esquema_ilustrativo (estructura nueva) | Diferir a próxima iteración |
 | descriptores | descriptores | ajuste de parseo (";" / ",") |
 | notas_al_pie | nota_al_pie / notas_al_margen | etl_notas_marginales |
 
