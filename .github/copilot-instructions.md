@@ -1,4 +1,4 @@
-# Instrucciones Operativas para la IA (GEMINI.md)
+# Instrucciones Operativas para la IA
 
 Este archivo contiene las directrices de diseño, reglas específicas y el contexto técnico del **Proyecto Biblioteca Normativa Circulares** destinadas a guiar a la IA (Antigravity CLI) en el mantenimiento y desarrollo del código.
 
@@ -24,9 +24,10 @@ Para garantizar la correcta ejecución y orden lógico durante el ciclo de vida 
 ### Fase 2: Ejecución (Iterativa)
 
 1. **`/executing-plans`**: Contenedor principal. Inicia la ejecución del plan. Dentro de la ejecución aplicas:
-   - **`/test-driven-development`**: Metodología paso a paso para desarrollar cada característica del plan.
-   - *Condicionales:*
-     - **`/single-flow-task-execution`**: Descomposición de tareas ordenadas con puntos de revisión.
+   * **`/test-driven-development`**: Metodología paso a paso para desarrollar cada característica del plan.
+   * **`/subagent-driven-development`**: Ejecutar tareas independientes del plan con subagentes en paralelo cuando no haya dependencias secuenciales.
+   * *Condicionales:*
+     * **`/dispatching-parallel-agents`**: Despachar 2+ tareas independientes en paralelo cuando no haya estado compartido ni dependencias secuenciales.
    *Reactivo:* Ante errores inesperados o fallos en tests durante la ejecución, interrumpir e invocar **`/systematic-debugging`**.
 
 ### Fase 3: Verificación y Calidad
