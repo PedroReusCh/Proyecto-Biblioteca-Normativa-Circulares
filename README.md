@@ -157,7 +157,7 @@ Como parte de la ampliación evolutiva del pipeline, se realizó el análisis de
 
 ### Resultados
 
-* **Cobertura de bloques**: 9 de 12 bloques completamente funcionales (**✓**); 3 de 12 bloques en estado **⚠️ Parcial** (Antecedentes, Descriptores, Nota al Pie).
+* **Cobertura de bloques**: 9 de 12 bloques completamente funcionales (**✓**); 3 de 12 bloques en estado **⚠️ Parcial** (Antecedentes: embebido en el cuerpo sin sección rotulada; Descriptores: presente en PDF pero extraído vacío; Nota al Pie: notas al margen de trazabilidad). Todos los bloques aplican (0 NO_APLICA).
 * **Tasa de cobertura de campos**: **~72%** (13 de 18 campos con datos; 5 vacíos).
 * **Estructuras nuevas detectadas**: tabla de modificaciones a otras circulares (págs. 5–8), esquema ilustrativo (pág. 3) y notas al margen de trazabilidad.
 
