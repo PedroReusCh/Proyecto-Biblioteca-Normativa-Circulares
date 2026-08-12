@@ -4,6 +4,22 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/) y este proyecto se adhiere a las prácticas de control de versiones semántico.
 
+## [0.7.3] - 2026-08-12
+
+### Added
+
+* **Análisis de Extracción de la Circular DDU 456 (Elementos Exteriores en Edificios)**:
+  * Nuevo reporte de análisis manual en [`reports/ddu456_analysis_report.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/reports/ddu456_analysis_report.md) sobre la Circular Ord. Nº 88 (25 FEB 2021).
+  * Script de validación estructural específico para la circular DDU 456.
+  * Documentación de la sección "Análisis de Circulares: DDU 456" en [`README.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/README.md) con los resultados de cobertura.
+
+### Findings
+
+* **Cobertura de bloques**: 10 de 12 bloques completos (**✓**) y 2 de 12 en estado **⚠️ Parcial** (Antecedentes embebido en el cuerpo y Nota al Pie como notas al margen de trazabilidad).
+* **Tasa de cobertura de campos**: **~72%** (13 de 18 campos con datos; 5 vacíos).
+* **Estructuras nuevas detectadas**: tabla de modificaciones a otras circulares (págs. 5–8), esquema ilustrativo (pág. 3) y notas al margen de trazabilidad.
+* **3 nuevos ETLs sugeridos**: `etl_tabla_modificaciones`, `etl_notas_marginales` y `etl_referencias`, confirmando el carácter evolutivo y ampliable del pipeline de extractores.
+
 ## [0.7.2] - 2026-08-12
 
 ### Added

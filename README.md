@@ -151,6 +151,28 @@ Actualmente, **42 de 42 pruebas pasan exitosamente** (100% de cobertura de la su
 
 ---
 
+## Análisis de Circulares: DDU 456 (Elementos Exteriores en Edificios)
+
+Como parte de la ampliación evolutiva del pipeline, se realizó el análisis de extracción de la **Circular DDU 456** (Orden Ord. Nº 88, 25 FEB 2021, sobre terrazas y elementos exteriores ubicados en la parte superior de los edificios y pisos mecánicos). El detalle completo se documenta en [`reports/ddu456_analysis_report.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/reports/ddu456_analysis_report.md).
+
+### Resultados
+
+* **Cobertura de bloques**: 10 de 12 bloques presentes de forma completa (**✓**); 2 de 12 bloques en estado **⚠️ Parcial** (Antecedentes, embebido en el cuerpo sin sección rotulada; y Nota al Pie, presente como notas al margen de trazabilidad).
+* **Tasa de cobertura de campos**: **~72%** (13 de 18 campos con datos; 5 vacíos).
+* **Estructuras nuevas detectadas**: tabla de modificaciones a otras circulares (págs. 5–8), esquema ilustrativo (pág. 3) y notas al margen de trazabilidad.
+
+### Nuevos ETLs sugeridos
+
+A partir de estos hallazgos se proponen **3 nuevos ETLs** para el paquete [`scripts/extractors/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors):
+
+1. `etl_tabla_modificaciones`: reconstrucción de la tabla de tres columnas que abarca varias páginas.
+2. `etl_notas_marginales`: captura de notas al margen de trazabilidad y su asociación al numeral del cuerpo.
+3. `etl_referencias`: detección por patrones de referencias normativas para poblar el bloque Antecedentes.
+
+Estos ETLs confirman el carácter evolutivo del pipeline: se integran mediante el decorador `@register_extractor` sin alterar el contrato de dominio ni la generación Akoma Ntoso.
+
+---
+
 ## Flujo de Trabajo y Trazabilidad
 
 Este proyecto exige **trazabilidad completa** de todas las modificaciones realizadas:

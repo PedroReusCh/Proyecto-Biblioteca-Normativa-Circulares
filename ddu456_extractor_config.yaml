@@ -3,55 +3,149 @@ ddu456:
   metadata:
     circular: "DDU 456"
     titulo: "Elementos Exteriores en Edificios"
+    acto_administrativo: "Circular Ord. Nº 88 (25 FEB 2021)"
+    paginas: 9
     fecha_analisis: "2026-08-12"
-    estado: "PENDIENTE"
+    estado: "ANALIZADO"
 
   bloques:
     encabezado:
       extractor: "extractor_encabezado.py"
-      status: "PENDIENTE"
-      notas: ""
+      status: "OK"
+      notas: "'DDU 456' presente en la parte superior de la página 1. Sin ajustes."
     acto_administrativo:
       extractor: "extractor_acto_administrativo.py"
-      status: "PENDIENTE"
-      notas: ""
+      status: "OK"
+      notas: "'CIRCULAR ORD. Nº 88 /' presente en página 1. Sin ajustes."
     antecedentes:
       extractor: "extractor_antecedentes.py"
-      status: "PENDIENTE"
-      notas: ""
+      status: "PARCIAL"
+      notas: >-
+        No hay sección rotulada de antecedentes; las referencias normativas
+        están embebidas en el cuerpo (LGUC art. 4, OGUC art. 2.6.3., Decreto
+        Supremo Nº 58 de 2019, Circulares DDU 322, 339 y 168). El campo se
+        extrae vacío (100%). Requiere el nuevo ETL etl_referencias para poblar
+        el bloque mediante detección de patrones.
     materia:
       extractor: "extractor_materia.py"
-      status: "PENDIENTE"
-      notas: ""
+      status: "OK"
+      notas: >-
+        Campo 'MAT.:' con descripción extensa (aplicación art. 2.6.3. incisos
+        vigésimo a vigésimo tercero de la OGUC). Sin ajustes.
     descriptores:
       extractor: "extractor_descriptores.py"
-      status: "PENDIENTE"
-      notas: ""
+      status: "PARCIAL"
+      notas: >-
+        Los descriptores están presentes en el PDF (lista en mayúsculas tras la
+        materia) pero el campo se extrae vacío (100%). Ajuste requerido:
+        separar vocablos por ';' y ','.
     fecha_lugar:
       extractor: "extractor_fecha_lugar.py"
-      status: "PENDIENTE"
-      notas: ""
+      status: "OK"
+      notas: "'SANTIAGO, 25 FEB 2021' en página 1. Ajuste menor: normalizar fecha a 25/02/2021."
     destinatarios:
       extractor: "extractor_destinatarios.py"
-      status: "PENDIENTE"
-      notas: ""
+      status: "OK"
+      notas: "'A : SEGÚN DISTRIBUCIÓN.' remite a la lista de distribución final. Sin ajustes."
     emision:
       extractor: "extractor_emision.py"
-      status: "PENDIENTE"
-      notas: ""
+      status: "OK"
+      notas: "'DE : JEFE DIVISIÓN DE DESARROLLO URBANO.' Sin ajustes."
     cuerpo:
       extractor: "extractor_cuerpo.py"
-      status: "PENDIENTE"
-      notas: ""
+      status: "OK"
+      notas: >-
+        Numerales 1 al 7. Bloque más extenso; incluye estructuras anidadas
+        (incisos citados, literales a-e, numerales romanos), un esquema
+        ilustrativo (pág. 3) y una tabla de modificaciones (págs. 5-8). Manejar
+        estructuras anidadas; las estructuras gráfica y tabular se derivan a
+        ETLs especializados.
     nota_al_pie:
       extractor: "extractor_nota_al_pie.py"
-      status: "PENDIENTE"
-      notas: ""
+      status: "PARCIAL"
+      notas: >-
+        No hay pies de página normativos; existen notas al margen (columna
+        lateral) con modificaciones posteriores por Circular Ord. Nº 214 /
+        DDU 498 (02.05.2024). El campo notas_al_pie se extrae vacío (100%).
+        Requiere el nuevo ETL etl_notas_marginales.
     firma:
       extractor: "extractor_firma.py"
-      status: "PENDIENTE"
-      notas: ""
+      status: "OK"
+      notas: >-
+        'Saluda atentamente a Ud., ... Jefe División de Desarrollo Urbano'
+        (pág. 8), rúbrica 'JPB'. Sin ajustes.
     distribucion:
       extractor: "extractor_distribucion.py"
-      status: "PENDIENTE"
-      notas: ""
+      status: "OK"
+      notas: >-
+        Lista numerada de 34 destinatarios (págs. 8-9). Ajuste: parsear lista
+        numerada que continúa entre páginas.
+
+  # Estructuras nuevas detectadas en el PDF que requieren extractores dedicados.
+  estructuras_nuevas:
+    esquema_ilustrativo:
+      status: "PARCIAL"
+      pagina: 3
+      notas: >-
+        Diagrama 'PLANTA AZOTEA / Sin Escala' y 'CORTE ESQUEMÁTICO / Sin Escala'
+        con etiquetas. Contenido gráfico; su texto queda disperso al extraer con
+        lectores de PDF de texto. Campo elementos_visuales vacío (100%).
+    tabla_modificaciones:
+      status: "PARCIAL"
+      paginas: "5-8"
+      notas: >-
+        Tabla de tres columnas (Circular / Materia(s) que se modifica(n) /
+        Motivo y/o Consideraciones) que se extiende por varias páginas. La
+        extracción de texto plano intercala columnas y fragmenta celdas.
+    notas_al_margen:
+      status: "PARCIAL"
+      notas: >-
+        Columna lateral con referencias a Circular Ord. Nº 214 / DDU 498
+        (02.05.2024) que modifican/aclaran esta circular. No son pies de página
+        clásicos.
+
+  # Nuevos ETLs necesarios derivados de los hallazgos de Tasks 2-3.
+  nuevos_etls:
+    etl_tabla_modificaciones:
+      objetivo: >-
+        Extraer la tabla de tres columnas (págs. 5-8) reconstruyendo las filas
+        'Circular / Materia modificada / Motivo' respetando el salto de página.
+      tecnica_sugerida: "Extracción por coordenadas/tablas (p. ej. pdfplumber) en lugar de texto plano."
+      alimenta: "cuerpo (estructura tabular)"
+    etl_notas_marginales:
+      objetivo: >-
+        Capturar las notas al margen de trazabilidad (circulares modificatorias
+        posteriores) y asociarlas al numeral del cuerpo al que refieren.
+      tecnica_sugerida: "Detección de columna lateral por posición y asociación al numeral cercano."
+      alimenta: "nota_al_pie / notas_al_pie"
+    etl_referencias:
+      objetivo: >-
+        Detectar referencias normativas dentro del cuerpo para poblar el bloque
+        Antecedentes, que en esta circular no está rotulado.
+      tecnica_sugerida: "Patrones: artículos 'N.N.N.', 'DDU NNN', 'Decreto Nº NN', 'Ley NN.NNN'."
+      alimenta: "antecedentes / referencias"
+
+  resumen:
+    total_bloques: 12
+    bloques_ok: 9
+    bloques_parcial: 3
+    bloques_no_aplica: 0
+    bloques_error: 0
+    bloques_parciales:
+      - "antecedentes"
+      - "descriptores"
+      - "nota_al_pie"
+    campos_vacios_extraccion: 5
+    campos_vacios_detalle:
+      - "antecedentes"
+      - "referencias"
+      - "elementos_visuales"
+      - "descriptores"
+      - "notas_al_pie"
+    estructuras_nuevas_detectadas: 3
+    nuevos_etls_requeridos: 3
+    observacion: >-
+      10 bloques presentes en el PDF; 2 bloques (antecedentes, nota_al_pie) son
+      parciales por formato no estándar y descriptores es parcial por parseo. La
+      extracción automática deja 5 campos vacíos, cubribles con los 3 ETLs
+      propuestos y ajustes de parseo en descriptores.

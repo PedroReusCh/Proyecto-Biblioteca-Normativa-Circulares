@@ -35,6 +35,18 @@ El sistema parte con un conjunto base de ETLs independientes, pero la estructura
 - Todo comentario al usuario y mensajes de commit van en español.
 - Los diagramas Mermaid deben guardarse como `.mmd` y validarse antes de mostrarse.
 
+## Proceso Estándar de Análisis de Nuevas Circulares
+
+Al incorporar una nueva circular DDU al pipeline, seguir este proceso estándar:
+
+1. **Análisis manual del PDF**: revisar la circular e identificar la presencia y estado de los 12 bloques normativos (completo **✓** o parcial **⚠️**), documentando estructuras inusuales (tablas multipágina, esquemas ilustrativos, notas al margen, etc.).
+2. **Reporte de extracción**: generar un reporte en `reports/<circular>_analysis_report.md` con hallazgos generales, análisis por bloque (tabla), estructuras nuevas y ETLs sugeridos.
+3. **Evaluación de cobertura**: calcular la tasa de cobertura de campos (campos con datos sobre el total esperado) y registrar los bloques parciales o vacíos.
+4. **Propuesta de nuevos ETLs**: cuando la estructura real lo exija, proponer extractores adicionales integrables vía `@register_extractor` sin romper el orquestador ni el contrato de dominio.
+5. **Actualización de documentación**: reflejar los resultados en `README.md` (sección de análisis de la circular) y `CHANGELOG.md` (entrada versionada), y ajustar estas instrucciones si cambian las convenciones.
+
+**Referencia**: el análisis de la Circular DDU 456 en `reports/ddu456_analysis_report.md` sirve como plantilla de este proceso (10/12 bloques completos, 2/12 parciales, ~72% de cobertura, 3 ETLs sugeridos).
+
 ## Flujo de Trabajo (Trazabilidad y Persistencia)
 
 **Por cada tarea completada:**
