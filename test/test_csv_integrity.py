@@ -57,8 +57,8 @@ def test_csv_integrity() -> None:
     csv_secuencia = doc_dir / "secuencia_planilla_akoma_ntoso.csv"
     csv_estructura = doc_dir / "estructura_circular_ddu.csv"
     
-    # 1. Validar Diccionario de Datos (6 columnas esperadas)
-    success_dicc = validar_csv(csv_diccionario, 6)
+    # 1. Validar Diccionario de Datos (5 columnas esperadas)
+    success_dicc = validar_csv(csv_diccionario, 5)
     
     # 2. Validar Secuencia de Plantilla (6 columnas esperadas)
     success_sec = validar_csv(csv_secuencia, 6)
