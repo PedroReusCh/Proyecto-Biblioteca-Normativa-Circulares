@@ -1,0 +1,57 @@
+# ddu456_extractor_config.yaml
+ddu456:
+  metadata:
+    circular: "DDU 456"
+    titulo: "Elementos Exteriores en Edificios"
+    fecha_analisis: "2026-08-12"
+    estado: "PENDIENTE"
+
+  bloques:
+    encabezado:
+      extractor: "extractor_encabezado.py"
+      status: "PENDIENTE"
+      notas: ""
+    acto_administrativo:
+      extractor: "extractor_acto_administrativo.py"
+      status: "PENDIENTE"
+      notas: ""
+    antecedentes:
+      extractor: "extractor_antecedentes.py"
+      status: "PENDIENTE"
+      notas: ""
+    materia:
+      extractor: "extractor_materia.py"
+      status: "PENDIENTE"
+      notas: ""
+    descriptores:
+      extractor: "extractor_descriptores.py"
+      status: "PENDIENTE"
+      notas: ""
+    fecha_lugar:
+      extractor: "extractor_fecha_lugar.py"
+      status: "PENDIENTE"
+      notas: ""
+    destinatarios:
+      extractor: "extractor_destinatarios.py"
+      status: "PENDIENTE"
+      notas: ""
+    emision:
+      extractor: "extractor_emision.py"
+      status: "PENDIENTE"
+      notas: ""
+    cuerpo:
+      extractor: "extractor_cuerpo.py"
+      status: "PENDIENTE"
+      notas: ""
+    nota_al_pie:
+      extractor: "extractor_nota_al_pie.py"
+      status: "PENDIENTE"
+      notas: ""
+    firma:
+      extractor: "extractor_firma.py"
+      status: "PENDIENTE"
+      notas: ""
+    distribucion:
+      extractor: "extractor_distribucion.py"
+      status: "PENDIENTE"
+      notas: ""
