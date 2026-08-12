@@ -157,7 +157,7 @@ Como parte de la ampliación evolutiva del pipeline, se realizó el análisis de
 
 ### Resultados
 
-* **Cobertura de bloques**: 10 de 12 bloques presentes de forma completa (**✓**); 2 de 12 bloques en estado **⚠️ Parcial** (Antecedentes, embebido en el cuerpo sin sección rotulada; y Nota al Pie, presente como notas al margen de trazabilidad).
+* **Cobertura de bloques**: 9 de 12 bloques completamente funcionales (**✓**); 3 de 12 bloques en estado **⚠️ Parcial** (Antecedentes, Descriptores, Nota al Pie).
 * **Tasa de cobertura de campos**: **~72%** (13 de 18 campos con datos; 5 vacíos).
 * **Estructuras nuevas detectadas**: tabla de modificaciones a otras circulares (págs. 5–8), esquema ilustrativo (pág. 3) y notas al margen de trazabilidad.
 
@@ -190,3 +190,4 @@ Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
 ```
 
 **La ausencia de commit, push o actualización de documentación indica que la tarea está incompleta.**
+

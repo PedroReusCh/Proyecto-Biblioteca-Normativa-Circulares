@@ -15,7 +15,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ### Findings
 
-* **Cobertura de bloques**: 10 de 12 bloques completos (**✓**) y 2 de 12 en estado **⚠️ Parcial** (Antecedentes embebido en el cuerpo y Nota al Pie como notas al margen de trazabilidad).
+* **Cobertura de bloques**: 9 de 12 bloques completos (**✓**) y 3 de 12 en estado **⚠️ Parcial** (Antecedentes, Descriptores, Nota al Pie).
 * **Tasa de cobertura de campos**: **~72%** (13 de 18 campos con datos; 5 vacíos).
 * **Estructuras nuevas detectadas**: tabla de modificaciones a otras circulares (págs. 5–8), esquema ilustrativo (pág. 3) y notas al margen de trazabilidad.
 * **3 nuevos ETLs sugeridos**: `etl_tabla_modificaciones`, `etl_notas_marginales` y `etl_referencias`, confirmando el carácter evolutivo y ampliable del pipeline de extractores.
@@ -223,3 +223,4 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
   * `test_xsd_structural_validation.py`: **PASO (100% OK)**
   * `test_xml_generation.py`: **PASO (100% OK, XML bien formado generado para DDU 533)**
   * `test_rdf_generation.py`: **PASO (100% OK, RDF Turtle semántico y válido generado para DDU 533)**
+
