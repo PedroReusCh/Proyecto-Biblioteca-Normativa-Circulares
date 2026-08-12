@@ -45,7 +45,7 @@ Al incorporar una nueva circular DDU al pipeline, seguir este proceso estándar:
 4. **Propuesta de nuevos ETLs**: cuando la estructura real lo exija, proponer extractores adicionales integrables vía `@register_extractor` sin romper el orquestador ni el contrato de dominio.
 5. **Actualización de documentación**: reflejar los resultados en `README.md` (sección de análisis de la circular) y `CHANGELOG.md` (entrada versionada), y ajustar estas instrucciones si cambian las convenciones.
 
-**Referencia**: el análisis de la Circular DDU 456 en `reports/ddu456_analysis_report.md` sirve como plantilla de este proceso (10/12 bloques completos, 2/12 parciales, ~72% de cobertura, 3 ETLs sugeridos).
+**Referencia**: el análisis de la Circular DDU 456 en `reports/ddu456_analysis_report.md` sirve como plantilla de este proceso (9/12 bloques completos, 3/12 parciales (Antecedentes, Descriptores, Nota al Pie), ~72% de cobertura, 3 ETLs sugeridos).
 
 ## Flujo de Trabajo (Trazabilidad y Persistencia)
 
