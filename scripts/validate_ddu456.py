@@ -1,35 +1,85 @@
 # scripts/validate_ddu456.py
 """
-Validación de extracción DDU 456 usando extractores actuales.
+Validacion de extraccion DDU 456 usando extractores actuales.
+
+NOTA: Este script usa el orquestador existente (scripts/ddu_orchestrator.py)
+SIN CAMBIOS. Se adapta a su interfaz real:
+  - Constructor sin argumentos: DDUOrchestrator()
+  - Extraccion de un PDF: process_pdf(Path) -> DatosCircularDDU (un dict)
+
+El codigo de ejemplo del brief (DDUOrchestrator(pdf_path).extract()) NO es
+compatible con el orquestador actual; ver task-3-report.md (NEEDS_CONTEXT).
 """
+import csv
 import sys
-sys.path.insert(0, '.')
+from pathlib import Path
+
+sys.path.insert(0, ".")
 
 from scripts.ddu_orchestrator import DDUOrchestrator
 
+
 def validate_ddu456():
-    """Ejecuta extractores sobre DDU 456 y reporta hallazgos."""
+    """Ejecuta el orquestador sobre DDU 456, genera CSV y reporta campos vacios."""
     pdf_path = "circulares/DDU 456.pdf"
+    csv_output = "salidas_csv/ddu456_validation.csv"
+
+    print("\n" + "=" * 60)
+    print("VALIDACION DDU 456 - EXTRACCION")
+    print("=" * 60)
 
     try:
-        orchestrator = DDUOrchestrator(pdf_path)
-        data = orchestrator.extract()
+        # Instanciar orquestador (interfaz real: sin argumentos)
+        orchestrator = DDUOrchestrator()
+        print("\n[OK] Orquestador instanciado")
 
-        print("\n[VALIDACIÓN DDU 456]")
-        print(f"PDF: {pdf_path}")
-        print(f"Registros extraídos: {len(data)}")
+        # Extraer datos del PDF (una circular = un registro/dict DatosCircularDDU)
+        registro = orchestrator.process_pdf(Path(pdf_path))
+        data = [registro]
+        print(f"[OK] PDF cargado: {pdf_path}")
+        print(f"[OK] Extraccion completada: {len(data)} registro(s), "
+              f"{len(registro)} campos")
 
-        # Analizar qué campos quedaron vacíos
-        for idx, record in enumerate(data):
-            empty_fields = [k for k, v in record.items() if not v or v == ""]
-            if empty_fields:
-                print(f"  Registro {idx}: campos vacíos: {empty_fields}")
+        # Guardar CSV
+        if data:
+            keys = list(data[0].keys())
+            with open(csv_output, "w", newline="", encoding="utf-8-sig") as f:
+                writer = csv.DictWriter(f, fieldnames=keys)
+                writer.writeheader()
+                writer.writerows(data)
+            print(f"[OK] CSV generado: {csv_output}")
+
+        # Analisis de campos vacios
+        print("\n" + "-" * 60)
+        print("ANALISIS DE CAMPOS VACIOS")
+        print("-" * 60)
+
+        empty_count = {}
+        for record in data:
+            for k, v in record.items():
+                if not v or v == "":
+                    empty_count[k] = empty_count.get(k, 0) + 1
+
+        if empty_count:
+            print("\nCampos con valores vacios:")
+            for field, count in sorted(empty_count.items(), key=lambda x: -x[1]):
+                pct = (count / len(data)) * 100
+                print(f"  - {field}: {count}/{len(data)} ({pct:.1f}%)")
+        else:
+            print("[OK] Todos los campos tienen valores")
+
+        print("\n" + "=" * 60)
+        print("VALIDACION COMPLETADA")
+        print("=" * 60)
 
         return data
 
     except Exception as e:
-        print(f"ERROR en validación: {e}")
+        print(f"\n[ERROR] {e}")
+        import traceback
+        traceback.print_exc()
         raise
+
 
 if __name__ == "__main__":
     validate_ddu456()

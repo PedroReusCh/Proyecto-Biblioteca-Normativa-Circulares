@@ -1,0 +1,24 @@
+
+============================================================
+VALIDACION DDU 456 - EXTRACCION
+============================================================
+
+[OK] Orquestador instanciado
+[OK] PDF cargado: circulares/DDU 456.pdf
+[OK] Extraccion completada: 1 registro(s), 18 campos
+[OK] CSV generado: salidas_csv/ddu456_validation.csv
+
+------------------------------------------------------------
+ANALISIS DE CAMPOS VACIOS
+------------------------------------------------------------
+
+Campos con valores vacios:
+  - antecedentes: 1/1 (100.0%)
+  - referencias: 1/1 (100.0%)
+  - elementos_visuales: 1/1 (100.0%)
+  - descriptores: 1/1 (100.0%)
+  - notas_al_pie: 1/1 (100.0%)
+
+============================================================
+VALIDACION COMPLETADA
+============================================================
