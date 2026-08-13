@@ -23,10 +23,50 @@ def _es_inicio_descriptores(line: str) -> bool:
     letras = [c for c in line_clean if c.isalpha()]
     if len(letras) >= 5:
         es_mayus = (sum(1 for c in letras if c.isupper()) / len(letras)) >= 0.75
-        kw = ("PLANIFICACION", "PLANIFICACIÓN", "REGULADOR", "SECCIONAL", "PERMISOS", "RECEPCIONES", "RIESGO", "APROBACIONES", "MODIFICACION", "MODIFICACIÓN")
-        if es_mayus and any(k in line_clean.upper() for k in kw):
+        kw = (
+            "PLANIFICACION",
+            "PLANIFICACIÓN",
+            "REGULADOR",
+            "SECCIONAL",
+            "PERMISOS",
+            "RECEPCIONES",
+            "RIESGO",
+            "APROBACIONES",
+            "MODIFICACION",
+            "MODIFICACIÓN",
+            "NORMAS",
+            "ALTURA",
+            "EDIFICACION",
+            "EDIFICACIÓN",
+            "ELEMENTOS EXTERIORES",
+            "EDIFICIOS",
+            "PISOS MECANICOS",
+            "PISOS MECÁNICOS",
+        )
+        if es_mayus and (
+            any(k in line_clean.upper() for k in kw)
+            or ";" in line_clean
+            or "," in line_clean
+            or len(line_clean.split()) <= 12
+        ):
             return True
     return False
+
+
+def _limpiar_texto_materia(texto: str) -> str:
+    """Repara cortes OCR frecuentes en el bloque de materia."""
+    patrones = [
+        (r"\baplicaci[^\w\s]*n\b", "Aplicación"),
+        (r"\bart[^\w\s]*culo\b", "artículo"),
+        (r"\binciso\s+s\b", "incisos"),
+        (r"\bvig[^\w\s]*simo\b", "vigésimo"),
+        (r"\bpisos\s+mec[^\w\s]*nicos\b", "pisos mecánicos"),
+        (r"\bterrazas\s+y\s+elementos\s+exteriores\b", "terrazas y elementos exteriores"),
+    ]
+    res = texto
+    for pat, repl in patrones:
+        res = re.sub(pat, repl, res, flags=re.IGNORECASE)
+    return re.sub(r"\s+", " ", res).strip()
 
 
 @register_extractor
@@ -82,6 +122,10 @@ class MateriaExtractor(BaseExtractor):
                     en_materia = True
 
         materia = re.sub(r"\s+", " ", materia).strip()
+        materia = re.sub(r"\s*;\s*", "; ", materia)
+        materia = re.sub(r"\s*,\s*", ", ", materia)
+        materia = re.sub(r"\s+\.", ".", materia)
+        materia = _limpiar_texto_materia(materia)
         exito = bool(materia)
 
         return ResultadoBloque(

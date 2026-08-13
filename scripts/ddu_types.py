@@ -25,6 +25,8 @@ class DatosCircularDDU(TypedDict):
     secciones: List[SeccionDDU]
     referencias: NotRequired[str]
     elementos_visuales: NotRequired[str]
+    imagen: NotRequired[str]
+    tabla: NotRequired[str]
     numero_ord: NotRequired[str]
     descriptores: NotRequired[str]
     cuerpo: NotRequired[str]

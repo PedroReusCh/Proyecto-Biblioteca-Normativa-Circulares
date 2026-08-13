@@ -10,6 +10,7 @@ from scripts.ddu_types import DatosCircularDDU
 
 PROYECTO_RAIZ = Path(__file__).resolve().parents[1]
 PDF_DDU_533 = PROYECTO_RAIZ / "circulares" / "DDU 533.pdf"
+PDF_DDU_456 = PROYECTO_RAIZ / "circulares" / "DDU 456.pdf"
 
 
 def test_orchestrator_process_pdf_ddu_533() -> None:
@@ -53,6 +54,31 @@ def test_export_individual_csv(tmp_path: Path) -> None:
         assert "materia" in campos
         assert "fecha_emision" in campos
         assert "emisor" in campos
+
+
+def test_export_individual_csv_ddu_456(tmp_path: Path) -> None:
+    """Verifica el CSV individual estándar para la circular DDU 456."""
+    orchestrator = DDUOrchestrator()
+    output_dir = tmp_path / "csv_output"
+
+    csv_path = orchestrator.export_individual_csv(PDF_DDU_456, output_dir)
+
+    assert csv_path.exists()
+    assert csv_path.name == "DDU_456_extraido.csv"
+
+    with open(csv_path, "r", encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f, delimiter=";")
+        rows = {row["campo"]: row["valor_extraido"] for row in reader}
+
+    assert rows["materia"]
+    assert "NORMAS URBANISTICAS" in rows["descriptores"].upper()
+    assert "PLANTA AZOTEA" not in rows["cuerpo"].upper()
+    assert "CIRCULAR MATERIA(S) QUE SE MODIFICA(N)" not in rows["cuerpo"].upper()
+    assert "CONSIDERACIONES" not in rows["firmante"].upper()
+    assert "[" not in rows["lista_distribucion"]
+    assert "]" not in rows["lista_distribucion"]
+    assert "imagen" in rows
+    assert "tabla" in rows
 
 
 def test_export_master_csv(tmp_path: Path) -> None:

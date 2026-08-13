@@ -34,7 +34,7 @@ class DescriptoresExtractor(BaseExtractor):
 
         # Iniciar escaneo tras la materia / antecedentes / circular para omitir ruido de membrete
         idx_inicio = 0
-        for i in range(min(30, len(lines))):
+        for i in range(min(15, len(lines))):
             if re.match(r"^(?:MAT\s*:|ANT\s*:|CIRCULAR|DDU|ORD\b)", lines[i].strip(), re.IGNORECASE):
                 idx_inicio = i + 1
 
@@ -76,6 +76,9 @@ class DescriptoresExtractor(BaseExtractor):
                     break
 
         descriptores = " ".join(desc_lineas)
+        descriptores = re.sub(r"\s*;\s*", "; ", descriptores)
+        descriptores = re.sub(r"\s*,\s*", ", ", descriptores)
+        descriptores = re.sub(r"\s+\.", ".", descriptores)
         descriptores = re.sub(r"\s+", " ", descriptores).strip()
         exito = bool(descriptores)
 

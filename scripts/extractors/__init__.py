@@ -34,6 +34,8 @@ _EXTRACTOR_MODULES: List[str] = [
     "destinatarios",
     "emisor",
     "cuerpo",
+    "imagen",
+    "tabla",
     "firma",
     "distribucion",
     "nota_al_pie",

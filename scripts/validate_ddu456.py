@@ -1,6 +1,5 @@
 # scripts/validate_ddu456.py
-"""
-Validacion de extraccion DDU 456 usando extractores actuales.
+"""Validacion de extraccion DDU 456 usando extractores actuales.
 
 NOTA: Este script usa el orquestador existente (scripts/ddu_orchestrator.py)
 SIN CAMBIOS. Se adapta a su interfaz real:
@@ -10,7 +9,6 @@ SIN CAMBIOS. Se adapta a su interfaz real:
 El codigo de ejemplo del brief (DDUOrchestrator(pdf_path).extract()) NO es
 compatible con el orquestador actual; ver task-3-report.md (NEEDS_CONTEXT).
 """
-import csv
 import sys
 from pathlib import Path
 
@@ -22,7 +20,8 @@ from scripts.ddu_orchestrator import DDUOrchestrator
 def validate_ddu456():
     """Ejecuta el orquestador sobre DDU 456, genera CSV y reporta campos vacios."""
     pdf_path = "circulares/DDU 456.pdf"
-    csv_output = "salidas_csv/ddu456_validation.csv"
+    output_dir = Path("salidas_csv")
+    legacy_csv = output_dir / "ddu456_validation.csv"
 
     print("\n" + "=" * 60)
     print("VALIDACION DDU 456 - EXTRACCION")
@@ -40,14 +39,12 @@ def validate_ddu456():
         print(f"[OK] Extraccion completada: {len(data)} registro(s), "
               f"{len(registro)} campos")
 
-        # Guardar CSV
-        if data:
-            keys = list(data[0].keys())
-            with open(csv_output, "w", newline="", encoding="utf-8-sig") as f:
-                writer = csv.DictWriter(f, fieldnames=keys)
-                writer.writeheader()
-                writer.writerows(data)
-            print(f"[OK] CSV generado: {csv_output}")
+        # Guardar CSV con la misma estructura que el resto de circulares:
+        # bloque | campo | valor_extraido
+        csv_output = orchestrator.export_individual_csv(Path(pdf_path), output_dir)
+        if legacy_csv.exists():
+            legacy_csv.unlink()
+        print(f"[OK] CSV generado: {csv_output}")
 
         # Analisis de campos vacios
         print("\n" + "-" * 60)

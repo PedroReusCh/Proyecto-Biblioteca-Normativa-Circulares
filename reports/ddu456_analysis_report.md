@@ -34,12 +34,12 @@ Del análisis manual del PDF (9 páginas) se concluye:
 Además del análisis manual del PDF, se ejecutó el script
 `scripts/validate_ddu456.py`, que instancia el orquestador existente
 (`scripts/ddu_orchestrator.py`, `DDUOrchestrator().process_pdf(Path)`) sobre
-`circulares/DDU 456.pdf`, genera un CSV con la extracción y calcula qué campos
-quedaron vacíos. La ejecución finalizó con éxito (exit code 0) y su salida
-completa está en `validation_output.txt`.
+`circulares/DDU 456.pdf`, genera el CSV estándar `salidas_csv/DDU_456_extraido.csv`
+y calcula qué campos quedaron vacíos. La ejecución finalizó con éxito (exit
+code 0) y su salida completa está en `validation_output.txt`.
 
 ### CSV Generado
-- **Archivo:** `salidas_csv/ddu456_validation.csv`
+- **Archivo:** `salidas_csv/DDU_456_extraido.csv`
 - **Registros:** 1 (una circular = un registro; DDU 456)
 - **Campos por registro:** 18
 - **Codificación:** `utf-8-sig` (acentos correctos)
@@ -77,7 +77,7 @@ extracción de 1 registro con 18 campos y generación del CSV).
 
 > **Nota metodológica:** la columna "Campos Vacíos" cruza el estado observado en
 > el análisis manual del PDF con el resultado real de la extracción automática
-> (`ddu456_validation.csv`). Cuando ambos coinciden, el bloque se considera
+> (`DDU_456_extraido.csv`). Cuando ambos coinciden, el bloque se considera
 > confirmado; cuando difieren (p. ej. **Descriptores**, visible en el PDF pero
 > vacío en el CSV), la discrepancia se documenta como brecha del extractor.
 

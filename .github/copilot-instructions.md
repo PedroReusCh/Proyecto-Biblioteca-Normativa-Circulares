@@ -43,9 +43,10 @@ Al incorporar una nueva circular DDU al pipeline, seguir este proceso estándar:
 2. **Reporte de extracción**: generar un reporte en `reports/<circular>_analysis_report.md` con hallazgos generales, análisis por bloque (tabla), estructuras nuevas y ETLs sugeridos.
 3. **Evaluación de cobertura**: calcular la tasa de cobertura de campos (campos con datos sobre el total esperado) y registrar los bloques parciales o vacíos.
 4. **Propuesta de nuevos ETLs**: cuando la estructura real lo exija, proponer extractores adicionales integrables vía `@register_extractor` sin romper el orquestador ni el contrato de dominio.
-5. **Actualización de documentación**: reflejar los resultados en `README.md` (sección de análisis de la circular) y `CHANGELOG.md` (entrada versionada), y ajustar estas instrucciones si cambian las convenciones.
+5. **Salida CSV estándar**: el archivo individual debe llamarse `DDU_<n>_extraido.csv` y mantener siempre las columnas `bloque`, `campo`, `valor_extraido`, igual al resto de circulares exportadas.
+6. **Actualización de documentación**: reflejar los resultados en `README.md` (sección de análisis de la circular) y `CHANGELOG.md` (entrada versionada), y ajustar estas instrucciones si cambian las convenciones.
 
-**Referencia**: el análisis de la Circular DDU 456 en `reports/ddu456_analysis_report.md` sirve como plantilla de este proceso (9/12 bloques completos, 3/12 parciales (Antecedentes, Descriptores, Nota al Pie), ~72% de cobertura, 3 ETLs sugeridos).
+**Referencia**: el análisis de la Circular DDU 456 en `reports/ddu456_analysis_report.md` sirve como plantilla de este proceso (9/12 bloques completos, 3/12 parciales (Antecedentes, Descriptores, Nota al Pie), ~72% de cobertura, 3 ETLs sugeridos, CSV estándar `DDU_456_extraido.csv`).
 
 ## Flujo de Trabajo (Trazabilidad y Persistencia)
 

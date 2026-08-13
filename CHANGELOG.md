@@ -20,6 +20,11 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 * **Estructuras nuevas detectadas**: tabla de modificaciones a otras circulares (págs. 5–8), esquema ilustrativo (pág. 3) y notas al margen de trazabilidad.
 * **3 nuevos ETLs sugeridos**: `etl_tabla_modificaciones`, `etl_notas_marginales` y `etl_referencias`, confirmando el carácter evolutivo y ampliable del pipeline de extractores.
 
+### Fixed
+
+* **CSV individual DDU 456**: normalización de la salida a `DDU_456_extraido.csv` con columnas `bloque`, `campo`, `valor_extraido`, consistente con el resto de CSVs del proyecto.
+* **Extracción DDU 456**: ajuste de `materia`, `descriptores`, `cuerpo`, `firmante` y limpieza de distribución para reflejar mejor el contenido real del PDF.
+
 ## [0.7.2] - 2026-08-12
 
 ### Added
@@ -223,4 +228,3 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
   * `test_xsd_structural_validation.py`: **PASO (100% OK)**
   * `test_xml_generation.py`: **PASO (100% OK, XML bien formado generado para DDU 533)**
   * `test_rdf_generation.py`: **PASO (100% OK, RDF Turtle semántico y válido generado para DDU 533)**
-

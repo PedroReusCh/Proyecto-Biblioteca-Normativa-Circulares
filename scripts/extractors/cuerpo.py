@@ -42,6 +42,8 @@ def _limpiar_texto_cuerpo(texto: str) -> str:
         (r"\bexpuest\s+os\b", "expuestos"),
         (r"\bim[áa]\s+genes\b", "imágenes"),
         (r"\bOS\s+33\b", "DS 33"),
+        (r"Circular\s+Modificada\s+por\s+Circular\s+Ord\.?\s+N[º°]?\s*214.*?DDU\s*498\s*\(numeral\s*7\.\)", ""),
+        (r"\(el destacado es nuestro\)", ""),
         # Reglas genéricas para plurales con 's' o 'es' aisladas por OCR
         (r"\b([a-záéíóúñ]{3,}[aeiouáéíóú])\s+s\b", r"\1s"),
         (r"\b([a-záéíóúñ]{3,}[bcdfghjklmnñpqrstvwxyz])\s+es\b", r"\1es"),
@@ -71,6 +73,21 @@ def _normalizar_prefijo_numeral_ocr(line: str) -> str:
     # 4. Normalizar 'Z.' -> '2. '
     line = re.sub(r"^Z\.\s+", "2. ", line)
     return line
+
+
+def _es_inicio_esquema_ilustrativo(line: str) -> bool:
+    """Detecta el bloque de esquema ilustrativo para excluir su contenido gráfico del cuerpo."""
+    line_clean = line.strip()
+    return bool(re.search(r"(?:PLANTA\s+AZOTEA|CORTE\s+ESQUEM[ÁA]TICO)", line_clean, re.IGNORECASE))
+
+
+def _es_inicio_tabla_modificaciones(line: str) -> bool:
+    """Detecta el inicio de la tabla multipágina de modificaciones a otras circulares."""
+    line_clean = line.strip()
+    return bool(
+        re.search(r"Circular\s+Materia\(s\)\s+que\s+se\s+modifica\(n\)", line_clean, re.IGNORECASE)
+        or re.search(r"Motivo\s+y/o\s+Consideraciones", line_clean, re.IGNORECASE)
+    )
 
 
 def _normalizar_llamadas_nota_al_pie(line: str) -> str:
@@ -225,6 +242,7 @@ class CuerpoExtractor(BaseExtractor):
         seccion_actual: SeccionDDU = {"titulo": "", "parrafos": []}
         parrafo_actual = ""
         omitiendo_nota_al_pie = False
+        omitiendo_esquema_ilustrativo = False
 
         lines_cuerpo = lines[inicio_cuerpo:]
         total_lineas = len(lines_cuerpo)
@@ -255,6 +273,24 @@ class CuerpoExtractor(BaseExtractor):
                 omitiendo_nota_al_pie = True
                 curr_idx += 1
                 continue
+
+            if omitiendo_esquema_ilustrativo:
+                if re.match(r"^\d+\.\s+", line_clean):
+                    omitiendo_esquema_ilustrativo = False
+                else:
+                    curr_idx += 1
+                    continue
+
+            if _es_inicio_esquema_ilustrativo(line_clean):
+                if parrafo_actual:
+                    seccion_actual["parrafos"].append(parrafo_actual.strip())
+                    parrafo_actual = ""
+                omitiendo_esquema_ilustrativo = True
+                curr_idx += 1
+                continue
+
+            if _es_inicio_tabla_modificaciones(line_clean):
+                break
 
             if omitiendo_nota_al_pie:
                 if re.match(r"^\d+\.\s+", line_clean) or re.match(r"^[I|V|X]+\.\s+", line_clean, re.IGNORECASE):
