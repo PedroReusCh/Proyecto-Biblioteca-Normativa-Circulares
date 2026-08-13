@@ -30,6 +30,7 @@ El sistema parte con un conjunto base de ETLs independientes, pero la estructura
 - `pytest.ini` define `pythonpath = . scripts`.
 - Mantener tipado estricto compatible con Pylance en `scripts/` y `test/`.
 - No versionar `.csv`, `.xlsx`, `.xls` ni `.pdf`.
+- Para el bloque `Imagen`, usar convención estable de enlace entre CSV y archivo: `DDU_<n>_imagen_<nombre_normalizado>` en `id_imagen` y `archivo`, guardando PNG en `salidas_imagenes/`.
 - Toda solicitud de cambio debe actualizar `README.md`, `CHANGELOG.md` y, si aplica, `\.github\copilot-instructions.md`.
 - La documentación y los tests deben reflejar que los extractores son ampliables y que la cantidad de ETLs puede variar según nuevas circulares y nuevos bloques normativos.
 - Todo comentario al usuario y mensajes de commit van en español.

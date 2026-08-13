@@ -4,6 +4,15 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/) y este proyecto se adhiere a las prácticas de control de versiones semántico.
 
+## [0.7.4] - 2026-08-13
+
+### Changed
+
+* **ETL de Imagen (DDU 456) con nomenclatura estable y trazable**:
+  * Se consolidó la salida del bloque `Imagen` en un único PNG de la página 3 con recorte ajustado para excluir encabezado textual y pie de página general, manteniendo rótulos del esquema.
+  * Se estandarizó la convención de identificación y archivo en el CSV: `DDU_<n>_imagen_<nombre_normalizado>`.
+  * Se aseguró consistencia 1:1 entre `id_imagen`, `archivo` y el nombre físico del PNG en `salidas_imagenes/`.
+
 ## [0.7.3] - 2026-08-12
 
 ### Added

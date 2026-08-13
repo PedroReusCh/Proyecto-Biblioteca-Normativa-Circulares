@@ -83,6 +83,7 @@ class DDUOrchestrator:
         # Determinar número desde el nombre de archivo si existe
         match_filename = re.search(r"\b(\d+)\b", filename)
         num_filename = match_filename.group(1) if match_filename else ""
+        numero_base = f"DDU {num_filename}" if num_filename else ""
 
         # Ejecutar todos los extractores modulares
         extractores_dict = ExtractorRegistry.get_all_extractors()
@@ -93,6 +94,7 @@ class DDUOrchestrator:
                 instancia = extractor_cls()
                 if pdf_path is not None:
                     setattr(instancia, "pdf_path", str(pdf_path))
+                setattr(instancia, "numero", numero_base)
                 resultado = instancia.extract(raw_text, lines)
                 if resultado.datos:
                     datos_consolidados.update(resultado.datos)
@@ -104,8 +106,8 @@ class DDUOrchestrator:
         if numero:
             if not numero.upper().startswith("DDU"):
                 numero = f"DDU {numero}"
-        elif num_filename:
-            numero = f"DDU {num_filename}"
+        elif numero_base:
+            numero = numero_base
         datos_consolidados["numero"] = numero
 
         # Garantizar emisor por defecto si no se detectó
@@ -167,6 +169,7 @@ class DDUOrchestrator:
         lines = [line.strip() for line in raw_text.splitlines()]
         match_filename = re.search(r"\b(\d+)\b", filename)
         num_filename = match_filename.group(1) if match_filename else ""
+        numero_base = f"DDU {num_filename}" if num_filename else ""
         extractores_dict = ExtractorRegistry.get_all_extractors()
         datos_consolidados: Dict[str, Any] = {}
         for nombre_bloque, extractor_cls in extractores_dict.items():
@@ -174,6 +177,7 @@ class DDUOrchestrator:
                 instancia = extractor_cls()
                 if pdf_path is not None:
                     setattr(instancia, "pdf_path", str(pdf_path))
+                setattr(instancia, "numero", numero_base)
                 resultado = instancia.extract(raw_text, lines)
                 if resultado.datos:
                     datos_consolidados.update(resultado.datos)
@@ -183,8 +187,8 @@ class DDUOrchestrator:
         if numero:
             if not numero.upper().startswith("DDU"):
                 numero = f"DDU {numero}"
-        elif num_filename:
-            numero = f"DDU {num_filename}"
+        elif numero_base:
+            numero = numero_base
         datos_consolidados["numero"] = numero
         if not datos_consolidados.get("emisor"):
             datos_consolidados["emisor"] = "JEFE DIVISION DE DESARROLLO URBANO"

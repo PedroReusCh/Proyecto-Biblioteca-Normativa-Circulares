@@ -16,7 +16,7 @@ El proyecto se estructura en los siguientes directorios clave:
 * [`salidas_rdf/`](./salidas_rdf): Grafos semánticos RDF en sintaxis Turtle (`.ttl`) generados desde los CSVs.
 * [`scripts/`](./scripts): Módulos funcionales de procesamiento y conversión:
   * [`ddu_types.py`](./scripts/ddu_types.py): Declaraciones de tipado estricto `DatosCircularDDU` y `SeccionDDU`.
-  * [`extractors/`](./scripts/extractors): Paquete de ETLs modulares e independientes (`encabezado.py`, `acto_administrativo.py`, `antecedentes.py`, `materia.py`, `descriptores.py`, `fecha_lugar.py`, `destinatarios.py`, `emisor.py`, `cuerpo.py`, `nota_al_pie.py`, `firma.py`, `distribucion.py`) derivados de la interfaz base `BaseExtractor`. Este conjunto es evolutivo y puede ampliarse o ajustarse según nuevas circulares y nuevos bloques normativos.
+  * [`extractors/`](./scripts/extractors): Paquete de ETLs modulares e independientes (`encabezado.py`, `acto_administrativo.py`, `antecedentes.py`, `materia.py`, `descriptores.py`, `fecha_lugar.py`, `destinatarios.py`, `emisor.py`, `cuerpo.py`, `imagen.py`, `tabla.py`, `nota_al_pie.py`, `firma.py`, `distribucion.py`) derivados de la interfaz base `BaseExtractor`. Este conjunto es evolutivo y puede ampliarse o ajustarse según nuevas circulares y nuevos bloques normativos.
   * [`ddu_orchestrator.py`](./scripts/ddu_orchestrator.py): Orquestador central (`DDUOrchestrator`) que coordina los extractores registrados y exporta CSVs.
   * [`ddu_parser.py`](./scripts/ddu_parser.py): Wrapper de retrocompatibilidad apuntando al orquestador.
   * [`ddu_to_xml.py`](./scripts/ddu_to_xml.py): Generador estructurado XML bajo el estándar Akoma Ntoso v2.0 BCN.
@@ -123,6 +123,7 @@ py -3 scripts/ddu_orchestrator.py --pdf "circulares/DDU 531.pdf" --export-csv
 
 * **Salida / Visualización**: Genera un archivo CSV codificado en UTF-8 con BOM y delimitado por punto y coma (`;`) listo para MS Excel en la carpeta `salidas_csv/` (ej. [`salidas_csv/DDU_531_extraido.csv`](./salidas_csv/DDU_531_extraido.csv)).
 * El CSV individual conserva bloques atómicos por extractor, incluyendo los nuevos bloques independientes `Imagen` y `Tabla` cuando la circular los contiene.
+* Cuando existe bloque `Imagen`, el ETL exporta el PNG asociado en `salidas_imagenes/` y usa convención de enlace estable en CSV: `DDU_<n>_imagen_<nombre_normalizado>` (mismo valor para `id_imagen` y base de `archivo`).
 
 ---
 
