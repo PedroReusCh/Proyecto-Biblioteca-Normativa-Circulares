@@ -17,6 +17,7 @@ try:
         register_extractor,
     )
     from scripts.extractors.tablas import TablasExtractor
+    from scripts.extractors.imagenes import ImagenesExtractor
 except ImportError:
     from extractors.base import (
         BaseExtractor,
@@ -25,6 +26,7 @@ except ImportError:
         register_extractor,
     )
     from extractors.tablas import TablasExtractor
+    from extractors.imagenes import ImagenesExtractor
 
 _EXTRACTOR_MODULES: List[str] = [
     "encabezado",
@@ -40,6 +42,7 @@ _EXTRACTOR_MODULES: List[str] = [
     "distribucion",
     "nota_al_pie",
     "tablas",
+    "imagenes",
 ]
 
 
@@ -66,5 +69,7 @@ __all__ = [
     "ExtractorRegistry",
     "register_extractor",
     "TablasExtractor",
+    "ImagenesExtractor",
     "registrar_todos_los_extractores",
 ]
+
