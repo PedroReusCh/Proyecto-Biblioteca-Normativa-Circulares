@@ -458,4 +458,42 @@ def test_firma_extractor_ddu_456_cargo_limpio() -> None:
     assert firmante == "Jefe DIVISIÓN de Desarrollo Urbano"
 
 
+def test_cuerpo_extractor_ddu_456_exclusion_tablas_e_imagenes() -> None:
+    """Verifica que el cuerpo de DDU 456 contenga exactamente 7 párrafos y excluya tablas e imágenes."""
+    pdf_path = Path("circulares/DDU 456.pdf")
+    if not pdf_path.exists():
+        pytest.skip(f"No se encontró el archivo PDF en {pdf_path}")
+
+
+    pypdf_mod: Any = importlib.import_module("pypdf")
+    reader = pypdf_mod.PdfReader(pdf_path)
+    raw_text = "\n".join([str(p.extract_text() or "") for p in reader.pages])
+    lines = [line.strip() for line in raw_text.splitlines() if line.strip()]
+
+    extractor = CuerpoExtractor()
+    resultado: ResultadoBloque = extractor.extract(raw_text, lines)
+
+    assert resultado.exito is True
+    secciones: List[SeccionDDU] = list(resultado.datos.get("secciones", []))
+    assert len(secciones) == 1
+    parrafos: List[str] = secciones[0].get("parrafos", [])
+
+    # Exactamente 7 párrafos (Numerales 1 al 7)
+    assert len(parrafos) == 7, f"Se esperaban 7 párrafos normativos, se obtuvieron {len(parrafos)}"
+
+    # Verificar numeral 4 limpio
+    assert parrafos[3].startswith("4.")
+    assert "A continuación, se presenta un esquema ilustrativo" in parrafos[3]
+    assert "PLANTA AZOTEA" not in parrafos[3]
+    assert "CORTE ESQUEMÁTICO" not in parrafos[3]
+
+    # Verificar numeral 7 limpio (sin contenido de la tabla de circulares)
+    assert parrafos[6].startswith("7.")
+    assert "Circular Materia(s) que se modifica(n)" not in parrafos[6]
+    assert "DDU 339" not in parrafos[6]
+    assert "DDU 322" not in parrafos[6]
+    assert "DDU 168" not in parrafos[6]
+
+
+
 

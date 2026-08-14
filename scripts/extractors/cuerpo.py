@@ -69,10 +69,22 @@ def _es_etiqueta_diagrama(line: str) -> bool:
     if len(line_clean) < 80 and _PATRON_DIAGRAMA_ESQUEMA.match(line_clean):
         return True
 
+def _es_inicio_bloque_tabla(line: str) -> bool:
+    """Detecta el inicio de un bloque tabular normativo para excluirlo del cuerpo."""
+    line_clean = line.strip()
+    if not line_clean:
+        return False
+    if re.search(r"Circular\s+Materia\(s\)\s+que\s+se\s+modifica\(n\)", line_clean, re.IGNORECASE):
+        return True
+    if re.search(r"\bMateria\(s\)\s+que\s+se\s+modifica\(n\)", line_clean, re.IGNORECASE):
+        return True
+    if re.match(r"^\|\s*Circular\b", line_clean, re.IGNORECASE):
+        return True
     return False
 
 
 def _limpiar_texto_cuerpo(texto: str) -> str:
+
     """Repara palabras rotas y preserva el casing original de mayúsculas/minúsculas."""
     res = limpiar_palabras_ocr(texto)
 
@@ -97,10 +109,17 @@ def _limpiar_texto_cuerpo(texto: str) -> str:
     res = re.sub(r"\b(solic)\s+(itud\w*)\b", r"\1\2", res, flags=re.IGNORECASE)
     res = re.sub(r"\b(aprob)\s+(ad\w+|ac[ií]on\w*)\b", r"\1\2", res, flags=re.IGNORECASE)
     res = re.sub(r"\b(expuest)\s+(o[s]?|a[s]?)\b", r"\1\2", res, flags=re.IGNORECASE)
-    res = re.sub(r"\b(im[áa])\s+(genes)\b", r"\1\2", res, flags=re.IGNORECASE)
     res = re.sub(r"\bOS\s+33\b", "DS 33", res)
 
+    # Remover remanentes de encabezados de tablas al final de párrafos
+    m_tbl = re.search(r"\s*(?:Circular\s+)?Materia\(s\)\s+que\s+se\s+modifica\(n\).*", res, re.IGNORECASE)
+    if m_tbl:
+        res = res[:m_tbl.start()].strip()
+        if res.endswith(";"):
+            res = res[:-1] + ":"
+
     return res
+
 
 
 
@@ -272,6 +291,8 @@ class CuerpoExtractor(BaseExtractor):
         seccion_actual: SeccionDDU = {"titulo": "", "parrafos": []}
         parrafo_actual = ""
         omitiendo_nota_al_pie = False
+        omitiendo_tabla = False
+
 
         lines_cuerpo = lines[inicio_cuerpo:]
         total_lineas = len(lines_cuerpo)
@@ -294,10 +315,34 @@ class CuerpoExtractor(BaseExtractor):
                 curr_idx += 1
                 continue
 
+            # Detectar e ignorar bloques de tablas normativas dentro del cuerpo
+            if _es_inicio_bloque_tabla(line_clean):
+                if parrafo_actual:
+                    m_th = re.search(r"(?:Circular\s+)?Materia\(s\)\s+que\s+se\s+modifica\(n\).*", parrafo_actual, re.IGNORECASE)
+                    if m_th:
+                        parrafo_actual = parrafo_actual[:m_th.start()].strip()
+                    if parrafo_actual.endswith(";"):
+                        parrafo_actual = parrafo_actual[:-1] + ":"
+                    seccion_actual["parrafos"].append(parrafo_actual.strip())
+                    parrafo_actual = ""
+                omitiendo_tabla = True
+                curr_idx += 1
+                continue
+
+            if omitiendo_tabla:
+                if re.search(r"Saluda\s+atent", line_clean, re.IGNORECASE) or re.match(
+                    r"^(?:DISTRIBUCI[ÓO\?I\s]+N|BUCI[ÓO\?I\s]+N|STRIBUCI[ÓO\?I\s]+N)[\s:]*", line_clean, re.IGNORECASE
+                ):
+                    omitiendo_tabla = False
+                else:
+                    curr_idx += 1
+                    continue
+
             # Aplicar normalización de numerales distorsionados por OCR (l. -> 1., S. -> 5., B. -> 8.)
             line_clean = _normalizar_prefijo_numeral_ocr(line_clean)
             # Aplicar formateo de llamadas a notas al pie [1], [2], [3]
             line_clean = _normalizar_llamadas_nota_al_pie(line_clean)
+
 
             # Detectar e ignorar bloques de notas al pie dentro del cuerpo
             if _es_inicio_nota_al_pie(line_clean):
@@ -403,9 +448,16 @@ class CuerpoExtractor(BaseExtractor):
             curr_idx += 1
 
         if parrafo_actual:
-            seccion_actual["parrafos"].append(parrafo_actual)
+            m_th = re.search(r"(?:Circular\s+)?Materia\(s\)\s+que\s+se\s+modifica\(n\).*", parrafo_actual, re.IGNORECASE)
+            if m_th:
+                parrafo_actual = parrafo_actual[:m_th.start()].strip()
+            if parrafo_actual.endswith(";"):
+                parrafo_actual = parrafo_actual[:-1] + ":"
+            if parrafo_actual:
+                seccion_actual["parrafos"].append(parrafo_actual)
 
         if seccion_actual["titulo"] or seccion_actual["parrafos"]:
+
             secciones.append(seccion_actual)
 
         # Aplicar reparación de palabras OCR a cada párrafo de las secciones

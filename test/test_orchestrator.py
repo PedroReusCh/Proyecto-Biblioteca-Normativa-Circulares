@@ -121,10 +121,18 @@ def test_orchestrator_process_pdf_ddu_456() -> None:
     # 2. Cuerpo descontaminado y estructurado
     cuerpo = str(datos.get("cuerpo", ""))
     assert "1. Conforme a las facultades" in cuerpo
+    assert "7. Para adecuarse a los cambios" in cuerpo
     assert "PLANTA AZOTEA" not in cuerpo
     assert "Piscina Chimeneas Terraza" not in cuerpo
+    assert "Circular Materia(s) que se modifica(n)" not in cuerpo
+    assert "DDU 339" not in cuerpo
+    assert "DDU 322" not in cuerpo
+    assert "Se deja sin efecto por completo la Circular" not in cuerpo
+    assert "Reemplázase la letra a. del punto 3" not in cuerpo
+
 
     # 3. Tablas consolidadas con manifiesto ligero (pdfplumber)
+
     tablas: List[Dict[str, Any]] = datos.get("tablas") or []
     assert isinstance(tablas, list)
     assert len(tablas) == 1  # 1 tabla consolidada (4 páginas → 1 tabla lógica)
