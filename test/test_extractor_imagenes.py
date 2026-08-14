@@ -8,6 +8,8 @@ from scripts.extractors import registrar_todos_los_extractores
 from scripts.extractors.base import BaseExtractor, ExtractorRegistry, ResultadoBloque
 from scripts.extractors.imagenes import ImagenesExtractor
 
+PROYECTO_RAIZ = Path(__file__).resolve().parents[1]
+
 
 def test_imagenes_extractor_registration() -> None:
     """Verifica que ImagenesExtractor esté registrado en ExtractorRegistry con nombre 'imagenes'."""
@@ -20,14 +22,20 @@ def test_imagenes_extractor_registration() -> None:
     assert instancia.nombre_bloque == "imagenes"
 
 
-def test_imagenes_extractor_ddu_456_pdf() -> None:
-    """Verifica la extracción estructurada de imágenes y esquemas en la circular DDU 456."""
-    pdf_path = Path("circulares/DDU 456.pdf")
+def test_imagenes_extractor_ddu_456_pdf(tmp_path: Path) -> None:
+    """Verifica la extracción estructurada de imágenes y guardado físico en DDU 456."""
+    pdf_path = PROYECTO_RAIZ / "circulares" / "DDU 456.pdf"
     if not pdf_path.exists():
         pytest.skip(f"No se encontró el archivo PDF en {pdf_path}")
 
     extractor = ImagenesExtractor()
-    resultado: ResultadoBloque = extractor.extract(raw_text="", lines=[], pdf_path=pdf_path)
+    salidas_dir = tmp_path / "salidas_imagenes"
+    resultado: ResultadoBloque = extractor.extract(
+        raw_text="",
+        lines=[],
+        pdf_path=pdf_path,
+        output_dir=salidas_dir,
+    )
 
     assert resultado.nombre_bloque == "imagenes"
     assert resultado.exito is True
@@ -39,22 +47,39 @@ def test_imagenes_extractor_ddu_456_pdf() -> None:
     # Verificar el esquema técnico principal de planta azotea y corte en página 3
     img_p3 = next((img for img in imagenes_lista if img.get("pagina") == 3), None)
     assert img_p3 is not None, "No se encontró la imagen técnica de la página 3"
+    assert img_p3["id"] == "DDU_456_img_1"
     assert img_p3["ancho"] == 700
     assert img_p3["alto"] == 760
+    assert img_p3["dimensiones"] == "700x760"
     assert img_p3["formato"] == "jpeg"
     assert img_p3["xref"] == 5
-    descripcion: str = str(img_p3.get("descripcion", "")).lower()
-    assert any(k in descripcion for k in ["esquema", "planta azotea", "corte", "diagrama"])
+    assert img_p3["tipo"] == "Esquema técnico"
+    assert "archivo_anexo" in img_p3
+    assert img_p3["archivo_anexo"] == "salidas_imagenes/DDU_456_img_1.jpeg"
+
+    nombre: str = str(img_p3.get("nombre", "")).lower()
+    assert any(k in nombre for k in ["esquema", "planta azotea", "corte", "diagrama"])
+
+    # Verificar existencia física del archivo binario extraído
+    img_file = salidas_dir / "DDU_456_img_1.jpeg"
+    assert img_file.exists(), f"No se encontró el archivo guardado {img_file}"
+    assert img_file.stat().st_size > 1000, "El archivo de imagen guardado está vacío o corrupto"
 
 
-def test_imagenes_extractor_filtrado_lineas_y_membretes() -> None:
+def test_imagenes_extractor_filtrado_lineas_y_membretes(tmp_path: Path) -> None:
     """Verifica que líneas menores a 60px y membretes institucionales sean filtrados."""
-    pdf_path = Path("circulares/DDU 456.pdf")
+    pdf_path = PROYECTO_RAIZ / "circulares" / "DDU 456.pdf"
     if not pdf_path.exists():
         pytest.skip(f"No se encontró el archivo PDF en {pdf_path}")
 
     extractor = ImagenesExtractor()
-    resultado: ResultadoBloque = extractor.extract(raw_text="", lines=[], pdf_path=pdf_path)
+    salidas_dir = tmp_path / "salidas_imagenes"
+    resultado: ResultadoBloque = extractor.extract(
+        raw_text="",
+        lines=[],
+        pdf_path=pdf_path,
+        output_dir=salidas_dir,
+    )
 
     imagenes_lista: List[Dict[str, Any]] = resultado.datos.get("imagenes", [])
 
@@ -85,7 +110,7 @@ def test_imagenes_extractor_sin_imagenes_texto() -> None:
 
 def test_imagenes_extractor_sin_imagenes_pdf() -> None:
     """Verifica el comportamiento con un PDF escaneado sin diagramas técnicos (DDU 531)."""
-    pdf_path = Path("circulares/DDU 531.pdf")
+    pdf_path = PROYECTO_RAIZ / "circulares" / "DDU 531.pdf"
     if not pdf_path.exists():
         pytest.skip(f"No se encontró {pdf_path}")
 
@@ -117,6 +142,7 @@ def test_imagenes_extractor_texto_markdown() -> None:
     imagenes: List[Dict[str, Any]] = resultado.datos.get("imagenes", [])
     assert len(imagenes) == 1
     img = imagenes[0]
-    assert img["descripcion"] == "Esquema técnico de planta y corte"
+    assert img["nombre"] == "Esquema técnico de planta y corte"
     assert img["formato"] == "png"
     assert img["pagina"] == 1
+    assert "archivo_anexo" in img

@@ -60,10 +60,15 @@ def _generar_descripcion_tecnica(page_text: str, pagina: int, ancho: int, alto: 
     return f"Esquema / diagrama técnico en página {pagina} ({ancho}x{alto} px)"
 
 
-def _extraer_imagenes_lineas(lines: List[str]) -> List[Dict[str, Any]]:
+def _extraer_imagenes_lineas(
+    lines: List[str],
+    num_str: str = "desconocido",
+    dir_imagenes: Optional[Path] = None,
+) -> List[Dict[str, Any]]:
     """Extrae metadatos de imágenes definidas en formato Markdown dentro del texto plano."""
-    imagenes: List[Dict[str, Any]] = []
+    imagenes_manifest: List[Dict[str, Any]] = []
     patron_md_img = re.compile(r"!\[([^\]]*)\]\(([^)]+)\)")
+    idx = 1
 
     for num_linea, line in enumerate(lines, 1):
         for match in patron_md_img.finditer(line):
@@ -73,17 +78,25 @@ def _extraer_imagenes_lineas(lines: List[str]) -> List[Dict[str, Any]]:
             ext_match = re.search(r"\.([a-zA-Z0-9]+)(?:[?#]|$)", src)
             formato = ext_match.group(1).lower() if ext_match else "png"
             descripcion = alt_text if alt_text else f"Imagen referenciada en línea {num_linea}"
+            img_id = f"DDU_{num_str}_img_{idx}"
+            rel_path = f"salidas_imagenes/{img_id}.{formato}"
 
-            imagenes.append({
+            imagenes_manifest.append({
+                "id": img_id,
+                "nombre": descripcion,
                 "pagina": 1,
-                "xref": 0,
+                "tipo": "Esquema técnico" if "esquema" in descripcion.lower() else "Imagen / Diagrama",
+                "formato": formato,
+                "dimensiones": "0x0",
                 "ancho": 0,
                 "alto": 0,
-                "formato": formato,
+                "xref": 0,
                 "descripcion": descripcion,
+                "archivo_anexo": rel_path,
             })
+            idx += 1
 
-    return imagenes
+    return imagenes_manifest
 
 
 @register_extractor
@@ -99,18 +112,32 @@ class ImagenesExtractor(BaseExtractor):
         raw_text: str,
         lines: List[str],
         pdf_path: Optional[Path] = None,
+        output_dir: Optional[Path] = None,
     ) -> ResultadoBloque:
-        """Extrae e inventaría imágenes y esquemas técnicos con PyMuPDF (fitz) o Markdown.
+        """Extrae e inventaría imágenes y esquemas técnicos con PyMuPDF (fitz) y exporta los binarios.
 
         Args:
             raw_text: Texto completo de la circular.
             lines: Lista de líneas limpias.
             pdf_path: Ruta opcional al archivo PDF para extracción nativa con PyMuPDF.
+            output_dir: Directorio opcional de salida para guardar las imágenes extraídas.
 
         Returns:
-            ResultadoBloque con la lista estructurada de imágenes detectadas.
+            ResultadoBloque con la lista estructurada del manifiesto ligero de imágenes.
         """
-        imagenes_extraidas: List[Dict[str, Any]] = []
+        # Determinar identificador base DDU (ej. 456)
+        num_str = "desconocido"
+        if pdf_path is not None:
+            m_pdf = re.search(r"\b(\d+)\b", pdf_path.stem)
+            if m_pdf:
+                num_str = m_pdf.group(1)
+        if num_str == "desconocido" and raw_text:
+            m_txt = re.search(r"DDU\s*(\d+)", raw_text, re.IGNORECASE)
+            if m_txt:
+                num_str = m_txt.group(1)
+
+        dir_imagenes = output_dir if output_dir is not None else (_PROYECTO_RAIZ / "salidas_imagenes")
+        manifest_imagenes: List[Dict[str, Any]] = []
 
         if pdf_path is not None and pdf_path.exists():
             try:
@@ -119,6 +146,7 @@ class ImagenesExtractor(BaseExtractor):
 
                 with fitz_mod.open(str(pdf_path)) as doc:
                     vistos_xrefs: Set[int] = set()
+                    img_idx = 1
 
                     for p_idx in range(len(doc)):
                         page = doc[p_idx]
@@ -143,7 +171,7 @@ class ImagenesExtractor(BaseExtractor):
                             w = int(base_img.get("width", 0))
                             h = int(base_img.get("height", 0))
                             ext = str(base_img.get("ext", "png")).lower()
-                            image_bytes = base_img.get("image", b"")
+                            image_bytes: bytes = base_img.get("image", b"")
                             byte_len = len(image_bytes)
 
                             # Filtro 1: Dimensiones mínimas (líneas divisorias, filetes menores a 60px)
@@ -168,15 +196,28 @@ class ImagenesExtractor(BaseExtractor):
 
                             vistos_xrefs.add(xref)
                             descripcion = _generar_descripcion_tecnica(page_text, num_pag, w, h)
+                            img_id = f"DDU_{num_str}_img_{img_idx}"
+                            filename = f"{img_id}.{ext}"
 
-                            imagenes_extraidas.append({
+                            dir_imagenes.mkdir(parents=True, exist_ok=True)
+                            img_out_path = dir_imagenes / filename
+                            img_out_path.write_bytes(image_bytes)
+
+                            rel_path = f"salidas_imagenes/{filename}"
+                            manifest_imagenes.append({
+                                "id": img_id,
+                                "nombre": descripcion,
                                 "pagina": num_pag,
-                                "xref": xref,
+                                "tipo": "Esquema técnico" if "esquema" in descripcion.lower() else "Imagen / Diagrama",
+                                "formato": ext,
+                                "dimensiones": f"{w}x{h}",
                                 "ancho": w,
                                 "alto": h,
-                                "formato": ext,
+                                "xref": xref,
                                 "descripcion": descripcion,
+                                "archivo_anexo": rel_path,
                             })
+                            img_idx += 1
 
             except Exception as e:
                 return ResultadoBloque(
@@ -187,17 +228,17 @@ class ImagenesExtractor(BaseExtractor):
                     observaciones=f"Error al procesar imágenes con PyMuPDF: {e}",
                 )
 
-        if not imagenes_extraidas:
-            imagenes_extraidas = _extraer_imagenes_lineas(lines)
+        if not manifest_imagenes:
+            manifest_imagenes = _extraer_imagenes_lineas(lines, num_str, dir_imagenes)
 
-        exito = len(imagenes_extraidas) > 0
+        exito = len(manifest_imagenes) > 0
         return ResultadoBloque(
             nombre_bloque=self.nombre_bloque,
             exito=exito,
-            datos={"imagenes": imagenes_extraidas},
+            datos={"imagenes": manifest_imagenes},
             confianza=1.0 if exito else 0.0,
             observaciones=(
-                f"Se detectaron {len(imagenes_extraidas)} imagen(es)/diagrama(s) técnico(s) en el documento."
+                f"Se detectaron {len(manifest_imagenes)} imagen(es)/diagrama(s) y se exportaron a {dir_imagenes.name}/."
                 if exito
                 else "No se detectaron imágenes ni esquemas técnicos relevantes en el documento."
             ),
@@ -207,9 +248,15 @@ class ImagenesExtractor(BaseExtractor):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="ETL Imágenes Extractor Standalone con PyMuPDF")
     parser.add_argument("--pdf", type=str, required=True, help="Ruta al archivo PDF")
+    parser.add_argument("--output-dir", type=str, default="salidas_imagenes", help="Directorio de salida para imágenes")
     args = parser.parse_args()
 
     target_pdf = Path(args.pdf)
     extractor = ImagenesExtractor()
-    resultado_bloque = extractor.extract(raw_text="", lines=[], pdf_path=target_pdf)
+    resultado_bloque = extractor.extract(
+        raw_text="",
+        lines=[],
+        pdf_path=target_pdf,
+        output_dir=Path(args.output_dir),
+    )
     print(json.dumps(asdict(resultado_bloque), indent=2, ensure_ascii=False))
