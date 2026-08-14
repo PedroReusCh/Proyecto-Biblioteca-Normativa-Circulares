@@ -126,3 +126,18 @@ def test_tablas_extractor_texto_markdown() -> None:
     assert t["filas"][0] == ["DDU 100", "Modifica art 1", "Actualización"]
     assert t["filas"][1] == ["DDU 200", "Modifica art 2", "Nueva ley"]
     assert "| Circular | Modificación | Motivo |" in t["markdown"]
+
+
+def test_compactar_tabla_pdf_encabezados_con_espacios() -> None:
+    """Verifica que celdas de encabezado con solo espacios se manejen sin generar IndexError."""
+    from scripts.extractors.tablas import _compactar_tabla_pdf
+    raw_table = [
+        ["Col1", "   ", "Col3"],
+        ["Val1", "   ", "Val3"],
+    ]
+    resultado = _compactar_tabla_pdf(raw_table)
+    assert resultado is not None
+    assert resultado["encabezados"] == ["Col1", "Col3"]
+    assert len(resultado["filas"]) == 1
+    assert resultado["filas"][0] == ["Val1", "Val3"]
+

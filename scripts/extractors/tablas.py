@@ -83,10 +83,11 @@ def _compactar_tabla_pdf(raw_table: List[List[Any]]) -> Optional[Dict[str, Any]]
         aligned_row = [""] * num_cols
 
         if len(r) == len(header_raw):
-            header_indices = [idx for idx, h in enumerate(header_raw) if h]
+            header_indices = [idx for idx, h in enumerate(header_raw) if h.strip()]
             for target_idx, orig_idx in enumerate(header_indices):
                 if orig_idx < len(r) and r[orig_idx]:
                     aligned_row[target_idx] = r[orig_idx]
+
             if sum(1 for c in aligned_row if c) < len(non_empty):
                 if not r[0] and len(non_empty) < num_cols:
                     for i, val in enumerate(non_empty):
@@ -188,10 +189,12 @@ class TablasExtractor(BaseExtractor):
 
         if pdf_path is not None and pdf_path.exists():
             try:
-                import pdfplumber
+                import importlib
+                pdfplumber_mod: Any = importlib.import_module("pdfplumber")
 
-                with pdfplumber.open(pdf_path) as pdf:
+                with pdfplumber_mod.open(pdf_path) as pdf:
                     for p_idx, page in enumerate(pdf.pages):
+
                         num_pag = p_idx + 1
                         raw_tables = page.extract_tables()
                         if not raw_tables:
