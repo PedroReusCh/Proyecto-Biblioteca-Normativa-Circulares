@@ -205,11 +205,9 @@ class DDUOrchestrator:
             fecha_str = str(datos.get("fecha", "")).strip()
             fecha_lugar_val = f"{lugar_str}, {fecha_str}" if lugar_str and fecha_str else (fecha_str or lugar_str)
 
-        tablas_list = datos.get("tablas") or []
-        tablas_val = json.dumps(tablas_list, ensure_ascii=False) if tablas_list else ""
+        tablas_val = formatear_manifiesto_plano(datos.get("tablas"))
+        imagenes_val = formatear_manifiesto_plano(datos.get("imagenes"))
 
-        imagenes_list = datos.get("imagenes") or []
-        imagenes_val = json.dumps(imagenes_list, ensure_ascii=False) if imagenes_list else ""
 
         filas_csv: List[Dict[str, str]] = [
             {"bloque": "Encabezado", "campo": "numero_ddu", "valor_extraido": datos["numero"]},

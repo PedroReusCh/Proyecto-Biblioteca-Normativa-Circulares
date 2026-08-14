@@ -218,21 +218,26 @@ def test_export_individual_csv_ddu_456(tmp_path: Path) -> None:
         ]
         assert bloques == bloques_esperados
 
-        # Verificar contenido de Tablas e Imágenes no vacío en DDU 456 (manifiesto con IDs)
+        # Verificar contenido de Tablas e Imágenes en formato plano limpio con ';' y sin caracteres JSON
         tablas_row = next(r for r in rows if r[0] == "Tablas")
         assert tablas_row[2] != ""
-        assert "DDU_456_tabla_1" in tablas_row[2]
-        assert "salidas_tablas/DDU_456_tabla_1.csv" in tablas_row[2]
+        assert "id: DDU_456_tabla_1" in tablas_row[2]
+        assert "archivo_anexo: salidas_tablas/DDU_456_tabla_1.csv" in tablas_row[2]
+        for c in ["[", "]", "{", "}"]:
+            assert c not in tablas_row[2], f"Carácter JSON prohibido '{c}' encontrado en fila Tablas"
 
         imagenes_row = next(r for r in rows if r[0] == "Imágenes")
         assert imagenes_row[2] != ""
-        assert "DDU_456_img_1" in imagenes_row[2]
-        assert "salidas_imagenes/DDU_456_img_1.png" in imagenes_row[2]
+        assert "id: DDU_456_img_1" in imagenes_row[2]
+        assert "archivo_anexo: salidas_imagenes/DDU_456_img_1.png" in imagenes_row[2]
+        for c in ["[", "]", "{", "}"]:
+            assert c not in imagenes_row[2], f"Carácter JSON prohibido '{c}' encontrado en fila Imágenes"
 
         mod_row = next(r for r in rows if r[0] == "Modificaciones Posteriores")
         assert mod_row[2] != ""
         assert "Circular Modificada por" in mod_row[2]
         assert "DDU 498" in mod_row[2]
+
 
 
 def test_formatear_manifiesto_plano() -> None:
