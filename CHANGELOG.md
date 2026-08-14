@@ -4,6 +4,28 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/) y este proyecto se adhiere a las prácticas de control de versiones semántico.
 
+## [0.3.0] - 2026-08-14
+
+### Added
+
+* **Arquitectura Ampliada de 14 Bloques ETL Modulares e Independientes**:
+  * Extensión del ecosistema de extractores en [`scripts/extractors/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/) coordinados por [`scripts/ddu_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_orchestrator.py) (`DDUOrchestrator`).
+  * **Extractor de Tablas (`TablasExtractor` en `scripts/extractors/tablas.py`)**: Extracción y normalización de tablas comparativas y modificaciones normativas en formato Markdown/estructurado mediante `pdfplumber` (`bloque="Tablas"`).
+  * **Extractor de Imágenes y Esquemas Técnicos (`ImagenesExtractor` en `scripts/extractors/imagenes.py`)**: Inventario de imágenes, diagramas de arquitectura y esquemas técnicos mediante PyMuPDF (`fitz`), con filtrado automático de membretes institucionales, filetes decorativos y descripción contextual (`bloque="Imágenes"`).
+  * **Saneamiento Tipográfico OCR Universal (`scripts/extractors/utils_cleaner.py`)**: Módulo de reparación determinista de fragmentaciones tipográficas de escaneo OCR (`a rtículo` ➔ `artículo`, `inciso s` ➔ `incisos`, `relativo s` ➔ `relativos`, `vigési mo` ➔ `vigésimo`, `quinch os` ➔ `quinchos`).
+  * **Soporte Estricto de Tipos**: Inclusión de campos `tablas` e `imagenes` en `DatosCircularDDU` en [`scripts/ddu_types.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_types.py).
+  * **Nuevas Pruebas Unitarias y de Integración**: Pruebas en [`test/test_utils_cleaner.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_utils_cleaner.py), [`test/test_extractor_tablas.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_extractor_tablas.py), [`test/test_extractor_imagenes.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_extractor_imagenes.py), y ampliación de [`test/test_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_orchestrator.py) con verificación de los 14 bloques normativos.
+
+### Changed
+
+* **Descontaminación de Cuerpo y Refinamiento de Firma**:
+  * [`scripts/extractors/cuerpo.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/cuerpo.py): Aislamiento del texto narrativo formal, excluyendo volcados desordenados de etiquetas de diagramas (ej. etiquetas del esquema de planta azotea y corte).
+  * [`scripts/extractors/firma.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/firma.py): Captura depurada del cargo y emisor formal sin absorción de encabezados de tablas ni texto residual.
+  * [`scripts/ddu_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_orchestrator.py): Actualización de `export_individual_csv()` para emitir los 14 bloques normativos estructurados.
+  * Regeneración de salidas para la circular DDU 456 (`salidas_csv/DDU_456_extraido.csv`, `salidas_xml/DDU_456_akoma.xml`, `salidas_rdf/DDU_456_rdf.ttl`).
+
+---
+
 ## [0.9.0] - 2026-08-14
 
 ### Added

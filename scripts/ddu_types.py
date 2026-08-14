@@ -4,7 +4,7 @@ Este módulo define las estructuras de datos strictly mediante TypedDict para ga
 el cumplimiento de los estándares de tipado estático (strict) en el proyecto.
 """
 
-from typing import List, NotRequired, TypedDict
+from typing import Any, Dict, List, NotRequired, Optional, TypedDict
 
 
 class SeccionDDU(TypedDict):
@@ -35,3 +35,5 @@ class DatosCircularDDU(TypedDict):
     lista_distribucion: NotRequired[List[str]]
     distribucion_texto: NotRequired[str]
     notas_al_pie: NotRequired[str]
+    tablas: NotRequired[Optional[List[Dict[str, Any]]]]
+    imagenes: NotRequired[Optional[List[Dict[str, Any]]]]
