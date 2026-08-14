@@ -48,3 +48,19 @@ def test_limpiar_palabras_ocr_casos_especificos() -> None:
     assert limpiar_palabras_ocr("vig ésimo") == "vigésimo"
     assert limpiar_palabras_ocr("encuent ren") == "encuentren"
     assert limpiar_palabras_ocr("arquitectóni cos") == "arquitectónicos"
+
+
+def test_limpiar_palabras_ocr_no_corrompe_palabras_validas() -> None:
+    """Verifica que palabras válidas similares no sean alteradas o corrompidas por límites de palabra."""
+    frase_valida = (
+        "fraccionar terrenos para estacionar vehículos en propiedad exclusiva "
+        "según el informe sobre normas de copropiedad (por razones de seguridad)."
+    )
+    assert limpiar_palabras_ocr(frase_valida) == frase_valida
+
+
+def test_limpiar_palabras_ocr_preserva_mayusculas() -> None:
+    """Verifica que si el texto original está en mayúsculas sostenidas, la reparación preserve el casing."""
+    assert limpiar_palabras_ocr("APLICACIÓN A RTÍCULO") == "APLICACIÓN ARTÍCULO"
+    assert limpiar_palabras_ocr("INCISO S VIGÉSIMO") == "INCISOS VIGÉSIMO"
+
