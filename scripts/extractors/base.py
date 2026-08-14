@@ -2,7 +2,8 @@
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Dict, List, Type, TypeVar
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Type, TypeVar
 
 T = TypeVar("T", bound="BaseExtractor")
 
@@ -28,12 +29,18 @@ class BaseExtractor(ABC):
         pass
 
     @abstractmethod
-    def extract(self, raw_text: str, lines: List[str]) -> ResultadoBloque:
-        """Ejecuta la lógica de extracción del bloque sobre el texto plano.
+    def extract(
+        self,
+        raw_text: str,
+        lines: List[str],
+        pdf_path: Optional[Path] = None,
+    ) -> ResultadoBloque:
+        """Ejecuta la lógica de extracción del bloque sobre el texto plano o el archivo PDF.
 
         Args:
             raw_text: Texto completo del PDF.
             lines: Líneas limpias del documento.
+            pdf_path: Ruta opcional al archivo PDF para extractores multimodales.
 
         Returns:
             ResultadoBloque con los datos extraídos y nivel de confianza.

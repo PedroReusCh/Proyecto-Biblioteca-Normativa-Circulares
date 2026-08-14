@@ -1,7 +1,7 @@
 """Orquestador Central y Exportador CSV para Circulares DDU.
 
 Este módulo define la clase DDUOrchestrator, encargada de coordinar la ejecución
-de los 11 extractores modulares (ETLs independientes en scripts/extractors/),
+de los 14 extractores modulares (ETLs independientes en scripts/extractors/),
 consolidar el diccionario de datos estricto DatosCircularDDU, y exportar
 archivos CSV estructurados (individuales o dataset acumulado).
 """
@@ -22,8 +22,6 @@ import importlib
 
 from scripts.ddu_types import DatosCircularDDU
 from scripts.extractors import ExtractorRegistry, registrar_todos_los_extractores
-from scripts.extractors.tablas import TablasExtractor
-from scripts.extractors.imagenes import ImagenesExtractor
 
 
 class DDUOrchestrator:
@@ -71,6 +69,8 @@ class DDUOrchestrator:
                     datos_consolidados.update(resultado.datos)
             except Exception as e:
                 print(f"Advertencia: Error al ejecutar extractor '{nombre_bloque}': {e}")
+
+
 
         # Consolidar número DDU (garantizando prefijo 'DDU ')
         numero = str(datos_consolidados.get("numero", "")).strip()

@@ -4,7 +4,8 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/) y este proyecto se adhiere a las prácticas de control de versiones semántico.
 
-## [0.3.0] - 2026-08-14
+## [0.10.0] - 2026-08-14
+
 
 ### Added
 
