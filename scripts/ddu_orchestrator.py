@@ -24,7 +24,53 @@ from scripts.ddu_types import DatosCircularDDU
 from scripts.extractors import ExtractorRegistry, registrar_todos_los_extractores
 
 
+def formatear_manifiesto_plano(items: Any) -> str:
+
+    """Convierte una lista de diccionarios de metadatos (tablas/imágenes) a formato plano con ';'.
+
+    Elimina sintaxis JSON ([ ], { }, \") y produce pares clave: valor separados por ';'.
+
+    Args:
+        items: Lista de diccionarios, diccionario único o cadena JSON.
+
+    Returns:
+        Cadena formateada en texto plano sin caracteres JSON estructurales.
+    """
+    if not items:
+        return ""
+    if isinstance(items, str):
+        if not (items.startswith("[") or items.startswith("{")):
+            return items
+        try:
+            items = json.loads(items)
+        except Exception:
+            return items
+
+    if isinstance(items, dict):
+        items = [items]
+
+    if not isinstance(items, list):
+        return str(items)
+
+    elementos_str: List[str] = []
+    for elem in items:
+        if isinstance(elem, dict):
+            pares: List[str] = []
+            for k, v in elem.items():
+                if isinstance(v, list):
+                    v_str = ", ".join(str(x) for x in v)
+                else:
+                    v_str = str(v)
+                pares.append(f"{k}: {v_str}")
+            elementos_str.append("; ".join(pares))
+        else:
+            elementos_str.append(str(elem))
+
+    return " || ".join(elementos_str)
+
+
 class DDUOrchestrator:
+
     """Orquestador central para ejecutar ETLs modulares de circulares DDU y exportar a CSV."""
 
     def __init__(self) -> None:

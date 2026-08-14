@@ -3,8 +3,9 @@ from pathlib import Path
 from typing import Any, Dict, List
 import pytest
 
-from scripts.ddu_orchestrator import DDUOrchestrator
+from scripts.ddu_orchestrator import DDUOrchestrator, formatear_manifiesto_plano
 from scripts.ddu_types import DatosCircularDDU
+
 
 PROYECTO_RAIZ = Path(__file__).resolve().parents[1]
 PDF_DDU_533 = PROYECTO_RAIZ / "circulares" / "DDU 533.pdf"
@@ -232,4 +233,40 @@ def test_export_individual_csv_ddu_456(tmp_path: Path) -> None:
         assert mod_row[2] != ""
         assert "Circular Modificada por" in mod_row[2]
         assert "DDU 498" in mod_row[2]
+
+
+def test_formatear_manifiesto_plano() -> None:
+    """Verifica que formatear_manifiesto_plano elimine caracteres JSON y use el delimitador ';'."""
+    # Caso 1: Lista de diccionarios
+    tablas_data = [
+        {
+            "id": "DDU_456_tabla_1",
+            "nombre": "Modificaciones Normativas (DDU 339, DDU 322, DDU 168)",
+            "paginas": [5, 6, 7, 8],
+            "filas": 3,
+            "columnas": 3,
+            "archivo_anexo": "salidas_tablas/DDU_456_tabla_1.csv",
+        }
+    ]
+    res = formatear_manifiesto_plano(tablas_data)
+    assert "id: DDU_456_tabla_1" in res
+    assert "nombre: Modificaciones Normativas" in res
+    assert "paginas: 5, 6, 7, 8" in res
+    assert "filas: 3" in res
+    assert "columnas: 3" in res
+    assert "archivo_anexo: salidas_tablas/DDU_456_tabla_1.csv" in res
+    # No debe contener corchetes, llaves ni comillas JSON
+    for char_prohibido in ["[", "]", "{", "}", '"']:
+        assert char_prohibido not in res, f"Carácter JSON prohibido '{char_prohibido}' encontrado en {res}"
+
+    # Caso 2: Cadena JSON previa
+    json_str = '[{"id": "DDU_456_img_1", "nombre": "Esquema ilustrativo", "pagina": 3}]'
+    res_json = formatear_manifiesto_plano(json_str)
+    assert "id: DDU_456_img_1; nombre: Esquema ilustrativo; pagina: 3" == res_json
+
+    # Caso 3: Vacío o None
+    assert formatear_manifiesto_plano(None) == ""
+    assert formatear_manifiesto_plano([]) == ""
+    assert formatear_manifiesto_plano("") == ""
+
 
