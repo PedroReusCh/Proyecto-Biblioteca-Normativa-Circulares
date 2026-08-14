@@ -9,6 +9,7 @@ import re
 from typing import Any, List
 
 from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
+from scripts.extractors.utils_cleaner import limpiar_palabras_ocr
 
 
 def _es_inicio_descriptores(line: str) -> bool:
@@ -88,6 +89,7 @@ class MateriaExtractor(BaseExtractor):
                     en_materia = True
 
         materia = re.sub(r"\s+", " ", materia).strip()
+        materia = limpiar_palabras_ocr(materia)
         exito = bool(materia)
 
         return ResultadoBloque(

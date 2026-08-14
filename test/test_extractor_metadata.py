@@ -227,3 +227,19 @@ def test_materia_y_descriptores_ddu_456() -> None:
     assert "NORMAS URBANISTICAS" in desc_res.datos["descriptores"]
     assert "PISOS MECÁNICOS" in desc_res.datos["descriptores"]
 
+
+def test_materia_extractor_con_fragmentacion_ocr() -> None:
+    """Prueba que el extractor de materia aplique saneamiento tipográfico OCR."""
+    lines = [
+        "DDU 456",
+        "CIRCULAR ORD. N° 88 /",
+        "MAT.: Aplicación a rtículo 2.6.3. inciso s vigési mo de la OGUC, relativo s a quinch os .",
+        "NORMAS URBANISTICAS",
+        "SANTIAGO, 25 FEB 2021",
+    ]
+    raw = "\n".join(lines)
+    extractor = MateriaExtractor()
+    resultado = extractor.extract(raw, lines)
+    assert resultado.exito is True
+    assert resultado.datos["materia"] == "Aplicación artículo 2.6.3. incisos vigésimo de la OGUC, relativos a quinchos."
+
