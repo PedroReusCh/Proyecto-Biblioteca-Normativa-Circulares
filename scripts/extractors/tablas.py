@@ -1,0 +1,242 @@
+"""Extractor modular de Tablas con pdfplumber y análisis tabular (TablasExtractor)."""
+
+import argparse
+from dataclasses import asdict
+import json
+from pathlib import Path
+import sys
+from typing import Any, Dict, List, Optional
+
+_PROYECTO_RAIZ = Path(__file__).resolve().parents[2]
+if str(_PROYECTO_RAIZ) not in sys.path:
+    sys.path.insert(0, str(_PROYECTO_RAIZ))
+
+try:
+    from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
+    from scripts.extractors.utils_cleaner import limpiar_palabras_ocr
+except ImportError:
+    from extractors.base import BaseExtractor, ResultadoBloque, register_extractor
+    from extractors.utils_cleaner import limpiar_palabras_ocr
+
+
+def _limpiar_texto_celda(celda: Any) -> str:
+    """Limpia y sanea el texto de una celda tabular aplicando corrección OCR."""
+    if celda is None:
+        return ""
+    texto = str(celda).strip()
+    return limpiar_palabras_ocr(texto)
+
+
+def _compactar_tabla_pdf(raw_table: List[List[Any]]) -> Optional[Dict[str, Any]]:
+    """Procesa y normaliza una tabla extraída por pdfplumber estructurando encabezados y filas."""
+    if not raw_table or len(raw_table) < 2:
+        return None
+
+    # 1. Limpieza de texto celda por celda
+    cleaned_rows: List[List[str]] = [
+        [_limpiar_texto_celda(c) for c in row]
+        for row in raw_table
+    ]
+
+    # Filtrar filas completamente vacías o con símbolos residuales únicos
+    non_empty_rows = [r for r in cleaned_rows if any(bool(c) for c in r)]
+    if len(non_empty_rows) < 2:
+        return None
+
+    # 2. Detección de encabezados multi-línea
+    r0 = non_empty_rows[0]
+    r1 = non_empty_rows[1] if len(non_empty_rows) > 1 else []
+
+    is_multi_header = False
+    if len(non_empty_rows) >= 3:
+        r1_non_empty = [c for c in r1 if c]
+        if len(r1_non_empty) <= 2 and not any("ddu" in c.lower() or "art" in c.lower() for c in r1_non_empty):
+            is_multi_header = True
+
+    if is_multi_header:
+        header_raw: List[str] = []
+        max_len = max(len(r0), len(r1))
+        r0_pad = r0 + [""] * (max_len - len(r0))
+        r1_pad = r1 + [""] * (max_len - len(r1))
+        for c0, c1 in zip(r0_pad, r1_pad):
+            combined = f"{c0} {c1}".strip()
+            header_raw.append(combined)
+        data_rows_raw = non_empty_rows[2:]
+    else:
+        header_raw = r0
+        data_rows_raw = non_empty_rows[1:]
+
+    # Encabezados limpios no vacíos
+    encabezados = [h.replace("\n", " ").strip() for h in header_raw if h.strip()]
+    if not encabezados:
+        encabezados = [f"Columna {i + 1}" for i in range(len(header_raw))]
+
+    num_cols = len(encabezados)
+
+    # 3. Alinear filas de datos
+    filas_finales: List[List[str]] = []
+    for r in data_rows_raw:
+        non_empty = [c for c in r if c]
+        if not non_empty:
+            continue
+
+        aligned_row = [""] * num_cols
+
+        if len(r) == len(header_raw):
+            header_indices = [idx for idx, h in enumerate(header_raw) if h]
+            for target_idx, orig_idx in enumerate(header_indices):
+                if orig_idx < len(r) and r[orig_idx]:
+                    aligned_row[target_idx] = r[orig_idx]
+            if sum(1 for c in aligned_row if c) < len(non_empty):
+                if not r[0] and len(non_empty) < num_cols:
+                    for i, val in enumerate(non_empty):
+                        if i + 1 < num_cols:
+                            aligned_row[i + 1] = val
+                else:
+                    for i, val in enumerate(non_empty[:num_cols]):
+                        aligned_row[i] = val
+        else:
+            for i, val in enumerate(non_empty[:num_cols]):
+                aligned_row[i] = val
+
+        filas_finales.append(aligned_row)
+
+    if not filas_finales:
+        return None
+
+    # 4. Construir representación Markdown
+    md_lines: List[str] = []
+    headers_clean = [h.replace("\n", " ").strip() for h in encabezados]
+    md_lines.append("| " + " | ".join(headers_clean) + " |")
+    md_lines.append("| " + " | ".join(["---"] * num_cols) + " |")
+    for f in filas_finales:
+        row_clean = [c.replace("\n", " ").strip() for c in f]
+        md_lines.append("| " + " | ".join(row_clean) + " |")
+
+    return {
+        "encabezados": encabezados,
+        "filas": filas_finales,
+        "markdown": "\n".join(md_lines),
+    }
+
+
+def _extraer_tablas_lineas(lines: List[str]) -> List[Dict[str, Any]]:
+    """Extrae tablas en formato Markdown presentes en una lista de líneas de texto."""
+    tablas: List[Dict[str, Any]] = []
+    idx = 0
+    n = len(lines)
+
+    while idx < n:
+        line = lines[idx].strip()
+        if line.startswith("|") and line.endswith("|") and line.count("|") >= 3:
+            # Posible inicio de tabla Markdown
+            table_lines: List[str] = [line]
+            idx += 1
+            while idx < n and lines[idx].strip().startswith("|") and lines[idx].strip().endswith("|"):
+                table_lines.append(lines[idx].strip())
+                idx += 1
+
+            if len(table_lines) >= 3:
+                raw_headers = [c.strip() for c in table_lines[0].split("|")[1:-1]]
+                encabezados = [_limpiar_texto_celda(h) for h in raw_headers]
+                filas: List[List[str]] = []
+
+                # Saltar la línea delimitadora (fila 1 con ---)
+                for tl in table_lines[2:]:
+                    cells = [c.strip() for c in tl.split("|")[1:-1]]
+                    cleaned_cells = [_limpiar_texto_celda(c) for c in cells]
+                    filas.append(cleaned_cells)
+
+                if encabezados and filas:
+                    tablas.append({
+                        "pagina": 1,
+                        "encabezados": encabezados,
+                        "filas": filas,
+                        "markdown": "\n".join(table_lines),
+                    })
+        else:
+            idx += 1
+
+    return tablas
+
+
+@register_extractor
+class TablasExtractor(BaseExtractor):
+    """Extractor modular para tablas normativas y comparativas en circulares DDU."""
+
+    @property
+    def nombre_bloque(self) -> str:
+        return "tablas"
+
+    def extract(
+        self,
+        raw_text: str,
+        lines: List[str],
+        pdf_path: Optional[Path] = None,
+    ) -> ResultadoBloque:
+        """Extrae tablas estructuradas usando pdfplumber o análisis de líneas de texto.
+
+        Args:
+            raw_text: Texto completo de la circular.
+            lines: Lista de líneas limpias.
+            pdf_path: Ruta opcional al archivo PDF para extracción nativa con pdfplumber.
+
+        Returns:
+            ResultadoBloque con la lista de tablas extraídas y formato Markdown.
+        """
+        tablas_extraidas: List[Dict[str, Any]] = []
+
+        if pdf_path is not None and pdf_path.exists():
+            try:
+                import pdfplumber
+
+                with pdfplumber.open(pdf_path) as pdf:
+                    for p_idx, page in enumerate(pdf.pages):
+                        num_pag = p_idx + 1
+                        raw_tables = page.extract_tables()
+                        if not raw_tables:
+                            continue
+                        for raw_t in raw_tables:
+                            res = _compactar_tabla_pdf(raw_t)
+                            if res is not None:
+                                tablas_extraidas.append({
+                                    "pagina": num_pag,
+                                    "encabezados": res["encabezados"],
+                                    "filas": res["filas"],
+                                    "markdown": res["markdown"],
+                                })
+            except Exception as e:
+                return ResultadoBloque(
+                    nombre_bloque=self.nombre_bloque,
+                    exito=False,
+                    datos={"tablas": []},
+                    confianza=0.0,
+                    observaciones=f"Error al procesar PDF con pdfplumber: {e}",
+                )
+
+        if not tablas_extraidas:
+            tablas_extraidas = _extraer_tablas_lineas(lines)
+
+        exito = len(tablas_extraidas) > 0
+        return ResultadoBloque(
+            nombre_bloque=self.nombre_bloque,
+            exito=exito,
+            datos={"tablas": tablas_extraidas},
+            confianza=1.0 if exito else 0.0,
+            observaciones=(
+                f"Se extrajeron {len(tablas_extraidas)} tabla(s) estructurada(s)."
+                if exito
+                else "No se detectaron tablas en el documento."
+            ),
+        )
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="ETL Tablas Extractor Standalone con pdfplumber")
+    parser.add_argument("--pdf", type=str, required=True, help="Ruta al archivo PDF")
+    args = parser.parse_args()
+
+    target_pdf = Path(args.pdf)
+    extractor = TablasExtractor()
+    resultado_bloque = extractor.extract(raw_text="", lines=[], pdf_path=target_pdf)
+    print(json.dumps(asdict(resultado_bloque), indent=2, ensure_ascii=False))
