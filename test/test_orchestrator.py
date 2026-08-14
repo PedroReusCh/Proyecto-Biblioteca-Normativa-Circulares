@@ -235,8 +235,11 @@ def test_export_individual_csv_ddu_456(tmp_path: Path) -> None:
 
         mod_row = next(r for r in rows if r[0] == "Modificaciones Posteriores")
         assert mod_row[2] != ""
-        assert "Circular Modificada por" in mod_row[2]
-        assert "DDU 498" in mod_row[2]
+        assert "Circular Modificada por Circular Ord. N°214" in mod_row[2]
+        assert "DDU 498 (numeral 7.)" in mod_row[2]
+        assert "Mediante Circular Ord" not in mod_row[2]
+
+
 
 
 

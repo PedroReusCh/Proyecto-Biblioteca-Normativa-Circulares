@@ -22,22 +22,20 @@ except ImportError:
 
 _PATRONES_MODIFICACION = [
     r"Circular\s+Modificada\s+por\b",
-    r"Mediante\s+Circular\s+Ord\b",
-    r"Modificada\s+por\s+Circular\b",
     r"Dejada\s+sin\s+efecto\s+por\s+Circular\b",
-    r"Dejada\s+sin\s+efecto\s+por\b",
     r"Aclarada\s+por\s+Circular\b",
     r"Complementada\s+por\s+Circular\b",
 ]
 
 
 def _extraer_notas_modificacion_desde_pdf(pdf_path: Path) -> List[str]:
-    """Escanea todas las páginas del PDF extrayendo notas de modificación posterior completas."""
+    """Escanea las páginas iniciales del PDF extrayendo notas marginales de modificación posterior."""
     notas_encontradas: List[str] = []
     try:
         import fitz  # PyMuPDF
         with fitz.open(str(pdf_path)) as doc:
-            for page in doc:
+            # Las notas marginales de vigencia de la circular residen en la portada / primeras páginas
+            for page in doc[:2]:
                 for b in page.get_text("blocks"):
                     txt = str(b[4]).strip()
                     for patron in _PATRONES_MODIFICACION:
@@ -53,22 +51,29 @@ def _extraer_notas_modificacion_desde_pdf(pdf_path: Path) -> List[str]:
 
 
 def _extraer_notas_modificacion_texto(texto: str) -> List[str]:
-    """Busca notas marginales o timbres de modificación posterior en el texto libre."""
+    """Busca notas marginales de modificación posterior en el texto libre."""
     texto_limpio = limpiar_palabras_ocr(texto)
     notas_encontradas: List[str] = []
 
-    patron_combinado = (
-        r"(?:Circular\s+Modificada\s+por|Mediante\s+Circular\s+Ord|Modificada\s+por\s+Circular|"
-        r"Dejada\s+sin\s+efecto\s+por|Aclarada\s+por\s+Circular|Complementada\s+por\s+Circular)"
-        r"[^\n]+(?:\n[^\n]+){0,6}"
+    patron_bloque = re.search(
+        r"Circular\s+Modificada\s+por\s*(?:\n\s*)?Circular\s+Ord\.?\s*N[°º\?]?\s*\d+[^\n]*(?:\n[^\n]*){0,4}\bDDU\s*\d+[^\n]*(?:\s*\([^\)]+\))?",
+        texto_limpio,
+        re.IGNORECASE,
     )
-    for m in re.finditer(patron_combinado, texto_limpio, re.IGNORECASE):
-        bloque = m.group(0).strip()
-        bloque_una_linea = re.sub(r"\s+", " ", bloque).strip()
-        if bloque_una_linea and bloque_una_linea not in notas_encontradas:
-            notas_encontradas.append(bloque_una_linea)
+    if patron_bloque:
+        bloque_texto = re.sub(r"\s+", " ", patron_bloque.group(0)).strip()
+        notas_encontradas.append(bloque_texto)
+
+    if not notas_encontradas:
+        for patron in _PATRONES_MODIFICACION:
+            matches = re.finditer(rf"{patron}[^\n]+", texto_limpio, re.IGNORECASE)
+            for m in matches:
+                nota = re.sub(r"\s+", " ", m.group(0)).strip()
+                if nota and nota not in notas_encontradas:
+                    notas_encontradas.append(nota)
 
     return notas_encontradas
+
 
 
 @register_extractor

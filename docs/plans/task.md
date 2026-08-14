@@ -1,5 +1,5 @@
 | Estado | Tarea |
 | :--- | :--- |
-| 🟢 Completado | 1. Implementar `formatear_manifiesto_plano` y tests unitarios en `test/test_orchestrator.py` |
-| 🟢 Completado | 2. Integrar `formatear_manifiesto_plano` en `export_individual_csv` y `export_master_csv` de `DDUOrchestrator` |
-| 🟢 Completado | 3. Regenerar `salidas_csv/DDU_456_extraido.csv`, verificar suite completa (78 tests) y actualizar `CHANGELOG.md` |
+| 🟢 Completado | 1. Actualizar `test/test_extractor_modificaciones_posteriores.py` con pruebas para la nota íntegra de portada |
+| 🟢 Completado | 2. Implementar extracción precisa de nota marginal en `scripts/extractors/modificaciones_posteriores.py` |
+| 🟢 Completado | 3. Regenerar salidas DDU 456, verificar suite completa (78 tests) y actualizar `CHANGELOG.md` |

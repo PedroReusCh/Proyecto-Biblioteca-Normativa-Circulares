@@ -40,14 +40,10 @@ def test_modificaciones_posteriores_ddu_456_pdf() -> None:
     assert resultado.confianza == 1.0
 
     texto_mod: str = str(resultado.datos.get("texto", ""))
-    # Nota 1 (Página 1)
     assert "Circular Modificada por Circular Ord. N°214" in texto_mod
     assert "02 de mayo de 2024, DDU 498 (numeral 7.)" in texto_mod
-    
-    # Nota 2 (Página 5)
-    assert "Mediante Circular Ord. N°214" in texto_mod
-    assert "02.05.2024, DDU 498" in texto_mod
-    assert "se aclara que la materia contenida en la Circular DDU 339" in texto_mod
+    assert "Mediante Circular Ord" not in texto_mod
+
 
 
 
