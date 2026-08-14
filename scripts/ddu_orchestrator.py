@@ -61,16 +61,16 @@ class DDUOrchestrator:
         for nombre_bloque, extractor_cls in extractores_dict.items():
             try:
                 instancia = extractor_cls()
-                if pdf_path is not None and nombre_bloque in ("tablas", "imagenes"):
+                if pdf_path is not None and nombre_bloque in ("tablas", "imagenes", "modificaciones_posteriores"):
                     resultado = instancia.extract(raw_text, lines, pdf_path=pdf_path)
                 else:
                     resultado = instancia.extract(raw_text, lines)
                 if resultado.datos:
+                    if nombre_bloque == "modificaciones_posteriores":
+                        datos_consolidados["modificaciones_posteriores"] = resultado.datos.get("texto", "")
                     datos_consolidados.update(resultado.datos)
             except Exception as e:
                 print(f"Advertencia: Error al ejecutar extractor '{nombre_bloque}': {e}")
-
-
 
         # Consolidar número DDU (garantizando prefijo 'DDU ')
         numero = str(datos_consolidados.get("numero", "")).strip()
@@ -106,9 +106,11 @@ class DDUOrchestrator:
             "notas_al_pie": str(datos_consolidados.get("notas_al_pie", "")),
             "tablas": datos_consolidados.get("tablas", []),
             "imagenes": datos_consolidados.get("imagenes", []),
+            "modificaciones_posteriores": str(datos_consolidados.get("modificaciones_posteriores", "")),
         }
 
         return res_final
+
 
     def process_pdf(self, pdf_path: Path) -> DatosCircularDDU:
         """Extrae el texto de un PDF y procesa la circular con el pipeline de ETLs.
@@ -171,6 +173,7 @@ class DDUOrchestrator:
             {"bloque": "Cuerpo", "campo": "cuerpo", "valor_extraido": str(datos.get("cuerpo") or "").strip()},
             {"bloque": "Tablas", "campo": "tablas", "valor_extraido": tablas_val},
             {"bloque": "Imágenes", "campo": "imagenes", "valor_extraido": imagenes_val},
+            {"bloque": "Modificaciones Posteriores", "campo": "modificaciones_posteriores", "valor_extraido": str(datos.get("modificaciones_posteriores") or "").strip()},
             {"bloque": "Nota al Pie", "campo": "notas_al_pie", "valor_extraido": str(datos.get("notas_al_pie") or "").strip()},
             {"bloque": "Firma", "campo": "firmante", "valor_extraido": datos.get("firmante", "")},
             {"bloque": "Distribución", "campo": "lista_distribucion", "valor_extraido": str(datos.get("distribucion_texto") or "")},
@@ -219,6 +222,7 @@ class DDUOrchestrator:
                     "destinatarios": datos.get("destinatarios", ""),
                     "emisor": datos["emisor"],
                     "cuerpo_resumen": cuerpo_resumen,
+                    "modificaciones_posteriores": str(datos.get("modificaciones_posteriores") or ""),
                     "notas_al_pie": datos.get("notas_al_pie", ""),
                     "firmante": datos.get("firmante", ""),
                     "lista_distribucion": dist_val,
@@ -238,12 +242,14 @@ class DDUOrchestrator:
             "destinatarios",
             "emisor",
             "cuerpo_resumen",
+            "modificaciones_posteriores",
             "notas_al_pie",
             "firmante",
             "lista_distribucion",
         ]
 
         with open(output_path, "w", encoding="utf-8-sig", newline="") as f:
+
             writer = csv.DictWriter(
                 f,
                 fieldnames=fieldnames,

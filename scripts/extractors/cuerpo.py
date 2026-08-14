@@ -83,8 +83,31 @@ def _es_inicio_bloque_tabla(line: str) -> bool:
     return False
 
 
-def _limpiar_texto_cuerpo(texto: str) -> str:
+def _es_nota_modificacion_posterior(line: str) -> bool:
+    """Detecta líneas de notas marginales de modificación posterior / vigencia jurídica."""
+    line_clean = line.strip()
+    if not line_clean:
+        return False
+    if re.search(r"Circular\s+Modificada\s+por\b", line_clean, re.IGNORECASE):
+        return True
+    if re.search(r"Modificada\s+por\s+Circular\b", line_clean, re.IGNORECASE):
+        return True
+    if re.search(r"Dejada\s+sin\s+efecto\s+por\b", line_clean, re.IGNORECASE):
+        return True
+    if re.match(r"^Circular\s+Ord\.?\s*N[°º\?]?\s*\d+\s*,?$", line_clean, re.IGNORECASE):
+        return True
+    if re.match(r"^de\s+fecha\s+\d{1,2}\s+de\s+[a-záéíóúñ]+", line_clean, re.IGNORECASE):
+        return True
+    if re.match(r"^de\s+\d{4},\s*DDU\s*\d+", line_clean, re.IGNORECASE):
+        return True
+    if re.search(r"\bde\s+fecha\s+\d{1,2}\s+de\s+[a-záéíóúñ]+\s+de\s+\d{4},\s*DDU\s*\d+", line_clean, re.IGNORECASE):
+        return True
+    if re.match(r"^\(?numeral\s+\d+\.?\)?$", line_clean, re.IGNORECASE):
+        return True
+    return False
 
+
+def _limpiar_texto_cuerpo(texto: str) -> str:
     """Repara palabras rotas y preserva el casing original de mayúsculas/minúsculas."""
     res = limpiar_palabras_ocr(texto)
 
@@ -111,6 +134,26 @@ def _limpiar_texto_cuerpo(texto: str) -> str:
     res = re.sub(r"\b(expuest)\s+(o[s]?|a[s]?)\b", r"\1\2", res, flags=re.IGNORECASE)
     res = re.sub(r"\bOS\s+33\b", "DS 33", res)
 
+    # Remover notas marginales de modificación posterior incrustadas
+    res = re.sub(
+        r"(?:Circular\s+Modificada\s+por\s+)?Circular\s+Ord\.?\s*N[°º\?]?\s*\d+[^\n]*(?:,\s*de\s+fecha\s+[^\n]+)?(?:,\s*DDU\s*\d+)?(?:\s*\([^)]*\))?",
+        "",
+        res,
+        flags=re.IGNORECASE,
+    )
+    res = re.sub(
+        r"Circular\s+Ord\.?\s*N[°º\?]?\s*\d+,\s*de\s+fecha\s+\d{1,2}\s+de\s+[a-záéíóúñ]+\s+de\s+\d{4},\s*DDU\s*\d+(?:\s*\(numeral\s+\d+\.?\))?",
+        "",
+        res,
+        flags=re.IGNORECASE,
+    )
+    res = re.sub(
+        r"de\s+fecha\s+\d{1,2}\s+de\s+[a-záéíóúñ]+\s+de\s+\d{4},\s*DDU\s*\d+",
+        "",
+        res,
+        flags=re.IGNORECASE,
+    )
+
     # Remover remanentes de encabezados de tablas al final de párrafos
     m_tbl = re.search(r"\s*(?:Circular\s+)?Materia\(s\)\s+que\s+se\s+modifica\(n\).*", res, re.IGNORECASE)
     if m_tbl:
@@ -118,7 +161,10 @@ def _limpiar_texto_cuerpo(texto: str) -> str:
         if res.endswith(";"):
             res = res[:-1] + ":"
 
+    res = re.sub(r"\s+", " ", res).strip()
     return res
+
+
 
 
 
@@ -314,6 +360,12 @@ class CuerpoExtractor(BaseExtractor):
             if _es_etiqueta_diagrama(line_clean):
                 curr_idx += 1
                 continue
+
+            # Descartar notas marginales de modificación posterior / timbres de vigencia
+            if _es_nota_modificacion_posterior(line_clean):
+                curr_idx += 1
+                continue
+
 
             # Detectar e ignorar bloques de tablas normativas dentro del cuerpo
             if _es_inicio_bloque_tabla(line_clean):

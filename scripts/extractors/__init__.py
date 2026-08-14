@@ -18,6 +18,7 @@ try:
     )
     from scripts.extractors.tablas import TablasExtractor
     from scripts.extractors.imagenes import ImagenesExtractor
+    from scripts.extractors.modificaciones_posteriores import ModificacionesPosterioresExtractor
 except ImportError:
     from extractors.base import (
         BaseExtractor,
@@ -27,6 +28,7 @@ except ImportError:
     )
     from extractors.tablas import TablasExtractor
     from extractors.imagenes import ImagenesExtractor
+    from extractors.modificaciones_posteriores import ModificacionesPosterioresExtractor
 
 _EXTRACTOR_MODULES: List[str] = [
     "encabezado",
@@ -43,6 +45,7 @@ _EXTRACTOR_MODULES: List[str] = [
     "nota_al_pie",
     "tablas",
     "imagenes",
+    "modificaciones_posteriores",
 ]
 
 
@@ -70,6 +73,8 @@ __all__ = [
     "register_extractor",
     "TablasExtractor",
     "ImagenesExtractor",
+    "ModificacionesPosterioresExtractor",
     "registrar_todos_los_extractores",
 ]
+
 

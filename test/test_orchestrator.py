@@ -81,10 +81,12 @@ def test_export_master_csv(tmp_path: Path) -> None:
             "destinatarios",
             "emisor",
             "cuerpo_resumen",
+            "modificaciones_posteriores",
             "notas_al_pie",
             "firmante",
             "lista_distribucion",
         ]
+
 
 
 def test_export_master_csv_error_handling(tmp_path: Path) -> None:
@@ -160,14 +162,18 @@ def test_orchestrator_process_pdf_ddu_456() -> None:
     assert img_p3["archivo_anexo"] == "salidas_imagenes/DDU_456_img_1.png"
     assert any(k in str(img_p3.get("nombre", "")).lower() for k in ["esquema", "planta azotea", "corte"])
 
-    # 5. Firma y distribución
+    # 5. Modificaciones posteriores como texto libre
+    assert "Circular Modificada por" in str(datos.get("modificaciones_posteriores", ""))
+    assert "DDU 498" in str(datos.get("modificaciones_posteriores", ""))
+
+    # 6. Firma y distribución
     assert "DIVISIÓN" in str(datos.get("firmante", ""))
     dist_lista = datos.get("lista_distribucion") or []
     assert len(dist_lista) >= 30
 
 
 def test_export_individual_csv_ddu_456(tmp_path: Path) -> None:
-    """Verifica que el CSV individual de DDU 456 contenga los 14 bloques normativos estructurados."""
+    """Verifica que el CSV individual de DDU 456 contenga los 15 bloques normativos estructurados."""
     if not PDF_DDU_456.exists():
         pytest.skip(f"No se encontró {PDF_DDU_456}")
 
@@ -184,7 +190,7 @@ def test_export_individual_csv_ddu_456(tmp_path: Path) -> None:
         assert header == ["bloque", "campo", "valor_extraido"]
 
         rows = list(reader)
-        assert len(rows) == 14, f"Se esperaban 14 bloques, se encontraron {len(rows)}"
+        assert len(rows) == 15, f"Se esperaban 15 bloques, se encontraron {len(rows)}"
 
         bloques = [row[0] for row in rows]
         bloques_esperados = [
@@ -199,6 +205,7 @@ def test_export_individual_csv_ddu_456(tmp_path: Path) -> None:
             "Cuerpo",
             "Tablas",
             "Imágenes",
+            "Modificaciones Posteriores",
             "Nota al Pie",
             "Firma",
             "Distribución",
@@ -215,3 +222,9 @@ def test_export_individual_csv_ddu_456(tmp_path: Path) -> None:
         assert imagenes_row[2] != ""
         assert "DDU_456_img_1" in imagenes_row[2]
         assert "salidas_imagenes/DDU_456_img_1.png" in imagenes_row[2]
+
+        mod_row = next(r for r in rows if r[0] == "Modificaciones Posteriores")
+        assert mod_row[2] != ""
+        assert "Circular Modificada por" in mod_row[2]
+        assert "DDU 498" in mod_row[2]
+
