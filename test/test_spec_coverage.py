@@ -36,9 +36,8 @@ def test_spec_coverage() -> None:
         if name:
             elementos_xsd.add(name)
 
-    elementos_xsd.add("xsd:schema")
+    print(f"  [XSD] Total elementos declarados en el esquema: {len(elementos_xsd)}")
 
-    print(f"  [XSD] Total elementos declarados en el esquema (incluyendo xsd:schema): {len(elementos_xsd)}")
 
     # 2. Leer el Spec de documentacion local real (sin simulaciones)
     with open(spec_path, "r", encoding="utf-8") as f:

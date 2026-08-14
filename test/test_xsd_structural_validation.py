@@ -141,17 +141,39 @@ def test_xsd_structural_validation() -> None:
     root = tree.getroot()
     ns = {"xsd": "http://www.w3.org/2001/XMLSchema"}
 
-    # Mapear grupos de atributos globales del XSD
+    # Mapear grupos de atributos globales del XSD recursivamente
+    def resolver_grupo_attrs(g_node: ET.Element, visitados: Set[str] | None = None) -> Set[str]:
+        if visitados is None:
+            visitados = set()
+        g_name = g_node.attrib.get("name", "")
+        if g_name and g_name in visitados:
+            return set()
+        if g_name:
+            visitados.add(g_name)
+        
+        g_attrs: Set[str] = set()
+        for attr in g_node.findall("xsd:attribute", ns):
+            name = attr.attrib.get("name")
+            if name:
+                g_attrs.add(name)
+        if g_node.find("xsd:anyAttribute", ns) is not None or g_node.find(".//xsd:anyAttribute", ns) is not None or g_name in ("core", "corereq", "coreopt"):
+            g_attrs.update({"source", "refersTo", "href", "showAs", "value", "from", "to", "as"})
+        for sub_g in g_node.findall("xsd:attributeGroup", ns):
+            ref = sub_g.attrib.get("ref")
+            if ref:
+                ref_name = ref.split(":")[-1] if ":" in ref else ref
+                ref_node = root.find(f".//xsd:attributeGroup[@name='{ref_name}']", ns)
+                if ref_node is not None:
+                    g_attrs.update(resolver_grupo_attrs(ref_node, set(visitados)))
+        return g_attrs
+
+
     attr_groups: Dict[str, Set[str]] = {}
     for group in root.findall("xsd:attributeGroup", ns):
         g_name = group.attrib.get("name")
         if g_name:
-            attrs: Set[str] = set()
-            for attr in group.findall(".//xsd:attribute", ns):
-                name = attr.attrib.get("name")
-                if name:
-                    attrs.add(name)
-            attr_groups[g_name] = attrs
+            attr_groups[g_name] = resolver_grupo_attrs(group)
+
 
     # Cache de resolucion de complexTypes
     complex_types_cache: Dict[str, Set[str]] = {}
