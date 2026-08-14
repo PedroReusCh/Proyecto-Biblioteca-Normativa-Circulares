@@ -473,9 +473,10 @@ def test_firma_extractor_ddu_456_cargo_limpio() -> None:
     resultado = extractor.extract(raw_text, lines)
 
     assert resultado.exito is True
-    firmante = str(resultado.datos.get("firmante", ""))
-    assert firmante == "Jefe División de Desarrollo Urbano"
+    assert resultado.datos.get("nombre_firmante") == "JPB"
     assert resultado.datos.get("cargo_firmante") == "Jefe División de Desarrollo Urbano"
+    assert resultado.datos.get("firmante") == "JPB, Jefe División de Desarrollo Urbano"
+
 
 
 

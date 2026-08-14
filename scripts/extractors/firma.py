@@ -35,13 +35,14 @@ def _es_nombre_persona(line: str) -> bool:
         "SUBSECRETARIA", "MINISTRO", "MINISTRA", "CONTRALOR", "CONTRALORA",
     }
     line_clean = re.sub(r"[^A-ZÁÉÍÓÚÑa-z\s]", " ", line).strip()
-    tokens = [w for w in line_clean.split() if len(w) >= 2]
+    tokens = [w for w in line_clean.split() if len(w) >= 2 and w[0].isupper()]
     if len(tokens) < 2:
         return False
     # No debe contener palabras exclusivas de cargos/organismos
     if any(t.upper() in palabras_descarte for t in tokens):
         return False
     return True
+
 
 
 @register_extractor
@@ -121,16 +122,29 @@ class FirmaExtractor(BaseExtractor):
                             cargo_str += ", " + partes_firma[j + 1]
                         break
 
-                # 1.2 Buscar candidato a nombre de persona antes o después del cargo
-                for j, p in enumerate(partes_firma):
-                    if j == idx_cargo or (idx_cargo != -1 and j == idx_cargo + 1 and re.search(r"MINISTERIO", p, re.IGNORECASE)):
-                        continue
+                # 1.2 Buscar candidato a nombre o identificador de firmante prioritariamente arriba del cargo
+                lineas_previas = partes_firma[:idx_cargo] if idx_cargo != -1 else partes_firma
+                for p in reversed(lineas_previas):
                     candidato = _limpiar_texto_firma(p)
-                    # Comprobar si coincide con un nombre propio o patrón OCR
+                    # A) Nombre completo de persona (2 o más palabras)
                     if _es_nombre_persona(candidato) or re.search(r"JUAN\s+DIEGO|VICENTE|PAZ|RODRIGO", candidato, re.IGNORECASE):
                         nombre_limpio = re.sub(r"[^A-ZÁÉÍÓÚÑa-z\s]", "", candidato).strip()
-                        if not re.search(r"\b(?:JPB|OFPA|DDU|ORD|MINVU)\b", nombre_limpio, re.IGNORECASE):
-                            nombre_str = nombre_limpio
+                        nombre_str = nombre_limpio
+                        break
+                    # B) Sigla / identificador alfabético de rúbrica (ej. JPB)
+                    m_sigla = re.search(r"\b([A-Z]{2,4})\b", candidato)
+                    if m_sigla and m_sigla.group(1).upper() not in {"DDU", "ORD", "PDF", "MINVU", "IS", "RIO"}:
+                        nombre_str = m_sigla.group(1).upper()
+                        break
+
+                # Si aún no hay nombre y hay líneas posteriores al cargo
+                if not nombre_str and idx_cargo != -1 and idx_cargo + 1 < len(partes_firma):
+                    for p in partes_firma[idx_cargo + 1:]:
+                        if re.search(r"MINISTERIO", p, re.IGNORECASE):
+                            continue
+                        candidato = _limpiar_texto_firma(p)
+                        if _es_nombre_persona(candidato):
+                            nombre_str = re.sub(r"[^A-ZÁÉÍÓÚÑa-z\s]", "", candidato).strip()
                             break
 
                 # Si no encontramos cargo formal pero hay líneas limpias
@@ -143,6 +157,7 @@ class FirmaExtractor(BaseExtractor):
                     ]
                     if partes_limpias:
                         cargo_str = ", ".join(partes_limpias)
+
 
         # 2. Si falta cargo o nombre, verificar cabecera DE: en las primeras páginas
         if not cargo_str or not nombre_str:
