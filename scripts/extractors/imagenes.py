@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 import re
 import sys
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set
 
 _PROYECTO_RAIZ = Path(__file__).resolve().parents[2]
 if str(_PROYECTO_RAIZ) not in sys.path:
@@ -117,68 +117,67 @@ class ImagenesExtractor(BaseExtractor):
                 import importlib
                 fitz_mod: Any = importlib.import_module("fitz")
 
-                doc: Any = fitz_mod.open(str(pdf_path))
-                vistos_xrefs: set[int] = set()
+                with fitz_mod.open(str(pdf_path)) as doc:
+                    vistos_xrefs: Set[int] = set()
 
-                for p_idx in range(len(doc)):
-                    page = doc[p_idx]
-                    num_pag = p_idx + 1
-                    p_w = float(page.rect.width)
-                    p_h = float(page.rect.height)
-                    page_text = str(page.get_text())
+                    for p_idx in range(len(doc)):
+                        page = doc[p_idx]
+                        num_pag = p_idx + 1
+                        p_w = float(page.rect.width)
+                        p_h = float(page.rect.height)
+                        page_text = str(page.get_text())
 
-                    img_list = page.get_images()
-                    if not img_list:
-                        continue
-
-                    for img_info in img_list:
-                        xref = int(img_info[0])
-                        if xref in vistos_xrefs:
+                        img_list = page.get_images()
+                        if not img_list:
                             continue
 
-                        base_img = doc.extract_image(xref)
-                        if not base_img:
-                            continue
+                        for img_info in img_list:
+                            xref = int(img_info[0])
+                            if xref in vistos_xrefs:
+                                continue
 
-                        w = int(base_img.get("width", 0))
-                        h = int(base_img.get("height", 0))
-                        ext = str(base_img.get("ext", "png")).lower()
-                        image_bytes = base_img.get("image", b"")
-                        byte_len = len(image_bytes)
+                            base_img = doc.extract_image(xref)
+                            if not base_img:
+                                continue
 
-                        # Filtro 1: Dimensiones mínimas (líneas divisorias, filetes menores a 60px)
-                        if h < 60 or w < 60:
-                            continue
+                            w = int(base_img.get("width", 0))
+                            h = int(base_img.get("height", 0))
+                            ext = str(base_img.get("ext", "png")).lower()
+                            image_bytes = base_img.get("image", b"")
+                            byte_len = len(image_bytes)
 
-                        # Filtro 2: Fragmentos y artefactos gráficos de muy bajo peso (< 1000 bytes)
-                        if byte_len < 1000:
-                            continue
+                            # Filtro 1: Dimensiones mínimas (líneas divisorias, filetes menores a 60px)
+                            if h < 60 or w < 60:
+                                continue
 
-                        # Obtener bounding box en la página
-                        rects = page.get_image_rects(xref)
-                        r = rects[0] if rects else None
+                            # Filtro 2: Fragmentos y artefactos gráficos de muy bajo peso (< 1000 bytes)
+                            if byte_len < 1000:
+                                continue
 
-                        # Filtro 3: Membrete institucional superior en la primera página
-                        if num_pag == 1 and r is not None and float(r.y0) < 150.0:
-                            continue
+                            # Obtener bounding box en la página
+                            rects = page.get_image_rects(xref)
+                            r = rects[0] if rects else None
 
-                        # Filtro 4: Escaneos completos de página (cubre >= 90% del ancho y alto)
-                        if r is not None and float(r.width) >= p_w * 0.9 and float(r.height) >= p_h * 0.9:
-                            continue
+                            # Filtro 3: Membrete institucional superior en la primera página
+                            if num_pag == 1 and r is not None and float(r.y0) < 150.0:
+                                continue
 
-                        vistos_xrefs.add(xref)
-                        descripcion = _generar_descripcion_tecnica(page_text, num_pag, w, h)
+                            # Filtro 4: Escaneos completos de página (cubre >= 90% del ancho y alto)
+                            if r is not None and float(r.width) >= p_w * 0.9 and float(r.height) >= p_h * 0.9:
+                                continue
 
-                        imagenes_extraidas.append({
-                            "pagina": num_pag,
-                            "xref": xref,
-                            "ancho": w,
-                            "alto": h,
-                            "formato": ext,
-                            "descripcion": descripcion,
-                        })
+                            vistos_xrefs.add(xref)
+                            descripcion = _generar_descripcion_tecnica(page_text, num_pag, w, h)
 
-                doc.close()
+                            imagenes_extraidas.append({
+                                "pagina": num_pag,
+                                "xref": xref,
+                                "ancho": w,
+                                "alto": h,
+                                "formato": ext,
+                                "descripcion": descripcion,
+                            })
+
             except Exception as e:
                 return ResultadoBloque(
                     nombre_bloque=self.nombre_bloque,
