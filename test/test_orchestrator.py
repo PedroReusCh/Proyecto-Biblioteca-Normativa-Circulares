@@ -143,10 +143,11 @@ def test_orchestrator_process_pdf_ddu_456() -> None:
     img_p3 = next((img for img in imagenes if img.get("pagina") == 3), None)
     assert img_p3 is not None
     assert img_p3["id"] == "DDU_456_img_1"
-    assert img_p3["ancho"] == 700
-    assert img_p3["alto"] == 760
+    assert img_p3["ancho"] >= 700
+    assert img_p3["alto"] >= 760
     assert img_p3["formato"] == "png"
     assert img_p3["xref"] == 5
+
     assert img_p3["tipo"] == "Esquema técnico"
     assert img_p3["archivo_anexo"] == "salidas_imagenes/DDU_456_img_1.png"
     assert any(k in str(img_p3.get("nombre", "")).lower() for k in ["esquema", "planta azotea", "corte"])

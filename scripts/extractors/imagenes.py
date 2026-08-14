@@ -95,8 +95,48 @@ def _extraer_imagenes_lineas(
     return imagenes_manifest
 
 
+
+def _calcular_clip_diagrama(page: Any, r: Any, p_w: float, p_h: float) -> Any:
+
+    """Calcula el rectángulo envolvente ampliado para capturar el diagrama técnico completo con etiquetas y cotas."""
+    import importlib
+    fitz_mod: Any = importlib.import_module("fitz")
+
+    if r is None:
+        return None
+
+    x0 = float(r.x0)
+    y0 = float(r.y0)
+    x1 = float(r.x1)
+    y1 = float(r.y1)
+
+    # Revisar bloques de texto en la vecindad del diagrama (para incluir etiquetas, cotas y títulos)
+    blocks = page.get_text("blocks")
+    for b in blocks:
+        by0, by1 = float(b[1]), float(b[3])
+        # Excluir encabezado institucional superior y pie de página
+        if by0 < 120.0 or by1 > (p_h - 40.0):
+            continue
+        # Si el bloque de texto está en la franja vertical o contexto del esquema
+        if (by1 >= y0 - 70.0 and by0 <= y1 + 70.0):
+            bx0, bx1 = float(b[0]), float(b[2])
+            x0 = min(x0, bx0)
+            y0 = min(y0, by0)
+            x1 = max(x1, bx1)
+            y1 = max(y1, by1)
+
+    # Margen de seguridad
+    x0 = max(40.0, x0 - 10.0)
+    y0 = max(140.0, y0 - 10.0)
+    x1 = min(p_w - 40.0, x1 + 10.0)
+    y1 = min(p_h - 40.0, y1 + 10.0)
+
+    return fitz_mod.Rect(x0, y0, x1, y1)
+
+
 @register_extractor
 class ImagenesExtractor(BaseExtractor):
+
     """Extractor modular para diagramas técnicos, planos e ilustraciones en circulares DDU."""
 
     @property
@@ -197,11 +237,19 @@ class ImagenesExtractor(BaseExtractor):
                             dir_imagenes.mkdir(parents=True, exist_ok=True)
                             img_out_path = dir_imagenes / filename
 
-                            # Exportar en formato PNG sin pérdida (lossless) con Pixmap
-                            pix = fitz_mod.Pixmap(doc, xref)
-                            if pix.n >= 5:
-                                pix = fitz_mod.Pixmap(fitz_mod.csRGB, pix)
+                            # Exportar en formato PNG sin pérdida (lossless) con DPI 300 capturando el esquema completo
+                            clip_rect = _calcular_clip_diagrama(page, r, p_w, p_h) if r is not None else None
+                            if clip_rect is not None:
+                                pix = page.get_pixmap(dpi=300, clip=clip_rect)
+                            else:
+                                pix = fitz_mod.Pixmap(doc, xref)
+                                if pix.n >= 5:
+                                    pix = fitz_mod.Pixmap(fitz_mod.csRGB, pix)
+
                             pix.save(str(img_out_path))
+
+                            final_w = int(pix.width)
+                            final_h = int(pix.height)
 
                             rel_path = f"salidas_imagenes/{filename}"
                             manifest_imagenes.append({
@@ -210,14 +258,15 @@ class ImagenesExtractor(BaseExtractor):
                                 "pagina": num_pag,
                                 "tipo": "Esquema técnico" if "esquema" in descripcion.lower() else "Imagen / Diagrama",
                                 "formato": "png",
-                                "dimensiones": f"{w}x{h}",
-                                "ancho": w,
-                                "alto": h,
+                                "dimensiones": f"{final_w}x{final_h}",
+                                "ancho": final_w,
+                                "alto": final_h,
                                 "xref": xref,
                                 "descripcion": descripcion,
                                 "archivo_anexo": rel_path,
                             })
                             img_idx += 1
+
 
             except Exception as e:
                 return ResultadoBloque(
