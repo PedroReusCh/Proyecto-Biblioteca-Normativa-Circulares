@@ -21,13 +21,35 @@ except ImportError:
 
 
 _PATRONES_MODIFICACION = [
-    r"Circular\s+Modificada\s+por\b[^\n]+",
-    r"Modificada\s+por\s+Circular\b[^\n]+",
-    r"Dejada\s+sin\s+efecto\s+por\s+Circular\b[^\n]+",
-    r"Dejada\s+sin\s+efecto\s+por\b[^\n]+",
-    r"Aclarada\s+por\s+Circular\b[^\n]+",
-    r"Complementada\s+por\s+Circular\b[^\n]+",
+    r"Circular\s+Modificada\s+por\b",
+    r"Mediante\s+Circular\s+Ord\b",
+    r"Modificada\s+por\s+Circular\b",
+    r"Dejada\s+sin\s+efecto\s+por\s+Circular\b",
+    r"Dejada\s+sin\s+efecto\s+por\b",
+    r"Aclarada\s+por\s+Circular\b",
+    r"Complementada\s+por\s+Circular\b",
 ]
+
+
+def _extraer_notas_modificacion_desde_pdf(pdf_path: Path) -> List[str]:
+    """Escanea todas las páginas del PDF extrayendo notas de modificación posterior completas."""
+    notas_encontradas: List[str] = []
+    try:
+        import fitz  # PyMuPDF
+        with fitz.open(str(pdf_path)) as doc:
+            for page in doc:
+                for b in page.get_text("blocks"):
+                    txt = str(b[4]).strip()
+                    for patron in _PATRONES_MODIFICACION:
+                        if re.search(patron, txt, re.IGNORECASE):
+                            limpio = limpiar_palabras_ocr(txt)
+                            limpio = re.sub(r"\s+", " ", limpio).strip()
+                            if limpio and limpio not in notas_encontradas:
+                                notas_encontradas.append(limpio)
+                            break
+    except Exception:
+        pass
+    return notas_encontradas
 
 
 def _extraer_notas_modificacion_texto(texto: str) -> List[str]:
@@ -35,24 +57,16 @@ def _extraer_notas_modificacion_texto(texto: str) -> List[str]:
     texto_limpio = limpiar_palabras_ocr(texto)
     notas_encontradas: List[str] = []
 
-    # 1. Búsqueda de bloque multilínea de nota marginal típica de DDU (ej. Página 1 de DDU 456)
-    patron_bloque = re.search(
-        r"Circular\s+Modificada\s+por\s*(?:\n\s*)?Circular\s+Ord\.?\s*N[°º\?]?\s*\d+[^\n]*(?:\n[^\n]*){0,3}\bDDU\s*\d+[^\n]*",
-        texto_limpio,
-        re.IGNORECASE,
+    patron_combinado = (
+        r"(?:Circular\s+Modificada\s+por|Mediante\s+Circular\s+Ord|Modificada\s+por\s+Circular|"
+        r"Dejada\s+sin\s+efecto\s+por|Aclarada\s+por\s+Circular|Complementada\s+por\s+Circular)"
+        r"[^\n]+(?:\n[^\n]+){0,6}"
     )
-    if patron_bloque:
-        bloque_texto = re.sub(r"\s+", " ", patron_bloque.group(0)).strip()
-        notas_encontradas.append(bloque_texto)
-
-    # 2. Búsqueda línea por línea de otros patrones de modificación posterior
-    if not notas_encontradas:
-        for patron in _PATRONES_MODIFICACION:
-            matches = re.finditer(patron, texto_limpio, re.IGNORECASE)
-            for m in matches:
-                nota = re.sub(r"\s+", " ", m.group(0)).strip()
-                if nota and nota not in notas_encontradas:
-                    notas_encontradas.append(nota)
+    for m in re.finditer(patron_combinado, texto_limpio, re.IGNORECASE):
+        bloque = m.group(0).strip()
+        bloque_una_linea = re.sub(r"\s+", " ", bloque).strip()
+        if bloque_una_linea and bloque_una_linea not in notas_encontradas:
+            notas_encontradas.append(bloque_una_linea)
 
     return notas_encontradas
 
@@ -83,22 +97,17 @@ class ModificacionesPosterioresExtractor(BaseExtractor):
         Returns:
             ResultadoBloque con el texto consolidado y lista de notas de modificación posterior.
         """
-        # Si no hay texto pero hay PDF, extraer texto de las primeras páginas
-        texto_analizar = raw_text
-        if (not texto_analizar or len(texto_analizar) < 50) and pdf_path is not None and pdf_path.exists():
-            try:
-                import importlib
-                pypdf_mod: Any = importlib.import_module("pypdf")
-                reader = pypdf_mod.PdfReader(pdf_path)
-                # Las notas marginales de vigencia se ubican típicamente en la primera página
-                texto_analizar = "\n".join([str(p.extract_text() or "") for p in reader.pages[:2]])
-            except Exception:
-                texto_analizar = raw_text
+        notas: List[str] = []
 
-        notas = _extraer_notas_modificacion_texto(texto_analizar)
-        if not notas and lines:
-            # Intentar también uniendo las primeras 40 líneas
-            notas = _extraer_notas_modificacion_texto("\n".join(lines[:40]))
+        # 1. Si hay PDF, escanear todos los bloques del PDF
+        if pdf_path is not None and pdf_path.exists():
+            notas = _extraer_notas_modificacion_desde_pdf(pdf_path)
+
+        # 2. Si no se encontraron o no hay PDF, analizar texto plano
+        if not notas:
+            texto_analizar = raw_text if raw_text else "\n".join(lines)
+            if texto_analizar:
+                notas = _extraer_notas_modificacion_texto(texto_analizar)
 
         texto_consolidado = "; ".join(notas) if notas else ""
         exito = len(notas) > 0
@@ -113,6 +122,7 @@ class ModificacionesPosterioresExtractor(BaseExtractor):
             confianza=1.0 if exito else 0.0,
             observaciones="Notas de modificación posterior extraídas" if exito else "No se detectaron notas de modificación posterior",
         )
+
 
 
 def main() -> None:
