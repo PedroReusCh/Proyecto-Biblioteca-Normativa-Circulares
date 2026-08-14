@@ -7,7 +7,8 @@ import pytest
 
 from scripts.extractors import registrar_todos_los_extractores
 from scripts.extractors.base import BaseExtractor, ExtractorRegistry, ResultadoBloque
-from scripts.extractors.tablas import TablasExtractor
+from scripts.extractors.tablas import TablasExtractor, normalizar_texto_celda_tabla
+
 
 PROYECTO_RAIZ = Path(__file__).resolve().parents[1]
 
@@ -168,3 +169,47 @@ def test_compactar_tabla_pdf_encabezados_con_espacios() -> None:
     assert resultado["encabezados"] == ["Col1", "Col3"]
     assert len(resultado["filas"]) == 1
     assert resultado["filas"][0] == ["Val1", "Val3"]
+
+
+def test_normalizar_texto_celda_tabla() -> None:
+    """Verifica que normalizar_texto_celda_tabla una saltos de columna y preserve párrafos/numerales."""
+    # Caso 1: Fragmentación estrecha por columna de PDF
+    fragmentado = (
+        "La materia contenida en la\n"
+        "Circular DDU 339 se aborda\n"
+        "en el punto 5 6 de\n"
+        "esta Circular, la que\n"
+        "actualiza la referencia al\n"
+        "inciso en que quedó la\n"
+        "norma que señala que.\n"
+        "Mediante Circular Ord. N°214,\n"
+        "de fecha 02.05.2024, DDU\n"
+        "498, se aclara."
+    )
+    res = normalizar_texto_celda_tabla(fragmentado)
+    lineas = res.splitlines()
+    assert len(lineas) == 2, f"Se esperaban 2 párrafos lógicos, se obtuvieron {len(lineas)}"
+    assert lineas[0] == "La materia contenida en la Circular DDU 339 se aborda en el punto 5 6 de esta Circular, la que actualiza la referencia al inciso en que quedó la norma que señala que."
+    assert lineas[1] == "Mediante Circular Ord. N°214, de fecha 02.05.2024, DDU 498, se aclara."
+
+    # Caso 2: Letras de incisos a), b)
+    incisos = (
+        "a) Reemplázase el numeral 2\n"
+        "por el siguiente:\n"
+        "2. Al respecto, cabe\n"
+        "hacer presente que.\n"
+        "b) Reemplázase el numeral 4\n"
+        "por el siguiente:\n"
+        "4. Conforme a lo anterior."
+    )
+    res_incisos = normalizar_texto_celda_tabla(incisos)
+    lineas_inc = res_incisos.splitlines()
+    assert len(lineas_inc) >= 2
+    assert lineas_inc[0].startswith("a) Reemplázase")
+    assert any(l.startswith("b) Reemplázase") for l in lineas_inc)
+
+    # Caso 3: Columna de identificación de circular
+    col_ddu = "DDU 339\nCircular\nOrd. N°\n0087 de\nfecha\n06.03.2017"
+    res_ddu = normalizar_texto_celda_tabla(col_ddu)
+    assert res_ddu == "DDU 339 Circular Ord. N° 0087 de fecha 06.03.2017"
+

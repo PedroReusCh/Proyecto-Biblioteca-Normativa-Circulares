@@ -21,12 +21,55 @@ except ImportError:
     from extractors.utils_cleaner import limpiar_palabras_ocr
 
 
+def normalizar_texto_celda_tabla(texto: str) -> str:
+    """Normaliza el contenido de una celda tabular uniendo saltos de línea continuos y preservando estructura lógica."""
+    if not texto:
+        return ""
+    texto = limpiar_palabras_ocr(str(texto).strip())
+    lineas = [l.strip() for l in texto.splitlines() if l.strip()]
+    if not lineas:
+        return ""
+
+    patron_nuevo_bloque = re.compile(
+        r"^(?:"
+        r"[a-zA-ZáéíóúÁÉÍÓÚ]\)\s+|"                 # a), b), c)
+        r"[a-zA-ZáéíóúÁÉÍÓÚ]\.\s+|"                 # a., b., c.
+        r"\d+[\.\)]\s+|"                            # 1., 2., 1), 2)
+        r"(?:i|ii|iii|iv|v|vi|vii|viii|ix|x)\)\s+|" # i), ii), iii)
+        r"[-•*]\s+|"                                # viñetas
+        r"Mediante\s+Circular| "                    # Notas de modificación
+        r"Por\s+la\s+siguiente:| "                  # Cláusulas de sustitución
+        r"Reemplázase\b| "
+        r"Se\s+deja\s+sin\s+efecto\b"
+        r")",
+        re.IGNORECASE,
+    )
+
+
+    parrafos: List[str] = []
+    parrafo_actual: List[str] = []
+
+    for l in lineas:
+        if parrafo_actual and patron_nuevo_bloque.match(l):
+            parrafos.append(" ".join(parrafo_actual))
+            parrafo_actual = [l]
+        else:
+            parrafo_actual.append(l)
+
+    if parrafo_actual:
+        parrafos.append(" ".join(parrafo_actual))
+
+    resultado = "\n".join(parrafos)
+    resultado = re.sub(r" +", " ", resultado)
+    return resultado.strip()
+
+
 def _limpiar_texto_celda(celda: Any) -> str:
-    """Limpia y sanea el texto de una celda tabular aplicando corrección OCR."""
+    """Limpia y sanea el texto de una celda tabular aplicando corrección OCR y flujo continuo."""
     if celda is None:
         return ""
-    texto = str(celda).strip()
-    return limpiar_palabras_ocr(texto)
+    return normalizar_texto_celda_tabla(str(celda))
+
 
 
 def _compactar_tabla_pdf(raw_table: List[List[Any]]) -> Optional[Dict[str, Any]]:
@@ -154,17 +197,18 @@ def _consolidar_tablas_multipagina(tablas_crudas: List[Dict[str, Any]]) -> List[
                     for i in range(len(fila)):
                         if i < len(ultima):
                             sep = "\n" if fila[i].strip() else ""
-                            ultima[i] = (ultima[i] + sep + fila[i]).strip()
+                            combinado = (ultima[i] + sep + fila[i]).strip()
+                            ultima[i] = normalizar_texto_celda_tabla(combinado)
                 else:
-                    actual["filas"].append(fila)
+                    actual["filas"].append([normalizar_texto_celda_tabla(c) for c in fila])
             actual["paginas"].append(pag)
         else:
             # Nueva tabla lógica (encabezados distintos o primera tabla)
             if actual is not None:
                 consolidadas.append(actual)
             actual = {
-                "encabezados": enc,
-                "filas": list(filas),
+                "encabezados": [normalizar_texto_celda_tabla(h).replace("\n", " ") for h in enc],
+                "filas": [[normalizar_texto_celda_tabla(c) for c in fila] for fila in filas],
                 "paginas": [pag],
             }
 
@@ -197,8 +241,13 @@ def _exportar_tabla_csv(encabezados: List[str], filas: List[List[str]], destino_
     destino_csv.parent.mkdir(parents=True, exist_ok=True)
     with open(destino_csv, "w", encoding="utf-8-sig", newline="") as f:
         writer = csv.writer(f, delimiter=";", quoting=csv.QUOTE_ALL, lineterminator="\r\n")
-        writer.writerow(encabezados)
-        writer.writerows(filas)
+        writer.writerow([normalizar_texto_celda_tabla(h).replace("\n", " ") for h in encabezados])
+        filas_limpias = [
+            [normalizar_texto_celda_tabla(c) for c in fila]
+            for fila in filas
+        ]
+        writer.writerows(filas_limpias)
+
 
 
 def _extraer_tablas_lineas(lines: List[str]) -> List[Dict[str, Any]]:
