@@ -84,8 +84,10 @@ class CSVToRDF:
             "lista_distribucion": [d.strip() for d in dist_texto.split(";") if d.strip()],
             "distribucion_texto": dist_texto,
             "notas_al_pie": raw_data.get("notas_al_pie", ""),
+            "modificaciones_posteriores": raw_data.get("modificaciones_posteriores", ""),
         }
         return datos
+
 
     def transform(self, csv_path: Path, output_rdf_path: Path) -> Path:
         """Transforma un archivo CSV individual a un grafo RDF Turtle (.ttl).

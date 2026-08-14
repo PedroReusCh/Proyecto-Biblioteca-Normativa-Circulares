@@ -20,6 +20,11 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
   * **Extracción Estructurada de Firma y OCR Visual con RapidOCR**: Se rediseñó `FirmaExtractor` para desglosar y extraer independientemente `nombre_firmante`, `cargo_firmante` y el consolidado `firmante`. En circulares donde el nombre de la persona no está presente en la capa de texto vectorial (ej. facsímil en DDU 456), se ejecuta un OCR visual directo en alta resolución sobre el recuadro de firma mediante `RapidOCR`, extrayendo con precisión el nombre completo inmediatamente arriba del cargo (`nombre_firmante = "ENRIQUE MATUSCHKA AYÇAGUER"`, `cargo_firmante = "Jefe División de Desarrollo Urbano"`), saneando caracteres y garantizando 100% de dinamismo.
 
   * **Formato Plano sin Caracteres JSON en CSV Principal**: En `salidas_csv/DDU_456_extraido.csv`, los campos de los bloques `Tablas` e `Imágenes` se formatean como pares clave-valor limpios delimitados por `; ` (ej. `id: DDU_456_tabla_1; nombre: ...; paginas: 5, 6, 7, 8; filas: 3; columnas: 3; archivo_anexo: salidas_tablas/...`), eliminando completamente la sintaxis y caracteres JSON (`[`, `]`, `{`, `}`, `"`), facilitando su lectura directa e integración en hojas de cálculo.
+  * **Integración Canónica en Akoma Ntoso XML (`scripts/ddu_to_xml.py`) y RDF (`scripts/ddu_to_rdf.py`)**:
+    * **Tablas**: Inyección del contenedor `<attachments>` tras `<conclusions>` con elementos `<componentRef id="..." src="salidas_tablas/..." showAs="..."/>`.
+    * **Imágenes**: Inyección de etiquetas inline `<img>` (`src`, `alt`, `width`, `height`, `id`) dentro de los párrafos que introducen esquemas o figuras técnicas.
+    * **Modificaciones Posteriores**: Incorporación de metadatos `<lifecycle>` (`<eventRef type="amendment"/>`), análisis de modificaciones pasivas `<analysis>` (`<passiveModifications>` con `<textualMod type="substitution">`) y referencia `<TLCReference>` en XML, junto con la tripleta semántica `minvu-ddu:modificadaPor` en el grafo RDF Turtle, validado al 100% contra el XSD oficial de la BCN con `lxml.etree.XMLSchema`.
+
 
 
 ---

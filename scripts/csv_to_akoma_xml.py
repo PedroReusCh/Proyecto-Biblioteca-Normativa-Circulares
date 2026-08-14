@@ -127,9 +127,13 @@ class CSVToAkomaXML:
             "lista_distribucion": [d.strip() for d in raw_data.get("lista_distribucion", "").split(";") if d.strip()],
             "distribucion_texto": raw_data.get("lista_distribucion", ""),
             "notas_al_pie": raw_data.get("notas_al_pie", ""),
+            "modificaciones_posteriores": raw_data.get("modificaciones_posteriores", ""),
+            "tablas_manifiesto": raw_data.get("tablas", ""),
+            "imagenes_manifiesto": raw_data.get("imagenes", ""),
         }
 
         return datos
+
 
     def transform(self, csv_path: Path, output_xml_path: Path) -> Path:
         """Transforma un archivo CSV individual a un archivo XML Akoma Ntoso.

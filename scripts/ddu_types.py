@@ -39,6 +39,9 @@ class DatosCircularDDU(TypedDict):
     distribucion_texto: NotRequired[str]
     notas_al_pie: NotRequired[str]
     tablas: NotRequired[Optional[List[Dict[str, Any]]]]
+    tablas_manifiesto: NotRequired[str]
     imagenes: NotRequired[Optional[List[Dict[str, Any]]]]
+    imagenes_manifiesto: NotRequired[str]
     modificaciones_posteriores: NotRequired[str]
+
 
