@@ -13,6 +13,45 @@ from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_ext
 from scripts.extractors.utils_cleaner import limpiar_palabras_ocr
 
 
+_PATRON_DIAGRAMA_ESQUEMA = re.compile(
+    r"^(?:"
+    r"EDIFICIO|"
+    r"Piscinas?\.?|"
+    r"Chimeneas?\.?|"
+    r"P[eé]rgolas?\.?|"
+    r"Ascensores\.?|"
+    r"Barandas?\.?|"
+    r"Paramentos(?:\s+perimetrales)?\.?|"
+    r"perimetrales\.?|"
+    r"escalera\.?|"
+    r"jardineras\.?|"
+    r"ornamentales\.?|"
+    r"quinchos?\.?|"
+    r"otros\.?|"
+    r"Salida\s+caja\s+de(?:\s+escalera)?\.?|"
+    r"Terraza(?:\s+Terraza)?\.?|"
+    r"Vegetaci[oó]n,?(?:\s+jardineras)?\.?|"
+    r"M[aá]ximo\s+25%(?:\s+de\s+la\s+superficie(?:\s+de\s+la\s+azotea\.?)?)?|"
+    r"de\s+la\s+superficie(?:\s+de\s+la\s+azotea\.?)?|"
+    r"superficie\s+de\s+la\s+azotea\.?|"
+    r"de\s+la\s+azotea\.?|"
+    r"Altura\s+m[aá]xima\s+de(?:\s+edificaci[oó]n\s+permitida(?:\s+por\s+el\s+IPT\.?)?)?|"
+    r"edificaci[oó]n\s+permitida(?:\s+por\s+el\s+IPT\.?)?|"
+    r"por\s+el\s+IPT\.?|"
+    r"Piscinas,\s+vegetaci[oó]n,?(?:\s+jardineras,?\s+elementos(?:\s+ornamentales\.?)?)?|"
+    r"jardineras,?\s+elementos(?:\s+ornamentales,?\s+resto\s+de\s+la)?|"
+    r"ornamentales,?\s+resto\s+de\s+la|"
+    r"resto\s+de\s+la|"
+    r"Salas\s+de\s+M[aá]quinas,?(?:\s+Cajas\s+de\s+escalera,?\s+Chimeneas\.?)?|"
+    r"Cajas\s+de\s+escalera,?(?:\s+Chimeneas\.?)?|"
+    r"\(con\s+un\s+m[aá]ximo\s+de\s+99%\)|"
+    r"P[eé]rgolas,?(?:\s+quinchos,?(?:\s+otros\.?)?)?"
+    r")$",
+    re.IGNORECASE,
+)
+
+
+
 def _es_etiqueta_diagrama(line: str) -> bool:
     """Detecta fragmentos de texto y etiquetas de planos, diagramas o esquemas técnicos."""
     line_clean = line.strip()
@@ -26,80 +65,43 @@ def _es_etiqueta_diagrama(line: str) -> bool:
     if re.search(r"\b(?:PLANTA\s+AZOTEA|CORTE\s+ESQUEM[AÁ]TICO|SIN\s+ESCALA)\b", line_clean, re.IGNORECASE):
         return True
 
-    # Etiquetas cortas y fragmentos de esquemas en azoteas/cortes
-    patrones_diagrama = [
-        r"^EDIFICIO$",
-        r"^(?:Piscinas?|Chimeneas?|P[eé]rgolas?|Ascensores|Barandas?|Paramentos|perimetrales|jardineras|escalera)$",
-        r"^Salida\s+caja\s+de(?:\s+escalera)?$",
-        r"^Terraza(?:\s+Terraza)?$",
-        r"^Vegetaci[oó]n,?(?:\s+jardineras)?$",
-        r"^M[aá]ximo\s+25%(?:\s+de\s+la\s+superficie(?:\s+de\s+la\s+azotea\.?)?)?$",
-        r"^de\s+la\s+superficie(?:\s+de\s+la\s+azotea\.?)?$",
-        r"^de\s+la\s+azotea\.?$",
-        r"^Altura\s+m[aá]xima\s+de(?:\s+edificaci[oó]n\s+permitida(?:\s+por\s+el\s+IPT\.?)?)?$",
-        r"^edificaci[oó]n\s+permitida(?:\s+por\s+el\s+IPT\.?)?$",
-        r"^por\s+el\s+IPT\.?$",
-        r"^Piscinas,\s+vegetaci[oó]n,?(?:\s+jardineras,?\s+elementos(?:\s+ornamentales\.?)?)?$",
-        r"^jardineras,?\s+elementos(?:\s+ornamentales,?\s+resto\s+de\s+la)?$",
-        r"^ornamentales,?\s+resto\s+de\s+la$",
-        r"^resto\s+de\s+la$",
-        r"^ornamentales\.?$",
-        r"^Salas\s+de\s+M[aá]quinas,?(?:\s+Cajas\s+de\s+escalera,?\s+Chimeneas\.?)?$",
-        r"^Cajas\s+de\s+escalera,?(?:\s+Chimeneas\.?)?$",
-        r"^Chimeneas\.?$",
-        r"^superficie\s+de\s+la\s+azotea\.?$",
-        r"^\(con\s+un\s+m[aá]ximo\s+de\s+99%\)$",
-        r"^P[eé]rgolas,?(?:\s+quinchos,?(?:\s+otros\.?)?)?$",
-        r"^quinchos\.?$",
-        r"^otros\.?$",
-    ]
-    return any(re.search(p, line_clean, re.IGNORECASE) for p in patrones_diagrama)
+    # Etiquetas cortas (< 80 caracteres) de diagramas
+    if len(line_clean) < 80 and _PATRON_DIAGRAMA_ESQUEMA.match(line_clean):
+        return True
+
+    return False
 
 
 def _limpiar_texto_cuerpo(texto: str) -> str:
-    """Repara palabras rotas y espacios antes de signos de puntuación producidos por OCR."""
-    texto = limpiar_palabras_ocr(texto)
-    patrones_reemplazo = [
-        (r"\binst\s+rumen\s+to\b", "instrumento"),
-        (r"\bpermi\s+so\b", "permiso"),
-        (r"\bpermi\s+sos\b", "permisos"),
-        (r"\bedifi\s+cad([aaos])\b", r"edificad\1"),
-        (r"\bedifi\s+cac(i[oó]n|iones)\b", r"edificac\1"),
-        (r"\bincrement\s+o\b", "incremento"),
-        (r"\bcircunscribi\s+rse\b", "circunscribirse"),
-        (r"\bporcentua\s+l\b", "porcentual"),
-        (r"\bante\s+s\b", "antes"),
-        (r"\baplicab\s+le([s]?)\b", r"aplicable\1"),
-        (r"\bmod\s+ificac(i[oó]n|iones)\b", r"modificac\1"),
-        (r"\bmod\s+ificad([aaos])\b", r"modificad\1"),
-        (r"\bespec[ií]f\s+ic([aaos])\b", r"específic\1"),
-        (r"\bconstruid\s+a\b", "construida"),
-        (r"\bcorrespond\s+ient([es]?)\b", r"correspondient\1"),
-        (r"\binst\s+rucc(i[oó]n|iones)\b", r"instrucc\1"),
-        (r"\bcircul\s+ar([es]?)\b", r"circular\1"),
-        (r"\bsuperf\s+ic(ie[s]?)\b", r"superfic\1"),
-        (r"\bdispos\s+ic(i[oó]n|iones)\b", r"disposic\1"),
-        (r"\burban[íi]st\s+ic([aaos])\b", r"urbanístic\1"),
-        (r"\bterritor\s+ial\b", "territorial"),
-        (r"\bsolic\s+itud\b", "solicitud"),
-        (r"\baprob\s+ad([aaos])\b", r"aprobad\1"),
-        (r"\baprob\s+ac(i[oó]n|iones)\b", r"aprobac\1"),
-        (r"\bexpuest\s+os\b", "expuestos"),
-        (r"\bim[áa]\s+genes\b", "imágenes"),
-        (r"\bOS\s+33\b", "DS 33"),
-        # Reglas genéricas para plurales con 's' o 'es' aisladas por OCR
-        (r"\b([a-záéíóúñ]{3,}[aeiouáéíóú])\s+s\b", r"\1s"),
-        (r"\b([a-záéíóúñ]{3,}[bcdfghjklmnñpqrstvwxyz])\s+es\b", r"\1es"),
-        (r"\s+\.", "."),
-        (r"\s+,", ","),
-        (r"\s+;", ";"),
-        (r"\s+:", ":"),
-    ]
+    """Repara palabras rotas y preserva el casing original de mayúsculas/minúsculas."""
+    res = limpiar_palabras_ocr(texto)
 
-    res = texto
-    for pat, repl in patrones_reemplazo:
-        res = re.sub(pat, repl, res, flags=re.IGNORECASE)
+    # Reparaciones morfológicas agrupadas para preservar casing exacto (\1\2)
+    res = re.sub(r"\b(inst)\s+(rumen\s+to|rucc[ií]on\w*)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(permi)\s+(so[s]?)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(edifi)\s+(cad\w+|cac[ií]on\w*)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(increment)\s+(o[s]?)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(circunscribi)\s+(rse)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(porcentua)\s+(l[es]?)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(ante)\s+(s)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(aplicab)\s+(le[s]?)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(mod)\s+(ificac[ií]on\w*|ificad\w+)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(espec[ií]f)\s+(ic\w+)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(construid)\s+(a[s]?|o[s]?)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(correspond)\s+(ient\w*)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(circul)\s+(ar\w*)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(superf)\s+(ic\w+)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(dispos)\s+(ic\w+)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(urban[íi]st)\s+(ic\w+)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(territor)\s+(ial\w*)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(solic)\s+(itud\w*)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(aprob)\s+(ad\w+|ac[ií]on\w*)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(expuest)\s+(o[s]?|a[s]?)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(im[áa])\s+(genes)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\bOS\s+33\b", "DS 33", res)
+
     return res
+
 
 
 def _normalizar_prefijo_numeral_ocr(line: str) -> str:
@@ -307,11 +309,12 @@ class CuerpoExtractor(BaseExtractor):
                 continue
 
             if omitiendo_nota_al_pie:
-                if re.match(r"^\d+\.\s+", line_clean) or re.match(r"^[I|V|X]+\.\s+", line_clean, re.IGNORECASE):
+                if re.match(r"^\d+\.\s+", line_clean) or re.match(r"^[IVXLCDM]+\.\s+", line_clean, re.IGNORECASE):
                     omitiendo_nota_al_pie = False
                 else:
                     curr_idx += 1
                     continue
+
 
             # Detener extracción si llegamos a la firma o distribución
             if re.search(r"Saluda\s+atent", line_clean, re.IGNORECASE) or re.match(

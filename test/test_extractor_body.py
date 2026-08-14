@@ -364,15 +364,34 @@ def test_distribucion_extractor_ddu_456() -> None:
 def test_cuerpo_extractor_ddu_456_sin_ruido_imagenes() -> None:
     """Verifica que el cuerpo extraído de DDU 456 no contenga ruido de diagramas ni palabras rotas por OCR."""
     pdf_path = Path("circulares/DDU 456.pdf")
-    if not pdf_path.exists():
-        pytest.skip("PDF DDU 456 no disponible")
-
-    pypdf_mod: Any = importlib.import_module("pypdf")
-    pdf_reader: Any = pypdf_mod.PdfReader(pdf_path)
-    pdf_pages: Any = pdf_reader.pages
-    text_list: List[str] = [str(getattr(p, "extract_text", lambda: "")() or "") for p in pdf_pages]
-    raw_text: str = "\n".join(text_list)
-    lines: List[str] = [line.strip() for line in raw_text.splitlines()]
+    if pdf_path.exists():
+        pypdf_mod: Any = importlib.import_module("pypdf")
+        pdf_reader: Any = pypdf_mod.PdfReader(pdf_path)
+        pdf_pages: Any = pdf_reader.pages
+        text_list: List[str] = [str(getattr(p, "extract_text", lambda: "")() or "") for p in pdf_pages]
+        raw_text: str = "\n".join(text_list)
+        lines: List[str] = [line.strip() for line in raw_text.splitlines()]
+    else:
+        raw_text = (
+            "DDU 456\n"
+            "CIRCULAR ORD. N° 0456\n"
+            "1. Se han recibido diversas consultas respecto a la aplicación a rtículo 2.6.3. de la OGUC.\n"
+            "2. En este sentido, los quinch os deben considerarse como relativo s a elementos exteriores.\n"
+            "3. Asimismo, el inciso s segundo establece las condiciones.\n"
+            "4. A continuación, se presenta un esquema ilustrativo que sintetiza algunos de los aspectos abordados en la presente Circular:\n"
+            "PLANTA AZOTEA\n"
+            "CORTE ESQUEMÁTICO\n"
+            "Piscina\n"
+            "Salida caja de escalera\n"
+            "Chimeneas\n"
+            "Pérgola\n"
+            "Ascensores\n"
+            "½\n"
+            "5. En el inciso vigésimo tercero se señalan los requerimientos.\n"
+            "Saluda atentamente a Ud.,\n"
+            "JEFE DIVISIÓN DE DESARROLLO URBANO"
+        )
+        lines = [line.strip() for line in raw_text.splitlines()]
 
     extractor = CuerpoExtractor()
     resultado = extractor.extract(raw_text, lines)
@@ -416,15 +435,20 @@ def test_cuerpo_extractor_ddu_456_sin_ruido_imagenes() -> None:
 def test_firma_extractor_ddu_456_cargo_limpio() -> None:
     """Verifica que FirmaExtractor en DDU 456 extraiga limpiamente el cargo 'Jefe DIVISIÓN de Desarrollo Urbano'."""
     pdf_path = Path("circulares/DDU 456.pdf")
-    if not pdf_path.exists():
-        pytest.skip("PDF DDU 456 no disponible")
-
-    pypdf_mod: Any = importlib.import_module("pypdf")
-    pdf_reader: Any = pypdf_mod.PdfReader(pdf_path)
-    pdf_pages: Any = pdf_reader.pages
-    text_list: List[str] = [str(getattr(p, "extract_text", lambda: "")() or "") for p in pdf_pages]
-    raw_text: str = "\n".join(text_list)
-    lines: List[str] = [line.strip() for line in raw_text.splitlines()]
+    if pdf_path.exists():
+        pypdf_mod: Any = importlib.import_module("pypdf")
+        pdf_reader: Any = pypdf_mod.PdfReader(pdf_path)
+        pdf_pages: Any = pdf_reader.pages
+        text_list: List[str] = [str(getattr(p, "extract_text", lambda: "")() or "") for p in pdf_pages]
+        raw_text: str = "\n".join(text_list)
+        lines: List[str] = [line.strip() for line in raw_text.splitlines()]
+    else:
+        raw_text = (
+            "Saluda atentamente a Ud.,\n"
+            "JPB\n"
+            "Jefe DIVISIÓN de Desarrollo Urbano"
+        )
+        lines = [line.strip() for line in raw_text.splitlines()]
 
     extractor = FirmaExtractor()
     resultado = extractor.extract(raw_text, lines)
@@ -432,5 +456,6 @@ def test_firma_extractor_ddu_456_cargo_limpio() -> None:
     assert resultado.exito is True
     firmante = str(resultado.datos.get("firmante", ""))
     assert firmante == "Jefe DIVISIÓN de Desarrollo Urbano"
+
 
 
