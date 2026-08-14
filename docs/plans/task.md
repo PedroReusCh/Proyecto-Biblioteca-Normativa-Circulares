@@ -1,5 +1,5 @@
 | Estado | Tarea |
 | :--- | :--- |
-| 🟢 Completado | 1. Actualizar pruebas unitarias en `test/test_extractor_body.py` y `test/test_orchestrator.py` (DDU 456 JPB, DDU 546) |
-| 🟢 Completado | 2. Implementar en `scripts/extractors/firma.py` la extracción prioritaria del nombre/sigla ubicada arriba del cargo |
-| 🟢 Completado | 3. Regenerar salidas CSV (`salidas_csv/DDU_456_extraido.csv`), verificar suite completa (77/77) y actualizar CHANGELOG.md |
+| 🟢 Completado | 1. Implementar `formatear_manifiesto_plano` y tests unitarios en `test/test_orchestrator.py` |
+| 🟢 Completado | 2. Integrar `formatear_manifiesto_plano` en `export_individual_csv` y `export_master_csv` de `DDUOrchestrator` |
+| 🟢 Completado | 3. Regenerar `salidas_csv/DDU_456_extraido.csv`, verificar suite completa (78 tests) y actualizar `CHANGELOG.md` |
