@@ -91,4 +91,3 @@ Para garantizar la correcta ejecución y orden lógico durante el ciclo de vida 
 
 - **Cumplimiento de Estándar `.github`**: Para cualquier creación, edición o visualización de diagramas de arquitectura, secuencias ETL o flujos de procesos del proyecto, se deben seguir estrictamente las directrices definidas en [`.github/instructions/mermaid.instructions.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/.github/instructions/mermaid.instructions.md).
 - **Archivos `.mmd` y Validación de Sintaxis**: Todos los diagramas deben escribirse o persistirse en archivos con extensión `.mmd` en el proyecto y validar la sintaxis (flechas, corchetes balanceados, palabras clave de inicio) antes de presentarlos al usuario.
-

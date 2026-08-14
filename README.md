@@ -28,9 +28,6 @@ El proyecto se estructura en los siguientes directorios clave:
   * [`leychile_api.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/leychile_api.py): Integración oficial con la API de Ley Chile de la BCN.
 * [`test/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test): Suite plana de pruebas automatizadas locales (`test_csv_to_akoma_xml.py`, `test_csv_to_rdf.py`, `test_extractor_base.py`, `test_extractor_metadata.py`, `test_extractor_body.py`, `test_extractor_nota_al_pie.py`, `test_orchestrator.py`, `test_csv_integrity.py`, `test_spec_coverage.py`, `test_xml_generation.py`, `test_rdf_generation.py`, `test_xsd_structural_validation.py`) ejecutables con `pytest`.
 
-
-
-
 ---
 
 ## Modelo de Datos de Dominio y Extensibilidad Evolutiva
@@ -151,4 +148,3 @@ pytest -v
 ```
 
 Actualmente, **45 de 45 pruebas pasan exitosamente** (100% de cobertura de la suite en estructura plana).
-
