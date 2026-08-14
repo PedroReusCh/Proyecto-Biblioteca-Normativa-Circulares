@@ -50,11 +50,14 @@ Para garantizar la correcta ejecución y orden lógico durante el ciclo de vida 
   - [`test/test_extractor_body.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_extractor_body.py): Pruebas unitarias de los extractores de cuerpo, firma y distribución.
   - [`test/test_extractor_nota_al_pie.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_extractor_nota_al_pie.py): Pruebas unitarias del extractor del metadato Nota al Pie.
   - [`test/test_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_orchestrator.py): Pruebas de integración del orquestador DDU y exportadores CSV.
+  - [`test/test_csv_to_akoma_xml.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_csv_to_akoma_xml.py): Pruebas de transformación de CSV a XML Akoma Ntoso BCN v2.0.
+  - [`test/test_csv_to_rdf.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_csv_to_rdf.py): Pruebas de transformación de CSV a grafos RDF Turtle.
   - [`test/test_csv_integrity.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_csv_integrity.py): Valida la coherencia columnar de los archivos CSV locales.
   - [`test/test_spec_coverage.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_spec_coverage.py): Mapea elementos XSD contra el diccionario y contra el archivo de cobertura local.
   - [`test/test_xsd_structural_validation.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_xsd_structural_validation.py): Verifica tipos y atributos heredados entre XSD y CSV.
   - [`test/test_xml_generation.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_xml_generation.py): Certifica que los XML construidos sean válidos.
   - [`test/test_rdf_generation.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_rdf_generation.py): Valida la sintaxis del formato Turtle (RDF).
+
 
 ### 2. Extracción 100% Dinámica (Prohibición de Fallbacks Estáticos)
 

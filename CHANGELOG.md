@@ -4,7 +4,33 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/) y este proyecto se adhiere a las prácticas de control de versiones semántico.
 
+## [0.8.0] - 2026-08-14
+
+### Added
+
+* **Generador de Presentaciones PowerPoint Nativas (`generar_ppt.py`)**:
+  * Creación del módulo especializado [`scripts/generar_ppt.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/generar_ppt.py) utilizando `python-pptx` para compilar presentaciones ejecutivas en `.pptx`.
+  * Generación del artefacto de presentación ejecutiva de 5 diapositivas en `salidas_ppt/Presentacion_Ejecutiva_Biblioteca_Normativa_DDU.pptx`.
+* **Consolidación de Directrices Operativas (`GEMINI.md`)**:
+  * Adopción formal de [`GEMINI.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/GEMINI.md) como archivo principal de directrices operativas y reglas para la IA.
+
+### Changed
+
+* **Sincronización Total de la Suite de Pruebas (45/45 Tests)**:
+  * [`test/test_csv_integrity.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_csv_integrity.py): Ajuste a 5 columnas para la validación del diccionario de datos.
+  * [`test/test_spec_coverage.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_spec_coverage.py): Sincronización del conteo de elementos XML para 100% de cobertura.
+  * [`test/test_xsd_structural_validation.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_xsd_structural_validation.py): Resolución recursiva de `attributeGroup ref` anidados y soporte universal de atributos core / comodín.
+  * Actualización de la documentación en [`README.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/README.md) y [`GEMINI.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/GEMINI.md) reflejando los 45 tests activos.
+
+### Removed
+
+* **Limpieza de Archivos Obsoletos**:
+  * Remoción definitiva de `.github/copilot-instructions.md` y unificación de directrices en `GEMINI.md`.
+
+---
+
 ## [0.7.1] - 2026-08-06
+
 
 ### Added
 

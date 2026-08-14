@@ -14,6 +14,7 @@ El proyecto se estructura en los siguientes directorios clave:
 * [`salidas_csv/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/salidas_csv): Colección de datos extraídos de circulares en formato tabular CSV de dominio plano.
 * [`salidas_xml/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/salidas_xml): Archivos XML Akoma Ntoso v2.0 BCN con segmentación atómica de numerales (`<num>`) y validación XSD.
 * [`salidas_rdf/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/salidas_rdf): Grafos semánticos RDF en sintaxis Turtle (`.ttl`) generados desde los CSVs.
+* [`salidas_ppt/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/salidas_ppt): Presentaciones ejecutivas del proyecto en formato PowerPoint nativo (`.pptx`).
 * [`scripts/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts): Módulos funcionales de procesamiento y conversión:
   * [`ddu_types.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_types.py): Declaraciones de tipado estricto `DatosCircularDDU` y `SeccionDDU`.
   * [`extractors/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors): Paquete de 12 ETLs modulares e independientes (`encabezado.py`, `acto_administrativo.py`, `antecedentes.py`, `materia.py`, `descriptores.py`, `fecha_lugar.py`, `destinatarios.py`, `emisor.py`, `cuerpo.py`, `nota_al_pie.py`, `firma.py`, `distribucion.py`) derivados de la interfaz base `BaseExtractor`.
@@ -23,8 +24,10 @@ El proyecto se estructura en los siguientes directorios clave:
   * [`csv_to_akoma_xml.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/csv_to_akoma_xml.py): Transformador independiente especializado que convierte CSVs a XML Akoma Ntoso v2.0 BCN con segmentación atómica de numerales `<num>`.
   * [`csv_to_rdf.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/csv_to_rdf.py): Transformador independiente especializado que convierte CSVs a grafos RDF Turtle (`.ttl`).
   * [`ddu_to_rdf.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_rdf.py): Constructor semántico RDF/Turtle.
+  * [`generar_ppt.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/generar_ppt.py): Generador de presentaciones ejecutivas en PowerPoint nativo (`.pptx`).
   * [`leychile_api.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/leychile_api.py): Integración oficial con la API de Ley Chile de la BCN.
 * [`test/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test): Suite plana de pruebas automatizadas locales (`test_csv_to_akoma_xml.py`, `test_csv_to_rdf.py`, `test_extractor_base.py`, `test_extractor_metadata.py`, `test_extractor_body.py`, `test_extractor_nota_al_pie.py`, `test_orchestrator.py`, `test_csv_integrity.py`, `test_spec_coverage.py`, `test_xml_generation.py`, `test_rdf_generation.py`, `test_xsd_structural_validation.py`) ejecutables con `pytest`.
+
 
 
 
@@ -147,4 +150,5 @@ Para garantizar que el sistema y sus modelos semánticos de datos cumplen al 100
 pytest -v
 ```
 
-Actualmente, **42 de 42 pruebas pasan exitosamente** (100% de cobertura de la suite en estructura plana).
+Actualmente, **45 de 45 pruebas pasan exitosamente** (100% de cobertura de la suite en estructura plana).
+
