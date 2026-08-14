@@ -167,8 +167,10 @@ def test_orchestrator_process_pdf_ddu_456() -> None:
     assert "DDU 498" in str(datos.get("modificaciones_posteriores", ""))
 
     # 6. Firma y distribución
-    assert "DIVISIÓN" in str(datos.get("firmante", ""))
+    assert "división" in str(datos.get("firmante", "")).lower()
+    assert str(datos.get("cargo_firmante", "")) != ""
     dist_lista = datos.get("lista_distribucion") or []
+
     assert len(dist_lista) >= 30
 
 

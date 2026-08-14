@@ -32,7 +32,10 @@ class DatosCircularDDU(TypedDict):
     lugar: NotRequired[str]
     destinatarios: NotRequired[str]
     firmante: NotRequired[str]
+    nombre_firmante: NotRequired[str]
+    cargo_firmante: NotRequired[str]
     lista_distribucion: NotRequired[List[str]]
+
     distribucion_texto: NotRequired[str]
     notas_al_pie: NotRequired[str]
     tablas: NotRequired[Optional[List[Dict[str, Any]]]]

@@ -247,7 +247,26 @@ def test_firma_extractor_ddu_546_ocr() -> None:
     assert resultado.exito is True
     firmante = resultado.datos.get("firmante", "")
     assert firmante == "JUAN DIEGO IZQUIERDO HEVIA, DIVISIÓN DE DESARROLLO URBANO, MINISTERIO DE VIVIENDA Y URBANISMO"
+    assert resultado.datos.get("nombre_firmante") == "JUAN DIEGO IZQUIERDO HEVIA"
+    assert "DIVISIÓN DE DESARROLLO URBANO" in str(resultado.datos.get("cargo_firmante", ""))
     assert "Sr. Ministro" not in firmante
+
+
+def test_firma_extractor_nombre_y_cargo_separados() -> None:
+    """Verifica que el extractor de firma separe correctamente nombre y cargo en distintas líneas."""
+    lines = [
+        "Saluda atentamente a Ud.,",
+        "VICENTE BURGOS BOLAÑOS",
+        "Jefe División de Desarrollo Urbano",
+    ]
+    extractor = FirmaExtractor()
+    resultado = extractor.extract("\n".join(lines), lines)
+
+    assert resultado.exito is True
+    assert resultado.datos.get("nombre_firmante") == "VICENTE BURGOS BOLAÑOS"
+    assert resultado.datos.get("cargo_firmante") == "Jefe División de Desarrollo Urbano"
+    assert resultado.datos.get("firmante") == "VICENTE BURGOS BOLAÑOS, Jefe División de Desarrollo Urbano"
+
 
 
 def test_distribucion_extractor_limpieza_palabras_divididas() -> None:
@@ -455,7 +474,9 @@ def test_firma_extractor_ddu_456_cargo_limpio() -> None:
 
     assert resultado.exito is True
     firmante = str(resultado.datos.get("firmante", ""))
-    assert firmante == "Jefe DIVISIÓN de Desarrollo Urbano"
+    assert firmante == "Jefe División de Desarrollo Urbano"
+    assert resultado.datos.get("cargo_firmante") == "Jefe División de Desarrollo Urbano"
+
 
 
 def test_cuerpo_extractor_ddu_456_exclusion_tablas_e_imagenes() -> None:

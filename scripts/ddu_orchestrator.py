@@ -101,7 +101,10 @@ class DDUOrchestrator:
             "lugar": str(datos_consolidados.get("lugar", "Santiago")),
             "destinatarios": str(datos_consolidados.get("destinatarios", "")),
             "firmante": str(datos_consolidados.get("firmante", "")),
+            "nombre_firmante": str(datos_consolidados.get("nombre_firmante", "")),
+            "cargo_firmante": str(datos_consolidados.get("cargo_firmante", "")),
             "lista_distribucion": datos_consolidados.get("lista_distribucion", []),
+
             "distribucion_texto": str(datos_consolidados.get("distribucion_texto", "")),
             "notas_al_pie": str(datos_consolidados.get("notas_al_pie", "")),
             "tablas": datos_consolidados.get("tablas", []),
