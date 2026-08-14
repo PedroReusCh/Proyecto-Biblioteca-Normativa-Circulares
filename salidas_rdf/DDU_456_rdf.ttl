@@ -1,0 +1,20 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix bcn-norms: <http://datos.bcn.cl/ontologies/bcn-norms#> .
+@prefix minvu-ddu: <http://datos.bcn.cl/ontologies/minvu-ddu#> .
+@prefix bcn-resources: <http://datos.bcn.cl/ontologies/bcn-resources#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+minvu-ddu:CircularDDU rdfs:subClassOf bcn-norms:Norm .
+
+<http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2021-02-25/DDU 456>
+    rdf:type minvu-ddu:CircularDDU ;
+    bcn-norms:hasNumber "DDU 456" ;
+    bcn-norms:publishDate "2021-02-25"^^xsd:date ;
+    dc:title """Aplicación a rtículo 2.6.3. inciso s vigésimo, vigésimo primero, vigésimo segundo y vigésimo tercero de la OGUC, sobre terrazas y elementos exteriores ubicados en la parte superior de los edificios y pisos mecánicos.""" ;
+    bcn-norms:createdBy <http://datos.bcn.cl/recurso/cl/organismo/ministerio-de-vivienda-y-urbanismo/division-de-desarrollo-urbano> ;
+    minvu-ddu:interpretaA <http://datos.bcn.cl/recurso/cl/dfl/ministerio-de-vivienda-y-urbanismo/1976-04-13/458>, <http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47>, <http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-1.1.2>, <http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-2.6.11>, <http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-2.6.12>, <http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-2.6.3>, <http://datos.bcn.cl/recurso/cl/dto/ministerio-de-vivienda-y-urbanismo/1992-05-19/47/seccion/articulo-6.1.8> ;
+    minvu-ddu:complementaA <http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2016-00-00/168>, <http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2016-00-00/322>, <http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2017-00-00/339>, <http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2024-00-00/498> ;
+    bcn-resources:tieneDocumentoAkomaNtoso <http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2021-02-25/DDU 456/espanol/datos.xml> .
