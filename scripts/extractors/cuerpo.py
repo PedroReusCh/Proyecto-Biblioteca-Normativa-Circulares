@@ -31,25 +31,25 @@ _PATRON_DIAGRAMA_ESQUEMA = re.compile(
     r"Salida\s+caja\s+de(?:\s+escalera)?\.?|"
     r"Terraza(?:\s+Terraza)?\.?|"
     r"Vegetaci[oó]n,?(?:\s+jardineras)?\.?|"
-    r"M[aá]ximo\s+25%(?:\s+de\s+la\s+superficie(?:\s+de\s+la\s+azotea\.?)?)?|"
-    r"de\s+la\s+superficie(?:\s+de\s+la\s+azotea\.?)?|"
-    r"superficie\s+de\s+la\s+azotea\.?|"
-    r"de\s+la\s+azotea\.?|"
-    r"Altura\s+m[aá]xima\s+de(?:\s+edificaci[oó]n\s+permitida(?:\s+por\s+el\s+IPT\.?)?)?|"
-    r"edificaci[oó]n\s+permitida(?:\s+por\s+el\s+IPT\.?)?|"
-    r"por\s+el\s+IPT\.?|"
-    r"Piscinas,\s+vegetaci[oó]n,?(?:\s+jardineras,?\s+elementos(?:\s+ornamentales\.?)?)?|"
-    r"jardineras,?\s+elementos(?:\s+ornamentales,?\s+resto\s+de\s+la)?|"
-    r"ornamentales,?\s+resto\s+de\s+la|"
-    r"resto\s+de\s+la|"
-    r"Salas\s+de\s+M[aá]quinas,?(?:\s+Cajas\s+de\s+escalera,?\s+Chimeneas\.?)?|"
-    r"Cajas\s+de\s+escalera,?(?:\s+Chimeneas\.?)?|"
+    r"M[aá]ximo\s+25%\s+de\s+la\s+superficie\s+de\s+la\s+azotea\.?|"
+    r"Altura\s+m[aá]xima\s+de\s+edificaci[oó]n\s+permitida\s+por\s+el\s+IPT\.?|"
+    r"Piscinas,\s+vegetaci[oó]n,?\s+jardineras,?\s+elementos\s+ornamentales\.?|"
+    r"Salas\s+de\s+M[aá]quinas,?\s+Cajas\s+de\s+escalera,?\s+Chimeneas\.?|"
     r"\(con\s+un\s+m[aá]ximo\s+de\s+99%\)|"
-    r"P[eé]rgolas,?(?:\s+quinchos,?(?:\s+otros\.?)?)?"
+    r"P[eé]rgolas,?\s+quinchos,?\s+otros\.?"
     r")$",
     re.IGNORECASE,
 )
 
+
+
+
+def _es_inicio_diagrama(line: str) -> bool:
+    """Detecta el inicio de un diagrama o esquema técnico."""
+    line_clean = line.strip()
+    if not line_clean:
+        return False
+    return bool(re.search(r"\b(?:PLANTA\s+AZOTEA|CORTE\s+ESQUEM[AÁ]TICO|SIN\s+ESCALA)\b", line_clean, re.IGNORECASE))
 
 
 def _es_etiqueta_diagrama(line: str) -> bool:
@@ -62,12 +62,14 @@ def _es_etiqueta_diagrama(line: str) -> bool:
         return True
 
     # Encabezados típicos de planos o esquemas técnicos
-    if re.search(r"\b(?:PLANTA\s+AZOTEA|CORTE\s+ESQUEM[AÁ]TICO|SIN\s+ESCALA)\b", line_clean, re.IGNORECASE):
+    if _es_inicio_diagrama(line_clean):
         return True
 
     # Etiquetas cortas (< 80 caracteres) de diagramas
     if len(line_clean) < 80 and _PATRON_DIAGRAMA_ESQUEMA.match(line_clean):
         return True
+    return False
+
 
 def _es_inicio_bloque_tabla(line: str) -> bool:
     """Detecta el inicio de un bloque tabular normativo para excluirlo del cuerpo."""
@@ -338,6 +340,7 @@ class CuerpoExtractor(BaseExtractor):
         parrafo_actual = ""
         omitiendo_nota_al_pie = False
         omitiendo_tabla = False
+        omitiendo_diagrama = False
 
 
         lines_cuerpo = lines[inicio_cuerpo:]
@@ -356,6 +359,22 @@ class CuerpoExtractor(BaseExtractor):
                 curr_idx += 1
                 continue
 
+            # Detectar e ignorar bloques de diagramas o esquemas técnicos dentro del cuerpo
+            if _es_inicio_diagrama(line_clean):
+                if parrafo_actual:
+                    seccion_actual["parrafos"].append(parrafo_actual.strip())
+                    parrafo_actual = ""
+                omitiendo_diagrama = True
+                curr_idx += 1
+                continue
+
+            if omitiendo_diagrama:
+                if re.match(r"^\d+\.\s+", line_clean) or re.match(r"^[IVXLCDM]+\.\s+", line_clean, re.IGNORECASE) or re.search(r"Saluda\s+atent", line_clean, re.IGNORECASE):
+                    omitiendo_diagrama = False
+                else:
+                    curr_idx += 1
+                    continue
+
             # Descartar fragmentos y etiquetas sueltas de diagramas/planos técnicos
             if _es_etiqueta_diagrama(line_clean):
                 curr_idx += 1
@@ -365,6 +384,7 @@ class CuerpoExtractor(BaseExtractor):
             if _es_nota_modificacion_posterior(line_clean):
                 curr_idx += 1
                 continue
+
 
 
             # Detectar e ignorar bloques de tablas normativas dentro del cuerpo

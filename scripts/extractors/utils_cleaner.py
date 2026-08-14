@@ -12,7 +12,9 @@ CORRECCIONES_DIRECTAS: Dict[str, str] = {
     r"\bcons iderar\b": "considerar",
     r"\binst ituto\b": "instituto",
     r"\bAD!\b": "ADI",
+    r"\bpo\s+r\b": "por",
 }
+
 
 
 def _preservar_casing(texto_original: str, texto_reemplazo: str) -> str:

@@ -481,10 +481,13 @@ def test_cuerpo_extractor_ddu_456_exclusion_tablas_e_imagenes() -> None:
     # Exactamente 7 párrafos (Numerales 1 al 7)
     assert len(parrafos) == 7, f"Se esperaban 7 párrafos normativos, se obtuvieron {len(parrafos)}"
 
-    # Verificar numeral 2 limpio (sin nota marginal de modificación posterior DDU 498)
+    # Verificar numeral 2 limpio (sin nota marginal de modificación posterior DDU 498 y con texto completo)
     assert parrafos[1].startswith("2.")
     assert "Circular Modificada por" not in parrafos[1]
     assert "DDU 498" not in parrafos[1]
+    assert "desde el nivel de la azotea." in parrafos[1]
+    assert "ocupada por los elementos" in parrafos[1]
+
 
     # Verificar numeral 4 limpio
     assert parrafos[3].startswith("4.")
