@@ -50,6 +50,11 @@ tmp/
 *.ttl
 *.pptx
 *.ppt
+*.png
+*.jpg
+*.jpeg
+salidas_tablas/
+salidas_imagenes/
 
 
 # --- Editores y Entornos de Desarrollo (IDEs) ---

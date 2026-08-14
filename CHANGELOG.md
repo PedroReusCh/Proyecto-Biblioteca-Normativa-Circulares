@@ -4,6 +4,17 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/) y este proyecto se adhiere a las prácticas de control de versiones semántico.
 
+## [0.11.0] - 2026-08-14
+
+### Added
+
+* **Arquitectura Desacoplada de Tablas e Imágenes con Manifiestos Ligeros e IDs Canónicos**:
+  * **Exportación Desacoplada de Tablas (`salidas_tablas/`)**: `TablasExtractor` ahora exporta cada tabla extraída como archivo CSV estructurado individual (`DDU_{num}_tabla_{idx}.csv`, `utf-8-sig`, delimitador `;`, `QUOTE_ALL`) y emite un manifiesto compacto con IDs canónicos (`DDU_456_tabla_1` a `DDU_456_tabla_4`).
+  * **Exportación Desacoplada de Imágenes en PNG Sin Pérdida (`salidas_imagenes/`)**: `ImagenesExtractor` ahora exporta esquemas y diagramas técnicos en formato PNG sin pérdida (`salidas_imagenes/DDU_{num}_img_{idx}.png`) mediante `fitz.Pixmap`, garantizando nitidez técnica en líneas y texto.
+  * **Manifiesto Ligero en CSV Principal**: En `salidas_csv/DDU_456_extraido.csv`, los bloques `Tablas` e `Imágenes` contienen referencias JSON limpias y legibles con IDs, nombres contextuales, dimensiones/columnas/filas y rutas relativas `archivo_anexo`, evitando saturar las celdas del CSV maestro con volcados pesados.
+
+---
+
 ## [0.10.0] - 2026-08-14
 
 

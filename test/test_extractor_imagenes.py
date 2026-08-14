@@ -51,17 +51,17 @@ def test_imagenes_extractor_ddu_456_pdf(tmp_path: Path) -> None:
     assert img_p3["ancho"] == 700
     assert img_p3["alto"] == 760
     assert img_p3["dimensiones"] == "700x760"
-    assert img_p3["formato"] == "jpeg"
+    assert img_p3["formato"] == "png"
     assert img_p3["xref"] == 5
     assert img_p3["tipo"] == "Esquema técnico"
     assert "archivo_anexo" in img_p3
-    assert img_p3["archivo_anexo"] == "salidas_imagenes/DDU_456_img_1.jpeg"
+    assert img_p3["archivo_anexo"] == "salidas_imagenes/DDU_456_img_1.png"
 
     nombre: str = str(img_p3.get("nombre", "")).lower()
     assert any(k in nombre for k in ["esquema", "planta azotea", "corte", "diagrama"])
 
-    # Verificar existencia física del archivo binario extraído
-    img_file = salidas_dir / "DDU_456_img_1.jpeg"
+    # Verificar existencia física del archivo binario extraído en PNG
+    img_file = salidas_dir / "DDU_456_img_1.png"
     assert img_file.exists(), f"No se encontró el archivo guardado {img_file}"
     assert img_file.stat().st_size > 1000, "El archivo de imagen guardado está vacío o corrupto"
 

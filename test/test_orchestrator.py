@@ -124,28 +124,31 @@ def test_orchestrator_process_pdf_ddu_456() -> None:
     assert "PLANTA AZOTEA" not in cuerpo
     assert "Piscina Chimeneas Terraza" not in cuerpo
 
-    # 3. Tablas estructuradas (pdfplumber)
+    # 3. Tablas estructuradas con manifiesto ligero (pdfplumber)
     tablas: List[Dict[str, Any]] = datos.get("tablas") or []
     assert isinstance(tablas, list)
     assert len(tablas) == 4
+    ids_tablas = [t["id"] for t in tablas]
+    assert ids_tablas == ["DDU_456_tabla_1", "DDU_456_tabla_2", "DDU_456_tabla_3", "DDU_456_tabla_4"]
     paginas_tablas = [t["pagina"] for t in tablas]
     assert paginas_tablas == [5, 6, 7, 8]
-    texto_tablas = " ".join([" ".join([" ".join(fila) for fila in t["filas"]]) for t in tablas])
-    assert "DDU 339" in texto_tablas
-    assert "DDU 322" in texto_tablas
-    assert "DDU 168" in texto_tablas
+    assert all("archivo_anexo" in t for t in tablas)
+    assert any("339" in t["nombre"] or "322" in t["nombre"] for t in tablas)
 
-    # 4. Imágenes técnicas inventariadas (PyMuPDF fitz)
+    # 4. Imágenes técnicas con manifiesto ligero (PyMuPDF fitz)
     imagenes: List[Dict[str, Any]] = datos.get("imagenes") or []
     assert isinstance(imagenes, list)
     assert len(imagenes) >= 1
     img_p3 = next((img for img in imagenes if img.get("pagina") == 3), None)
     assert img_p3 is not None
+    assert img_p3["id"] == "DDU_456_img_1"
     assert img_p3["ancho"] == 700
     assert img_p3["alto"] == 760
-    assert img_p3["formato"] == "jpeg"
+    assert img_p3["formato"] == "png"
     assert img_p3["xref"] == 5
-    assert any(k in str(img_p3.get("descripcion", "")).lower() for k in ["esquema", "planta azotea", "corte"])
+    assert img_p3["tipo"] == "Esquema técnico"
+    assert img_p3["archivo_anexo"] == "salidas_imagenes/DDU_456_img_1.png"
+    assert any(k in str(img_p3.get("nombre", "")).lower() for k in ["esquema", "planta azotea", "corte"])
 
     # 5. Firma y distribución
     assert "DIVISIÓN" in str(datos.get("firmante", ""))
@@ -192,11 +195,13 @@ def test_export_individual_csv_ddu_456(tmp_path: Path) -> None:
         ]
         assert bloques == bloques_esperados
 
-        # Verificar contenido de Tablas e Imágenes no vacío en DDU 456
+        # Verificar contenido de Tablas e Imágenes no vacío en DDU 456 (manifiesto con IDs)
         tablas_row = next(r for r in rows if r[0] == "Tablas")
         assert tablas_row[2] != ""
-        assert "DDU 339" in tablas_row[2]
+        assert "DDU_456_tabla_1" in tablas_row[2]
+        assert "salidas_tablas/DDU_456_tabla_1.csv" in tablas_row[2]
 
         imagenes_row = next(r for r in rows if r[0] == "Imágenes")
         assert imagenes_row[2] != ""
-        assert "planta azotea" in imagenes_row[2].lower() or "esquema" in imagenes_row[2].lower()
+        assert "DDU_456_img_1" in imagenes_row[2]
+        assert "salidas_imagenes/DDU_456_img_1.png" in imagenes_row[2]

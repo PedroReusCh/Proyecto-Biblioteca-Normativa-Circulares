@@ -73,20 +73,16 @@ def _extraer_imagenes_lineas(
     for num_linea, line in enumerate(lines, 1):
         for match in patron_md_img.finditer(line):
             alt_text = match.group(1).strip()
-            src = match.group(2).strip()
-
-            ext_match = re.search(r"\.([a-zA-Z0-9]+)(?:[?#]|$)", src)
-            formato = ext_match.group(1).lower() if ext_match else "png"
             descripcion = alt_text if alt_text else f"Imagen referenciada en línea {num_linea}"
             img_id = f"DDU_{num_str}_img_{idx}"
-            rel_path = f"salidas_imagenes/{img_id}.{formato}"
+            rel_path = f"salidas_imagenes/{img_id}.png"
 
             imagenes_manifest.append({
                 "id": img_id,
                 "nombre": descripcion,
                 "pagina": 1,
                 "tipo": "Esquema técnico" if "esquema" in descripcion.lower() else "Imagen / Diagrama",
-                "formato": formato,
+                "formato": "png",
                 "dimensiones": "0x0",
                 "ancho": 0,
                 "alto": 0,
@@ -114,7 +110,7 @@ class ImagenesExtractor(BaseExtractor):
         pdf_path: Optional[Path] = None,
         output_dir: Optional[Path] = None,
     ) -> ResultadoBloque:
-        """Extrae e inventaría imágenes y esquemas técnicos con PyMuPDF (fitz) y exporta los binarios.
+        """Extrae e inventaría imágenes y esquemas técnicos con PyMuPDF (fitz) y exporta en formato PNG sin pérdida.
 
         Args:
             raw_text: Texto completo de la circular.
@@ -170,7 +166,6 @@ class ImagenesExtractor(BaseExtractor):
 
                             w = int(base_img.get("width", 0))
                             h = int(base_img.get("height", 0))
-                            ext = str(base_img.get("ext", "png")).lower()
                             image_bytes: bytes = base_img.get("image", b"")
                             byte_len = len(image_bytes)
 
@@ -197,11 +192,16 @@ class ImagenesExtractor(BaseExtractor):
                             vistos_xrefs.add(xref)
                             descripcion = _generar_descripcion_tecnica(page_text, num_pag, w, h)
                             img_id = f"DDU_{num_str}_img_{img_idx}"
-                            filename = f"{img_id}.{ext}"
+                            filename = f"{img_id}.png"
 
                             dir_imagenes.mkdir(parents=True, exist_ok=True)
                             img_out_path = dir_imagenes / filename
-                            img_out_path.write_bytes(image_bytes)
+
+                            # Exportar en formato PNG sin pérdida (lossless) con Pixmap
+                            pix = fitz_mod.Pixmap(doc, xref)
+                            if pix.n >= 5:
+                                pix = fitz_mod.Pixmap(fitz_mod.csRGB, pix)
+                            pix.save(str(img_out_path))
 
                             rel_path = f"salidas_imagenes/{filename}"
                             manifest_imagenes.append({
@@ -209,7 +209,7 @@ class ImagenesExtractor(BaseExtractor):
                                 "nombre": descripcion,
                                 "pagina": num_pag,
                                 "tipo": "Esquema técnico" if "esquema" in descripcion.lower() else "Imagen / Diagrama",
-                                "formato": ext,
+                                "formato": "png",
                                 "dimensiones": f"{w}x{h}",
                                 "ancho": w,
                                 "alto": h,
@@ -238,7 +238,7 @@ class ImagenesExtractor(BaseExtractor):
             datos={"imagenes": manifest_imagenes},
             confianza=1.0 if exito else 0.0,
             observaciones=(
-                f"Se detectaron {len(manifest_imagenes)} imagen(es)/diagrama(s) y se exportaron a {dir_imagenes.name}/."
+                f"Se detectaron {len(manifest_imagenes)} imagen(es)/diagrama(s) y se exportaron en PNG a {dir_imagenes.name}/."
                 if exito
                 else "No se detectaron imágenes ni esquemas técnicos relevantes en el documento."
             ),
