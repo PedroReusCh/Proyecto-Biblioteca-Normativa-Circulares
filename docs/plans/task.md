@@ -1,13 +1,7 @@
 | Estado | Tarea |
 | :--- | :--- |
-| 🟢 Completado | 1. Saneamiento Tipográfico OCR Universal (`utils_cleaner.py` e integración en `materia.py`) |
-| 🟢 Completado | 2. Implementar nuevo ETL Modular `TablasExtractor` (`tablas.py` con `pdfplumber`) y tests |
-| 🟢 Completado | 3. Implementar nuevo ETL Modular `ImagenesExtractor` (`imagenes.py` con PyMuPDF) y tests |
-| 🟢 Completado | 4. Descontaminar `CuerpoExtractor` de etiquetas de esquemas y refinar `FirmaExtractor` |
-| 🟢 Completado | 5. Orquestación con 14 bloques, regeneración de CSV/XML/RDF y verificación total de la suite |
-
-
-
-
-
-
+| 🟢 Completado | 1. Implementación base de los 14 bloques ETL y saneamiento OCR DDU 456 |
+| 🔄 En curso | 2. Refactorizar TablasExtractor (tablas.py) para emitir manifiesto con IDs y exportar CSVs anexos en salidas_tablas/ |
+| ⏳ Pendiente | 3. Refactorizar ImagenesExtractor (imagenes.py) para emitir manifiesto con IDs y exportar imágenes en salidas_imagenes/ |
+| ⏳ Pendiente | 4. Actualizar DDUOrchestrator, tests y regenerar salidas_csv/DDU_456_extraido.csv |
+| ⏳ Pendiente | 5. Verificación final de la suite completa y actualización de CHANGELOG.md |

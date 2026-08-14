@@ -1,9 +1,11 @@
 """Extractor modular de Tablas con pdfplumber y análisis tabular (TablasExtractor)."""
 
 import argparse
+import csv
 from dataclasses import asdict
 import json
 from pathlib import Path
+import re
 import sys
 from typing import Any, Dict, List, Optional
 
@@ -121,6 +123,33 @@ def _compactar_tabla_pdf(raw_table: List[List[Any]]) -> Optional[Dict[str, Any]]
     }
 
 
+def _determinar_nombre_tabla(encabezados: List[str], filas: List[List[str]], pagina: int) -> str:
+    """Genera un nombre descriptivo para una tabla a partir de sus encabezados y contenido."""
+    todo_texto = " ".join(encabezados + [c for fila in filas for c in fila])
+    if "DDU 339" in todo_texto and "DDU 322" in todo_texto:
+        return "Modificaciones Normativas (DDU 339, DDU 322)"
+    if "DDU 339" in todo_texto:
+        return "Modificaciones Normativas (DDU 339)"
+    if "DDU 322" in todo_texto:
+        return "Modificaciones Normativas (DDU 322)"
+    if "DDU 168" in todo_texto:
+        return "Modificaciones Normativas (DDU 168)"
+    if any("modifica" in h.lower() or "circular" in h.lower() for h in encabezados):
+        return f"Tabla de Modificaciones Normativas (Pág. {pagina})"
+    if encabezados:
+        return f"Tabla: {', '.join(encabezados[:2])} (Pág. {pagina})"
+    return f"Tabla técnica (Pág. {pagina})"
+
+
+def _exportar_tabla_csv(encabezados: List[str], filas: List[List[str]], destino_csv: Path) -> None:
+    """Exporta una tabla individual como archivo CSV estructurado."""
+    destino_csv.parent.mkdir(parents=True, exist_ok=True)
+    with open(destino_csv, "w", encoding="utf-8-sig", newline="") as f:
+        writer = csv.writer(f, delimiter=";", quoting=csv.QUOTE_ALL, lineterminator="\r\n")
+        writer.writerow(encabezados)
+        writer.writerows(filas)
+
+
 def _extraer_tablas_lineas(lines: List[str]) -> List[Dict[str, Any]]:
     """Extrae tablas en formato Markdown presentes en una lista de líneas de texto."""
     tablas: List[Dict[str, Any]] = []
@@ -174,18 +203,20 @@ class TablasExtractor(BaseExtractor):
         raw_text: str,
         lines: List[str],
         pdf_path: Optional[Path] = None,
+        output_dir: Optional[Path] = None,
     ) -> ResultadoBloque:
-        """Extrae tablas estructuradas usando pdfplumber o análisis de líneas de texto.
+        """Extrae tablas estructuradas usando pdfplumber o análisis de líneas de texto y genera manifiesto.
 
         Args:
             raw_text: Texto completo de la circular.
             lines: Lista de líneas limpias.
             pdf_path: Ruta opcional al archivo PDF para extracción nativa con pdfplumber.
+            output_dir: Directorio opcional de salida para guardar los CSVs de tablas.
 
         Returns:
-            ResultadoBloque con la lista de tablas extraídas y formato Markdown.
+            ResultadoBloque con la lista de manifiesto ligero de tablas extraídas.
         """
-        tablas_extraidas: List[Dict[str, Any]] = []
+        tablas_crudas: List[Dict[str, Any]] = []
 
         if pdf_path is not None and pdf_path.exists():
             try:
@@ -194,7 +225,6 @@ class TablasExtractor(BaseExtractor):
 
                 with pdfplumber_mod.open(pdf_path) as pdf:
                     for p_idx, page in enumerate(pdf.pages):
-
                         num_pag = p_idx + 1
                         raw_tables = page.extract_tables()
                         if not raw_tables:
@@ -202,7 +232,7 @@ class TablasExtractor(BaseExtractor):
                         for raw_t in raw_tables:
                             res = _compactar_tabla_pdf(raw_t)
                             if res is not None:
-                                tablas_extraidas.append({
+                                tablas_crudas.append({
                                     "pagina": num_pag,
                                     "encabezados": res["encabezados"],
                                     "filas": res["filas"],
@@ -217,29 +247,75 @@ class TablasExtractor(BaseExtractor):
                     observaciones=f"Error al procesar PDF con pdfplumber: {e}",
                 )
 
-        if not tablas_extraidas:
-            tablas_extraidas = _extraer_tablas_lineas(lines)
+        if not tablas_crudas:
+            tablas_crudas = _extraer_tablas_lineas(lines)
 
-        exito = len(tablas_extraidas) > 0
+        if not tablas_crudas:
+            return ResultadoBloque(
+                nombre_bloque=self.nombre_bloque,
+                exito=False,
+                datos={"tablas": []},
+                confianza=0.0,
+                observaciones="No se detectaron tablas en el documento.",
+            )
+
+        # Determinar identificador base DDU (ej. DDU_456)
+        num_str = "desconocido"
+        if pdf_path is not None:
+            m_pdf = re.search(r"\b(\d+)\b", pdf_path.stem)
+            if m_pdf:
+                num_str = m_pdf.group(1)
+        if num_str == "desconocido" and raw_text:
+            m_txt = re.search(r"DDU\s*(\d+)", raw_text, re.IGNORECASE)
+            if m_txt:
+                num_str = m_txt.group(1)
+
+        dir_tablas = output_dir if output_dir is not None else (_PROYECTO_RAIZ / "salidas_tablas")
+        dir_tablas.mkdir(parents=True, exist_ok=True)
+
+        manifest_tablas: List[Dict[str, Any]] = []
+        for idx, t in enumerate(tablas_crudas, start=1):
+            tabla_id = f"DDU_{num_str}_tabla_{idx}"
+            encabezados: List[str] = t["encabezados"]
+            filas: List[List[str]] = t["filas"]
+            num_pag: int = int(t["pagina"])
+            nombre = _determinar_nombre_tabla(encabezados, filas, num_pag)
+            csv_filename = f"{tabla_id}.csv"
+            csv_path = dir_tablas / csv_filename
+
+            _exportar_tabla_csv(encabezados, filas, csv_path)
+
+            rel_path = f"salidas_tablas/{csv_filename}"
+            manifest_tablas.append({
+                "id": tabla_id,
+                "nombre": nombre,
+                "pagina": num_pag,
+                "filas": len(filas),
+                "columnas": len(encabezados),
+                "archivo_anexo": rel_path,
+            })
+
         return ResultadoBloque(
             nombre_bloque=self.nombre_bloque,
-            exito=exito,
-            datos={"tablas": tablas_extraidas},
-            confianza=1.0 if exito else 0.0,
-            observaciones=(
-                f"Se extrajeron {len(tablas_extraidas)} tabla(s) estructurada(s)."
-                if exito
-                else "No se detectaron tablas en el documento."
-            ),
+            exito=True,
+            datos={"tablas": manifest_tablas},
+            confianza=1.0,
+            observaciones=f"Se extrajeron {len(manifest_tablas)} tabla(s) y se exportaron a {dir_tablas.name}/.",
         )
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="ETL Tablas Extractor Standalone con pdfplumber")
     parser.add_argument("--pdf", type=str, required=True, help="Ruta al archivo PDF")
+    parser.add_argument("--output-dir", type=str, default="salidas_tablas", help="Directorio de salida para tablas")
     args = parser.parse_args()
 
     target_pdf = Path(args.pdf)
     extractor = TablasExtractor()
-    resultado_bloque = extractor.extract(raw_text="", lines=[], pdf_path=target_pdf)
+    resultado_bloque = extractor.extract(
+        raw_text="",
+        lines=[],
+        pdf_path=target_pdf,
+        output_dir=Path(args.output_dir),
+    )
     print(json.dumps(asdict(resultado_bloque), indent=2, ensure_ascii=False))
