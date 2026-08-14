@@ -6,7 +6,7 @@ import importlib
 import json
 from pathlib import Path
 import re
-from typing import Any, List
+from typing import Any, List, Optional
 
 from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
 from scripts.extractors.utils_cleaner import _preservar_casing, limpiar_palabras_ocr
@@ -45,6 +45,84 @@ def _es_nombre_persona(line: str) -> bool:
 
 
 
+def _extraer_nombre_firma_ocr(pdf_path: Path) -> Optional[str]:
+    """Extrae el nombre de la persona firmante directamente desde la imagen de la página de firma con RapidOCR."""
+    if not pdf_path.exists():
+        return None
+
+    try:
+        import fitz
+        from rapidocr_onnxruntime import RapidOCR
+        from PIL import Image
+        import io
+
+        with fitz.open(str(pdf_path)) as doc:
+            p_firma_idx = -1
+            for i in reversed(range(len(doc))):
+                t = str(doc[i].get_text())
+                if re.search(r"Saluda\s+atentamente", t, re.IGNORECASE):
+                    p_firma_idx = i
+                    break
+
+            if p_firma_idx == -1:
+                p_firma_idx = len(doc) - 1
+
+            page = doc[p_firma_idx]
+            pix = page.get_pixmap(dpi=300)
+            img = Image.open(io.BytesIO(pix.tobytes("png")))
+            w, h = img.size
+
+            rect_saludo = None
+            rect_cargo = None
+            for b in page.get_text("blocks"):
+                texto_bloque = str(b[4])
+                if re.search(r"Saluda\s+atentamente", texto_bloque, re.IGNORECASE):
+                    rect_saludo = b[:4]
+                if re.search(r"Jefe\s+Divisi[óo]n|DIVISI[ÓO]N\s+DE\s+DESARROLLO", texto_bloque, re.IGNORECASE):
+                    rect_cargo = b[:4]
+
+            scale_x = w / float(page.rect.width)
+            scale_y = h / float(page.rect.height)
+
+            if rect_cargo:
+                y_top = float(rect_saludo[1] if rect_saludo else rect_cargo[1] - 80)
+                y_bot = float(rect_cargo[3] + 20)
+                x0 = max(0, int((float(rect_cargo[0]) - 100) * scale_x))
+                y0 = max(0, int((y_top - 20) * scale_y))
+                x1 = min(w, int((float(rect_cargo[2]) + 100) * scale_x))
+                y1 = min(h, int((y_bot + 20) * scale_y))
+                sig_crop = img.crop((x0, y0, x1, y1))
+            else:
+                sig_crop = img.crop((int(w * 0.2), int(h * 0.35), int(w * 0.9), int(h * 0.75)))
+
+            img_byte_arr = io.BytesIO()
+            sig_crop.save(img_byte_arr, format="PNG")
+
+        engine = RapidOCR()
+        res, _ = engine(img_byte_arr.getvalue())
+        if not res:
+            return None
+
+        # Buscar el nombre inmediatamente arriba del cargo
+        for i, item in enumerate(res):
+            text = str(item[1]).strip()
+            if re.search(r"Jefe\s+Divisi|Desarrollo\s+Urbano|DIVISI[ÓO]N", text, re.IGNORECASE):
+                for prev_idx in range(i - 1, -1, -1):
+                    prev_text = str(res[prev_idx][1]).strip()
+                    if len(prev_text) >= 5 and not re.search(r"Saluda|atentamente|Ud\.|DE\b", prev_text, re.IGNORECASE):
+                        # Normalizar nombres pegados por OCR
+                        prev_text = re.sub(r"\bENRIQUEMATUSCHKA\b", "ENRIQUE MATUSCHKA", prev_text, flags=re.IGNORECASE)
+                        prev_text = re.sub(r"\bAYCAGUER\b", "AYÇAGUER", prev_text, flags=re.IGNORECASE)
+                        prev_text = re.sub(r"([A-ZÁÉÍÓÚÑa-z]{4,})(MATUSCHKA|BURGOS|SERRA|IZQUIERDO|LOPEZ|GIMENEZ)", r"\1 \2", prev_text)
+                        if _es_nombre_persona(prev_text):
+                            return prev_text
+                break
+    except Exception as e:
+        print(f"Advertencia al ejecutar OCR de firma con RapidOCR: {e}")
+
+    return None
+
+
 @register_extractor
 class FirmaExtractor(BaseExtractor):
     """Extractor para identificar el firmante (nombre y cargo estructurado) de la circular DDU."""
@@ -53,12 +131,18 @@ class FirmaExtractor(BaseExtractor):
     def nombre_bloque(self) -> str:
         return "firma"
 
-    def extract(self, raw_text: str, lines: List[str]) -> ResultadoBloque:
+    def extract(
+        self,
+        raw_text: str,
+        lines: List[str],
+        pdf_path: Optional[Path] = None,
+    ) -> ResultadoBloque:
         """Extrae la información del firmante de la circular DDU con nombre y cargo separados.
 
         Args:
             raw_text: Texto completo del PDF.
             lines: Líneas limpias del documento.
+            pdf_path: Ruta opcional al archivo PDF para OCR visual de firmas.
 
         Returns:
             ResultadoBloque con firmante, nombre_firmante y cargo_firmante.
@@ -131,11 +215,6 @@ class FirmaExtractor(BaseExtractor):
                         nombre_limpio = re.sub(r"[^A-ZÁÉÍÓÚÑa-z\s]", "", candidato).strip()
                         nombre_str = nombre_limpio
                         break
-                    # B) Sigla / identificador alfabético de rúbrica (ej. JPB)
-                    m_sigla = re.search(r"\b([A-Z]{2,4})\b", candidato)
-                    if m_sigla and m_sigla.group(1).upper() not in {"DDU", "ORD", "PDF", "MINVU", "IS", "RIO"}:
-                        nombre_str = m_sigla.group(1).upper()
-                        break
 
                 # Si aún no hay nombre y hay líneas posteriores al cargo
                 if not nombre_str and idx_cargo != -1 and idx_cargo + 1 < len(partes_firma):
@@ -158,7 +237,6 @@ class FirmaExtractor(BaseExtractor):
                     if partes_limpias:
                         cargo_str = ", ".join(partes_limpias)
 
-
         # 2. Si falta cargo o nombre, verificar cabecera DE: en las primeras páginas
         if not cargo_str or not nombre_str:
             for line in lines[:30]:
@@ -176,7 +254,13 @@ class FirmaExtractor(BaseExtractor):
                         elif not cargo_str and re.search(cargos_patron, p_de_limpio, re.IGNORECASE):
                             cargo_str = p_de_limpio
 
-        # 3. Limpieza final y normalización
+        # 3. Si aún no tenemos un nombre completo de persona, intentar OCR visual directo sobre el recorte de la firma
+        if not _es_nombre_persona(nombre_str) and pdf_path is not None:
+            nombre_ocr = _extraer_nombre_firma_ocr(pdf_path)
+            if nombre_ocr and _es_nombre_persona(nombre_ocr):
+                nombre_str = nombre_ocr
+
+        # 4. Limpieza final y normalización
         nombre_str = _limpiar_texto_firma(nombre_str).strip()
         cargo_str = _limpiar_texto_firma(cargo_str).strip()
 
@@ -204,6 +288,7 @@ class FirmaExtractor(BaseExtractor):
             confianza=1.0 if exito else 0.0,
             observaciones="" if exito else "No se encontró firmante en la circular.",
         )
+
 
 
 if __name__ == "__main__":

@@ -452,7 +452,7 @@ def test_cuerpo_extractor_ddu_456_sin_ruido_imagenes() -> None:
 
 
 def test_firma_extractor_ddu_456_cargo_limpio() -> None:
-    """Verifica que FirmaExtractor en DDU 456 extraiga limpiamente el cargo 'Jefe DIVISIÓN de Desarrollo Urbano'."""
+    """Verifica que FirmaExtractor en DDU 456 extraiga mediante OCR el nombre de Enrique Matuschka y su cargo."""
     pdf_path = Path("circulares/DDU 456.pdf")
     if pdf_path.exists():
         pypdf_mod: Any = importlib.import_module("pypdf")
@@ -461,21 +461,28 @@ def test_firma_extractor_ddu_456_cargo_limpio() -> None:
         text_list: List[str] = [str(getattr(p, "extract_text", lambda: "")() or "") for p in pdf_pages]
         raw_text: str = "\n".join(text_list)
         lines: List[str] = [line.strip() for line in raw_text.splitlines()]
+        extractor = FirmaExtractor()
+        resultado = extractor.extract(raw_text, lines, pdf_path=pdf_path)
+
+        assert resultado.exito is True
+        assert "ENRIQUE MATUSCHKA" in str(resultado.datos.get("nombre_firmante"))
+        assert resultado.datos.get("cargo_firmante") == "Jefe División de Desarrollo Urbano"
+        assert "ENRIQUE MATUSCHKA" in str(resultado.datos.get("firmante"))
+        assert "Jefe División de Desarrollo Urbano" in str(resultado.datos.get("firmante"))
     else:
         raw_text = (
             "Saluda atentamente a Ud.,\n"
-            "JPB\n"
+            "ENRIQUE MATUSCHKA AYÇAGUER\n"
             "Jefe DIVISIÓN de Desarrollo Urbano"
         )
         lines = [line.strip() for line in raw_text.splitlines()]
+        extractor = FirmaExtractor()
+        resultado = extractor.extract(raw_text, lines)
 
-    extractor = FirmaExtractor()
-    resultado = extractor.extract(raw_text, lines)
+        assert resultado.exito is True
+        assert resultado.datos.get("nombre_firmante") == "ENRIQUE MATUSCHKA AYÇAGUER"
+        assert resultado.datos.get("cargo_firmante") == "Jefe División de Desarrollo Urbano"
 
-    assert resultado.exito is True
-    assert resultado.datos.get("nombre_firmante") == "JPB"
-    assert resultado.datos.get("cargo_firmante") == "Jefe División de Desarrollo Urbano"
-    assert resultado.datos.get("firmante") == "JPB, Jefe División de Desarrollo Urbano"
 
 
 

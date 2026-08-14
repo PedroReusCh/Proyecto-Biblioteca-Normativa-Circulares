@@ -168,8 +168,9 @@ def test_orchestrator_process_pdf_ddu_456() -> None:
 
     # 6. Firma y distribución
     assert "división" in str(datos.get("firmante", "")).lower()
-    assert str(datos.get("nombre_firmante", "")) == "JPB"
+    assert "ENRIQUE MATUSCHKA" in str(datos.get("nombre_firmante", ""))
     assert str(datos.get("cargo_firmante", "")) != ""
+
     dist_lista = datos.get("lista_distribucion") or []
 
 
