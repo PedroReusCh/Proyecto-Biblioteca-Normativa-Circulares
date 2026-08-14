@@ -9,10 +9,12 @@ import re
 from typing import Any, List
 
 from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
+from scripts.extractors.utils_cleaner import limpiar_palabras_ocr
 
 
 def _limpiar_texto_firma(texto: str) -> str:
     """Repara distorsiones típicas de OCR en nombres, cargos y ministerios del firmante."""
+    texto = limpiar_palabras_ocr(texto)
     texto = re.sub(r"\bN\s+DIEGO\s+ZQUIERDO\s+HEVIA\b", "JUAN DIEGO IZQUIERDO HEVIA", texto, flags=re.IGNORECASE)
     texto = re.sub(r"\bN\s+DIEGO\s+IZQUIERDO\s+HEVIA\b", "JUAN DIEGO IZQUIERDO HEVIA", texto, flags=re.IGNORECASE)
     texto = re.sub(r"\bD\s*VISI[ÓO\?I\ufffd\s]+N\b", "DIVISIÓN", texto, flags=re.IGNORECASE)

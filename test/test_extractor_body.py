@@ -1,6 +1,10 @@
 """Pruebas unitarias para los extractores independientes de cuerpo, firma y distribución (ETLs 9 a 11)."""
 
+import importlib
+from pathlib import Path
+import re
 from typing import Any, List
+import pytest
 
 from scripts.ddu_types import SeccionDDU
 from scripts.extractors import registrar_todos_los_extractores
@@ -355,4 +359,78 @@ def test_distribucion_extractor_ddu_456() -> None:
     dist_list = list(resultado.datos.get("lista_distribucion", []))
     assert len(dist_list) >= 9
     assert any("Oficina de Partes MINVU Ley 20.285" in d for d in dist_list)
+
+
+def test_cuerpo_extractor_ddu_456_sin_ruido_imagenes() -> None:
+    """Verifica que el cuerpo extraído de DDU 456 no contenga ruido de diagramas ni palabras rotas por OCR."""
+    pdf_path = Path("circulares/DDU 456.pdf")
+    if not pdf_path.exists():
+        pytest.skip("PDF DDU 456 no disponible")
+
+    pypdf_mod: Any = importlib.import_module("pypdf")
+    pdf_reader: Any = pypdf_mod.PdfReader(pdf_path)
+    pdf_pages: Any = pdf_reader.pages
+    text_list: List[str] = [str(getattr(p, "extract_text", lambda: "")() or "") for p in pdf_pages]
+    raw_text: str = "\n".join(text_list)
+    lines: List[str] = [line.strip() for line in raw_text.splitlines()]
+
+    extractor = CuerpoExtractor()
+    resultado = extractor.extract(raw_text, lines)
+
+    assert resultado.exito is True
+    secciones: List[SeccionDDU] = list(resultado.datos.get("secciones", []))
+    assert len(secciones) > 0
+
+    parrafos_cuerpo: List[str] = [p for s in secciones for p in s.get("parrafos", [])]
+    cuerpo_total = " ".join(parrafos_cuerpo)
+
+    # 1. Numeral 4 debe contener solo la frase narrativa introductoria
+    parrafos_num4 = [p for p in parrafos_cuerpo if p.startswith("4. A continuación")]
+    assert len(parrafos_num4) == 1
+    num4_texto = parrafos_num4[0]
+    assert "A continuación, se presenta un esquema ilustrativo que sintetiza algunos de los aspectos abordados en la presente Circular:" in num4_texto
+
+    # 2. Numeral 4 NO debe contener etiquetas o fragmentos sueltos de los diagramas/planos
+    ruidos_prohibidos = [
+        "PLANTA AZOTEA",
+        "CORTE ESQUEMÁTICO",
+        "Piscina",
+        "Salida caja de escalera",
+        "Chimeneas",
+        "Pérgola",
+        "Ascensores",
+        "½",
+    ]
+    for ruido in ruidos_prohibidos:
+        assert ruido not in num4_texto, f"Ruido de diagrama '{ruido}' encontrado en Numeral 4"
+
+    # 3. Verificar saneamiento OCR en el cuerpo
+    assert "quinch os" not in cuerpo_total
+    assert "quinchos" in cuerpo_total
+    assert not re.search(r"\ba\s+rt[íi]culo\b", cuerpo_total, re.IGNORECASE)
+    assert not re.search(r"\binciso\s+s\b", cuerpo_total, re.IGNORECASE)
+    assert not re.search(r"\brelativo\s+s\b", cuerpo_total, re.IGNORECASE)
+    assert "relativos" in cuerpo_total
+
+
+def test_firma_extractor_ddu_456_cargo_limpio() -> None:
+    """Verifica que FirmaExtractor en DDU 456 extraiga limpiamente el cargo 'Jefe DIVISIÓN de Desarrollo Urbano'."""
+    pdf_path = Path("circulares/DDU 456.pdf")
+    if not pdf_path.exists():
+        pytest.skip("PDF DDU 456 no disponible")
+
+    pypdf_mod: Any = importlib.import_module("pypdf")
+    pdf_reader: Any = pypdf_mod.PdfReader(pdf_path)
+    pdf_pages: Any = pdf_reader.pages
+    text_list: List[str] = [str(getattr(p, "extract_text", lambda: "")() or "") for p in pdf_pages]
+    raw_text: str = "\n".join(text_list)
+    lines: List[str] = [line.strip() for line in raw_text.splitlines()]
+
+    extractor = FirmaExtractor()
+    resultado = extractor.extract(raw_text, lines)
+
+    assert resultado.exito is True
+    firmante = str(resultado.datos.get("firmante", ""))
+    assert firmante == "Jefe DIVISIÓN de Desarrollo Urbano"
+
 

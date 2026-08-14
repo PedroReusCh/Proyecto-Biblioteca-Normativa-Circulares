@@ -10,10 +10,55 @@ from typing import Any, List
 
 from scripts.ddu_types import SeccionDDU
 from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
+from scripts.extractors.utils_cleaner import limpiar_palabras_ocr
+
+
+def _es_etiqueta_diagrama(line: str) -> bool:
+    """Detecta fragmentos de texto y etiquetas de planos, diagramas o esquemas técnicos."""
+    line_clean = line.strip()
+    if not line_clean:
+        return False
+    # Símbolos y fracciones aisladas (ej. ½, ¼, ¾, \ufffd)
+    if re.match(r"^[\u00bd\u00bc\u00be\ufffd\?]+$", line_clean):
+        return True
+
+    # Encabezados típicos de planos o esquemas técnicos
+    if re.search(r"\b(?:PLANTA\s+AZOTEA|CORTE\s+ESQUEM[AÁ]TICO|SIN\s+ESCALA)\b", line_clean, re.IGNORECASE):
+        return True
+
+    # Etiquetas cortas y fragmentos de esquemas en azoteas/cortes
+    patrones_diagrama = [
+        r"^EDIFICIO$",
+        r"^(?:Piscinas?|Chimeneas?|P[eé]rgolas?|Ascensores|Barandas?|Paramentos|perimetrales|jardineras|escalera)$",
+        r"^Salida\s+caja\s+de(?:\s+escalera)?$",
+        r"^Terraza(?:\s+Terraza)?$",
+        r"^Vegetaci[oó]n,?(?:\s+jardineras)?$",
+        r"^M[aá]ximo\s+25%(?:\s+de\s+la\s+superficie(?:\s+de\s+la\s+azotea\.?)?)?$",
+        r"^de\s+la\s+superficie(?:\s+de\s+la\s+azotea\.?)?$",
+        r"^de\s+la\s+azotea\.?$",
+        r"^Altura\s+m[aá]xima\s+de(?:\s+edificaci[oó]n\s+permitida(?:\s+por\s+el\s+IPT\.?)?)?$",
+        r"^edificaci[oó]n\s+permitida(?:\s+por\s+el\s+IPT\.?)?$",
+        r"^por\s+el\s+IPT\.?$",
+        r"^Piscinas,\s+vegetaci[oó]n,?(?:\s+jardineras,?\s+elementos(?:\s+ornamentales\.?)?)?$",
+        r"^jardineras,?\s+elementos(?:\s+ornamentales,?\s+resto\s+de\s+la)?$",
+        r"^ornamentales,?\s+resto\s+de\s+la$",
+        r"^resto\s+de\s+la$",
+        r"^ornamentales\.?$",
+        r"^Salas\s+de\s+M[aá]quinas,?(?:\s+Cajas\s+de\s+escalera,?\s+Chimeneas\.?)?$",
+        r"^Cajas\s+de\s+escalera,?(?:\s+Chimeneas\.?)?$",
+        r"^Chimeneas\.?$",
+        r"^superficie\s+de\s+la\s+azotea\.?$",
+        r"^\(con\s+un\s+m[aá]ximo\s+de\s+99%\)$",
+        r"^P[eé]rgolas,?(?:\s+quinchos,?(?:\s+otros\.?)?)?$",
+        r"^quinchos\.?$",
+        r"^otros\.?$",
+    ]
+    return any(re.search(p, line_clean, re.IGNORECASE) for p in patrones_diagrama)
 
 
 def _limpiar_texto_cuerpo(texto: str) -> str:
     """Repara palabras rotas y espacios antes de signos de puntuación producidos por OCR."""
+    texto = limpiar_palabras_ocr(texto)
     patrones_reemplazo = [
         (r"\binst\s+rumen\s+to\b", "instrumento"),
         (r"\bpermi\s+so\b", "permiso"),
@@ -239,6 +284,11 @@ class CuerpoExtractor(BaseExtractor):
             # Descartar líneas de pie de página de OCR (incluyendo espacios rotos) y resetear estado de descarte
             if _es_pie_de_pagina(line_clean):
                 omitiendo_nota_al_pie = False
+                curr_idx += 1
+                continue
+
+            # Descartar fragmentos y etiquetas sueltas de diagramas/planos técnicos
+            if _es_etiqueta_diagrama(line_clean):
                 curr_idx += 1
                 continue
 
