@@ -147,4 +147,5 @@ Para garantizar que el sistema y sus modelos semánticos de datos cumplen al 100
 pytest -v
 ```
 
-Actualmente, **45 de 45 pruebas pasan exitosamente** (100% de cobertura de la suite en estructura plana).
+Actualmente, **48 de 48 pruebas pasan exitosamente** (100% de cobertura de la suite en estructura plana).
+

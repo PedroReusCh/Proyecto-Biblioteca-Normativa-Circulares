@@ -15,7 +15,8 @@ def _limpiar_texto_firma(texto: str) -> str:
     """Repara distorsiones típicas de OCR en nombres, cargos y ministerios del firmante."""
     texto = re.sub(r"\bN\s+DIEGO\s+ZQUIERDO\s+HEVIA\b", "JUAN DIEGO IZQUIERDO HEVIA", texto, flags=re.IGNORECASE)
     texto = re.sub(r"\bN\s+DIEGO\s+IZQUIERDO\s+HEVIA\b", "JUAN DIEGO IZQUIERDO HEVIA", texto, flags=re.IGNORECASE)
-    texto = re.sub(r"\bD\s+VISI[ÓO]N\b", "DIVISIÓN", texto, flags=re.IGNORECASE)
+    texto = re.sub(r"\bD\s*VISI[ÓO\?I\ufffd\s]+N\b", "DIVISIÓN", texto, flags=re.IGNORECASE)
+    texto = re.sub(r"\bDIVISI[ÓO\?I\ufffd\s]+N\b", "DIVISIÓN", texto, flags=re.IGNORECASE)
     texto = re.sub(r"\bIS\s+RIO\b", "MINISTERIO", texto, flags=re.IGNORECASE)
     return texto
 
@@ -42,6 +43,10 @@ class FirmaExtractor(BaseExtractor):
         patron_distribucion = (
             r"^(?:DISTRIBUCI[OÓ\?I\s]+N|BUCI[OÓ\?I\s]+N|STRIBUCI[OÓ\?I\s]+N|D\s*STRIBUC[I\?OÓ\s]*N|RIB[a-z\s\)\?]*[ÓO]N)[\s:]*"
         )
+        palabras_descarte = {
+            "MOTIVO", "CONSIDERACIONES", "MATERIA", "MATERIAS", "OBSERVACIONES",
+            "ANTECEDENTES", "CIRCULAR", "TABLA", "CUADRO", "MODIFICA", "MODIFICAN"
+        }
 
         # 1. Buscar patrón "Saluda atentamente..." y extraer las líneas siguientes
         idx_saludo = -1
@@ -54,7 +59,7 @@ class FirmaExtractor(BaseExtractor):
 
         if idx_saludo != -1:
             partes_firma: List[str] = []
-            for line in lines[idx_saludo + 1 : idx_saludo + 8]:
+            for line in lines[idx_saludo + 1 : idx_saludo + 16]:
                 line_clean = line.strip()
                 if not line_clean:
                     continue
@@ -66,20 +71,51 @@ class FirmaExtractor(BaseExtractor):
                 ) or re.search(r"Ministerio\s+de\s+Vivienda", line_clean, re.IGNORECASE):
                     break
 
+                # Descartar cabeceras de tabla o textos residuales
+                palabras_linea = set(re.findall(r"\b[A-ZÁÉÍÓÚÑa-z]+\b", line_clean.upper()))
+                if palabras_linea and palabras_linea.issubset(palabras_descarte):
+                    continue
+                if re.match(r"^[\d\/\-\(\)\,\.\s\:\_~|]+$", line_clean):
+                    continue
+
                 # Limpiar caracteres ruidosos de firma o sellos de OCR
-                line_clean = re.sub(r"^[_\s\-|\.]+", "", line_clean).strip()
+                line_clean = re.sub(r"^[_\s\-|\.\~:]+", "", line_clean).strip()
                 if line_clean:
                     partes_firma.append(line_clean)
 
             if partes_firma:
-                # Filtrar líneas que consistan en ruido de sellos o símbolos de OCR
-                partes_limpias = [
-                    p for p in partes_firma
-                    if not re.search(r"[\/\~\*\<\>\(\)\;\\]", p)
-                    and len(re.findall(r"\b[A-ZÁÉÍÓÚÑa-z]{3,}\b", p)) > 0
-                ]
-                if partes_limpias:
-                    firmante = ", ".join(partes_limpias)
+                # Buscar si alguna línea contiene un cargo formal
+                cargos_patron = r"(?:JEFE|DIRECTOR|MINISTRO|SUBSECRETARI[OA]|SECRETARI[OA])\s+(?:DIVISI[ÓO\?I\ufffd\s]+N|GENERAL|DE)?\b"
+                idx_cargo = -1
+                for j, p in enumerate(partes_firma):
+                    if re.search(cargos_patron, p, re.IGNORECASE):
+                        idx_cargo = j
+                        break
+
+                if idx_cargo != -1:
+                    cargo_str = partes_firma[idx_cargo]
+                    nombre_str = ""
+                    if idx_cargo > 0:
+                        candidato_nombre = partes_firma[idx_cargo - 1]
+                        if not any(w in candidato_nombre.upper() for w in palabras_descarte):
+                            nombre_limpio = re.sub(r"[^A-ZÁÉÍÓÚÑa-z\s]", "", candidato_nombre).strip()
+                            palabras = nombre_limpio.split()
+                            # Si es un nombre de persona real (al menos 2 palabras de longitud >= 3) y sin siglas
+                            if len(palabras) >= 2 and all(len(w) >= 3 for w in palabras) and not re.search(r"\b(?:JPB|OFPA|DDU|ORD|MINVU)\b", nombre_limpio, re.IGNORECASE):
+                                nombre_str = nombre_limpio
+                    firmante = f"{nombre_str}, {cargo_str}".strip(", ") if nombre_str else cargo_str
+
+
+                else:
+                    partes_limpias = [
+                        p for p in partes_firma
+                        if not re.search(r"[\/\~\*\<\>\(\)\;\\]", p)
+                        and len(re.findall(r"\b[A-ZÁÉÍÓÚÑa-z]{3,}\b", p)) > 0
+                        and not any(w in p.upper() for w in palabras_descarte)
+                    ]
+                    if partes_limpias:
+                        firmante = ", ".join(partes_limpias)
+
 
         # 2. Si no se encontró mediante saludo o era ruido OCR, buscar patrones de emisor/cargo
         if not firmante:

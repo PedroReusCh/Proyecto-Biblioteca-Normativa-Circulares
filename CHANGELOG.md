@@ -4,7 +4,27 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/) y este proyecto se adhiere a las prácticas de control de versiones semántico.
 
+## [0.9.0] - 2026-08-14
+
+### Added
+
+* **Soporte y Transformación Integral de la Circular DDU 456**:
+  * Procesamiento completo del PDF `circulares/DDU 456.pdf` (9 páginas, año 2021) con extracción estructurada de 7 numerales y 34 destinatarios.
+  * Generación de archivos de salida: `salidas_csv/DDU_456_extraido.csv`, `salidas_xml/DDU_456_akoma.xml` y `salidas_rdf/DDU_456_rdf.ttl`.
+  * Indexación en el Grafo RDF de relaciones normativas hacia la LGUC (DFL 458), OGUC (DTO 47 y artículos 1.1.2, 2.6.3, 2.6.11, 2.6.12, 6.1.8) y precedencia de circulares (`DDU 168`, `DDU 322`, `DDU 339`, `DDU 498`).
+  * Inclusión de nuevas pruebas unitarias en [`test/test_extractor_metadata.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_extractor_metadata.py) y [`test/test_extractor_body.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_extractor_body.py) elevando la suite a **48 pruebas exitosas**.
+
+### Changed
+
+* **Refinamiento de Extractores de Metadatos y Firma**:
+  * [`scripts/extractors/firma.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/firma.py): Descarte de falsos positivos de cabeceras de tablas (`Motivo y/o Consideraciones`) y captura precisa del cargo del firmante.
+  * [`scripts/extractors/materia.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/materia.py) y [`scripts/extractors/descriptores.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/descriptores.py): Detección y separación exacta de descriptores en mayúsculas sin prefijo explícito (ej. `NORMAS URBANISTICAS`).
+  * [`scripts/ddu_to_xml.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_xml.py): Normalización de `docNumber` para prevenir duplicación de prefijos `DDU`.
+
+---
+
 ## [0.8.0] - 2026-08-14
+
 
 ### Added
 

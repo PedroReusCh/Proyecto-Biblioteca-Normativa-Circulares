@@ -306,3 +306,53 @@ def test_cuerpo_extractor_llamada_nota_imagenes_ocr() -> None:
     assert resultado.exito is True
     cuerpo = str(resultado.datos.get("cuerpo", ""))
     assert "imágenes [2]" in cuerpo
+
+
+def test_firma_extractor_ddu_456_tabla_motivo() -> None:
+    """Prueba que FirmaExtractor descarte cabeceras de tabla como 'Motivo y/o Consideraciones' y extraiga el cargo real."""
+    lines = [
+        "7. Para adecuarse a los cambios normativos...",
+        "Saluda atentamente a Ud.,",
+        "-",
+        "~",
+        "L",
+        "Motivo y/o",
+        "Consideraciones",
+        "-:.. f' .:s \"-Z, - ~",
+        "/ JPB  O~,  1_1-0",
+        "Jefe División de Desarrollo Urbano",
+        "871/(165-2)",
+        "DISTRIBUCIÓN:",
+        "1. Sr. Ministro de Vivienda y Urbanismo.",
+    ]
+    extractor = FirmaExtractor()
+    resultado = extractor.extract("\n".join(lines), lines)
+    assert resultado.exito is True
+    firmante = str(resultado.datos.get("firmante", ""))
+    assert "Consideraciones" not in firmante
+    assert "Motivo" not in firmante
+    assert "JEFE DIVISIÓN DE DESARROLLO URBANO" in firmante.upper()
+
+
+def test_distribucion_extractor_ddu_456() -> None:
+    """Prueba que DistribucionExtractor capture la nómina completa de distribución de DDU 456."""
+    lines = [
+        "DISTRIBUCIÓN:",
+        "1. Sr. Ministro de Vivienda y Urbanismo.",
+        "2. Sr. Subsecretario de Vivienda y Urbanismo.",
+        "3. Sr. Contralor General de la República.",
+        "4. Biblioteca del Congreso Nacional.",
+        "Ministerio de Vivienda y Urbanismo - Alameda 924 - Santiago - Chile Página 8 de 9",
+        "30. OIRS.",
+        "31. Jefe SIAC.",
+        "32. Archivo DDU.",
+        "33. Oficina de Partes D.D.U.",
+        "34. Oficina de Partes MINVU Ley 20.285",
+    ]
+    extractor = DistribucionExtractor()
+    resultado = extractor.extract("\n".join(lines), lines)
+    assert resultado.exito is True
+    dist_list = list(resultado.datos.get("lista_distribucion", []))
+    assert len(dist_list) >= 9
+    assert any("Oficina de Partes MINVU Ley 20.285" in d for d in dist_list)
+

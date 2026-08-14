@@ -244,13 +244,16 @@ class DDUToXML:
         builder.dedent()
         builder.add('</meta>')
 
+        numero_clean = re.sub(r"^DDU\s*", "", numero, flags=re.IGNORECASE).strip()
+
         # Bloque <preface>
         builder.add('<preface>')
         builder.indent()
         builder.add('<p><docType>CIRCULAR</docType></p>')
-        builder.add(f'<p><docNumber>DDU {numero}</docNumber></p>')
+        builder.add(f'<p><docNumber>DDU {numero_clean}</docNumber></p>')
         builder.add(f'<p><docDate date="{fecha}">{fecha_legible}</docDate></p>')
         builder.add(f'<p><docTitle>{materia_escapada}</docTitle></p>')
+
         if descriptores:
             builder.add(f'<p>Descriptores: {self._xml_escape(descriptores)}</p>')
         builder.dedent()

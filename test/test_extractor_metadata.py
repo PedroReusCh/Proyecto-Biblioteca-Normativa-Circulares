@@ -199,3 +199,31 @@ def test_emisor_orden_invertido() -> None:
     assert resultado.exito is True
     assert "DESARROLLO URBANO" in resultado.datos["emisor"]
     assert resultado.confianza == 1.0
+
+
+def test_materia_y_descriptores_ddu_456() -> None:
+    """Prueba la separación exacta de materia y descriptores en mayúsculas para DDU 456."""
+    lines = [
+        "DDU 456",
+        "CIRCULAR ORD. N° 88 /",
+        "MAT.: Aplicación artículo 2.6.3. incisos vigésimo, vigésimo primero, vigésimo segundo y",
+        "vigésimo tercero de la OGUC, sobre terrazas y elementos exteriores ubicados en la parte",
+        "superior de los edificios y pisos mecánicos.",
+        "NORMAS URBANISTICAS ; ALTURA MÁXIMA DE EDIFICACIÓN, ELEMENTOS EXTERIORES",
+        "UBICADOS EN LA PARTE SUPERIOR DE LOS EDIFICIOS, PISOS MECÁNICOS.",
+        "SANTIAGO, 25 FEB 2021",
+        "A : SEGÚN DISTRIBUCIÓN.",
+        "DE : JEFE DIVISIÓN DE DESARROLLO URBANO.",
+    ]
+    raw = "\n".join(lines)
+    mat_res = MateriaExtractor().extract(raw, lines)
+    desc_res = DescriptoresExtractor().extract(raw, lines)
+
+    assert mat_res.exito is True
+    assert "sobre terrazas y elementos exteriores" in mat_res.datos["materia"]
+    assert "NORMAS URBANISTICAS" not in mat_res.datos["materia"]
+
+    assert desc_res.exito is True
+    assert "NORMAS URBANISTICAS" in desc_res.datos["descriptores"]
+    assert "PISOS MECÁNICOS" in desc_res.datos["descriptores"]
+

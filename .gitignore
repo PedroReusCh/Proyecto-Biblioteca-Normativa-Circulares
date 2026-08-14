@@ -47,8 +47,10 @@ tmp/
 *.docx
 *.doc
 *.xml
+*.ttl
 *.pptx
 *.ppt
+
 
 # --- Editores y Entornos de Desarrollo (IDEs) ---
 .vscode/

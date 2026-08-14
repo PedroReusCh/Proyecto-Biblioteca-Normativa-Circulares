@@ -15,7 +15,7 @@ def _es_inicio_descriptores(line: str) -> bool:
     """Verifica si una línea marca el inicio del bloque de descriptores/vocablos en mayúsculas."""
     line_clean = line.strip()
     if re.match(
-        r"^(?:PERMISOS|VIGENCIA|RECEPCIONES|DE LA PLANIFICACI[ÓO]N|MODIFICACI[ÓO]N|APROBACIONES|ESTUDIOS DE RIESGO|PLAN REGULADOR)\b",
+        r"^(?:PERMISOS|VIGENCIA|RECEPCIONES|DE LA PLANIFICACI[ÓO]N|MODIFICACI[ÓO]N|APROBACIONES|ESTUDIOS DE RIESGO|PLAN REGULADOR|NORMAS\s+URBAN[IÍ]STICAS|NORMAS)\b",
         line_clean,
         re.IGNORECASE,
     ):
@@ -23,10 +23,16 @@ def _es_inicio_descriptores(line: str) -> bool:
     letras = [c for c in line_clean if c.isalpha()]
     if len(letras) >= 5:
         es_mayus = (sum(1 for c in letras if c.isupper()) / len(letras)) >= 0.75
-        kw = ("PLANIFICACION", "PLANIFICACIÓN", "REGULADOR", "SECCIONAL", "PERMISOS", "RECEPCIONES", "RIESGO", "APROBACIONES", "MODIFICACION", "MODIFICACIÓN")
-        if es_mayus and any(k in line_clean.upper() for k in kw):
+        kw = (
+            "PLANIFICACION", "PLANIFICACIÓN", "REGULADOR", "SECCIONAL", "PERMISOS",
+            "RECEPCIONES", "RIESGO", "APROBACIONES", "MODIFICACION", "MODIFICACIÓN",
+            "NORMAS", "URBANISTICAS", "URBANÍSTICAS", "EDIFICACION", "EDIFICACIÓN",
+            "PISOS", "MECANICOS", "MECÁNICOS", "ALTURA"
+        )
+        if es_mayus and (any(k in line_clean.upper() for k in kw) or ";" in line_clean):
             return True
     return False
+
 
 
 @register_extractor
