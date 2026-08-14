@@ -124,16 +124,17 @@ def test_orchestrator_process_pdf_ddu_456() -> None:
     assert "PLANTA AZOTEA" not in cuerpo
     assert "Piscina Chimeneas Terraza" not in cuerpo
 
-    # 3. Tablas estructuradas con manifiesto ligero (pdfplumber)
+    # 3. Tablas consolidadas con manifiesto ligero (pdfplumber)
     tablas: List[Dict[str, Any]] = datos.get("tablas") or []
     assert isinstance(tablas, list)
-    assert len(tablas) == 4
-    ids_tablas = [t["id"] for t in tablas]
-    assert ids_tablas == ["DDU_456_tabla_1", "DDU_456_tabla_2", "DDU_456_tabla_3", "DDU_456_tabla_4"]
-    paginas_tablas = [t["pagina"] for t in tablas]
-    assert paginas_tablas == [5, 6, 7, 8]
-    assert all("archivo_anexo" in t for t in tablas)
-    assert any("339" in t["nombre"] or "322" in t["nombre"] for t in tablas)
+    assert len(tablas) == 1  # 1 tabla consolidada (4 páginas → 1 tabla lógica)
+    t_tabla = tablas[0]
+    assert t_tabla["id"] == "DDU_456_tabla_1"
+    assert t_tabla["paginas"] == [5, 6, 7, 8]
+    assert "archivo_anexo" in t_tabla
+    assert "DDU 339" in t_tabla["nombre"]
+    assert "DDU 322" in t_tabla["nombre"]
+    assert "DDU 168" in t_tabla["nombre"]
 
     # 4. Imágenes técnicas con manifiesto ligero (PyMuPDF fitz)
     imagenes: List[Dict[str, Any]] = datos.get("imagenes") or []

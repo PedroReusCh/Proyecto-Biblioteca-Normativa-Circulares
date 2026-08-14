@@ -9,7 +9,8 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 ### Added
 
 * **Arquitectura Desacoplada de Tablas e Imágenes con Manifiestos Ligeros e IDs Canónicos**:
-  * **Exportación Desacoplada de Tablas (`salidas_tablas/`)**: `TablasExtractor` ahora exporta cada tabla extraída como archivo CSV estructurado individual (`DDU_{num}_tabla_{idx}.csv`, `utf-8-sig`, delimitador `;`, `QUOTE_ALL`) y emite un manifiesto compacto con IDs canónicos (`DDU_456_tabla_1` a `DDU_456_tabla_4`).
+  * **Exportación Desacoplada de Tablas (`salidas_tablas/`)**: `TablasExtractor` ahora exporta cada tabla extraída como archivo CSV estructurado individual (`DDU_{num}_tabla_{idx}.csv`, `utf-8-sig`, delimitador `;`, `QUOTE_ALL`) y emite un manifiesto compacto con IDs canónicos.
+  * **Consolidación Inteligente de Tablas Multi-Página**: Tablas consecutivas con encabezados idénticos se fusionan automáticamente en una sola tabla lógica. Las filas de continuación (primera columna vacía por paginación) se concatenan con la fila precedente. DDU 456: 4 tablas parciales (pág. 5-8) → 1 tabla consolidada con 3 filas (DDU 339, DDU 322, DDU 168) y campo `paginas: [5, 6, 7, 8]`.
   * **Exportación Desacoplada de Imágenes en PNG Sin Pérdida (`salidas_imagenes/`)**: `ImagenesExtractor` ahora exporta esquemas y diagramas técnicos en formato PNG sin pérdida (`salidas_imagenes/DDU_{num}_img_{idx}.png`) mediante `fitz.Pixmap`, garantizando nitidez técnica en líneas y texto.
   * **Manifiesto Ligero en CSV Principal**: En `salidas_csv/DDU_456_extraido.csv`, los bloques `Tablas` e `Imágenes` contienen referencias JSON limpias y legibles con IDs, nombres contextuales, dimensiones/columnas/filas y rutas relativas `archivo_anexo`, evitando saturar las celdas del CSV maestro con volcados pesados.
 

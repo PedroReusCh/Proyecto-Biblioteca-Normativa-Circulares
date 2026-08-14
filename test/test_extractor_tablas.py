@@ -24,7 +24,7 @@ def test_tablas_extractor_registration() -> None:
 
 
 def test_tablas_extractor_ddu_456_pdf(tmp_path: Path) -> None:
-    """Verifica la extracción de tablas en DDU 456, generación de manifiesto y archivos CSV anexos."""
+    """Verifica la extracción consolidada de tablas multi-página en DDU 456."""
     pdf_path = PROYECTO_RAIZ / "circulares" / "DDU 456.pdf"
     if not pdf_path.exists():
         pytest.skip(f"No se encontró el archivo PDF en {pdf_path}")
@@ -43,54 +43,43 @@ def test_tablas_extractor_ddu_456_pdf(tmp_path: Path) -> None:
     assert resultado.confianza == 1.0
 
     tablas_manifest: List[Dict[str, Any]] = resultado.datos.get("tablas", [])
-    assert len(tablas_manifest) == 4, f"Se esperaban 4 tablas en DDU 456, se encontraron {len(tablas_manifest)}"
+    # Tabla consolidada: 4 páginas → 1 tabla lógica (mismos encabezados)
+    assert len(tablas_manifest) == 1, f"Se esperaba 1 tabla consolidada, se encontraron {len(tablas_manifest)}"
 
-    # 1. Verificar IDs canónicos
-    ids = [t["id"] for t in tablas_manifest]
-    assert ids == ["DDU_456_tabla_1", "DDU_456_tabla_2", "DDU_456_tabla_3", "DDU_456_tabla_4"]
+    t = tablas_manifest[0]
 
-    # 2. Páginas esperadas: 5, 6, 7, 8
-    paginas = [t["pagina"] for t in tablas_manifest]
-    assert paginas == [5, 6, 7, 8]
+    # 1. ID canónico
+    assert t["id"] == "DDU_456_tabla_1"
 
-    # 3. Metadatos del manifiesto
-    for t in tablas_manifest:
-        assert "id" in t
-        assert "nombre" in t
-        assert "pagina" in t
-        assert "filas" in t
-        assert "columnas" in t
-        assert "archivo_anexo" in t
-        assert t["filas"] >= 1
-        assert t["columnas"] >= 2
+    # 2. Páginas consolidadas
+    assert t["paginas"] == [5, 6, 7, 8]
 
-    # 4. Verificar existencia y contenido de archivos CSV generados
-    t1 = tablas_manifest[0]
-    assert "DDU 339" in t1["nombre"] or "DDU 322" in t1["nombre"]
-    csv1_path = salidas_dir / "DDU_456_tabla_1.csv"
-    assert csv1_path.exists(), f"No se encontró el archivo anexo {csv1_path}"
+    # 3. Nombre descriptivo con las 3 circulares
+    assert "DDU 339" in t["nombre"]
+    assert "DDU 322" in t["nombre"]
+    assert "DDU 168" in t["nombre"]
 
-    with open(csv1_path, "r", encoding="utf-8-sig") as f:
+    # 4. Metadatos del manifiesto
+    assert t["filas"] >= 3  # Al menos DDU 339, DDU 322, DDU 168
+    assert t["columnas"] == 3
+    assert "archivo_anexo" in t
+
+    # 5. Verificar existencia y contenido del CSV consolidado
+    csv_path = salidas_dir / "DDU_456_tabla_1.csv"
+    assert csv_path.exists(), f"No se encontró el archivo anexo {csv_path}"
+
+    with open(csv_path, "r", encoding="utf-8-sig") as f:
         reader = csv.reader(f, delimiter=";")
         header = next(reader)
         assert any("Circular" in h for h in header)
         assert any("Materia" in h for h in header)
 
         rows = list(reader)
-        assert len(rows) >= 2
+        assert len(rows) >= 3
         todo_texto = " ".join([" ".join(r) for r in rows])
         assert "DDU 339" in todo_texto
         assert "DDU 322" in todo_texto
-
-    # Verificar tabla 2 (DDU 168)
-    csv2_path = salidas_dir / "DDU_456_tabla_2.csv"
-    assert csv2_path.exists()
-    with open(csv2_path, "r", encoding="utf-8-sig") as f:
-        reader = csv.reader(f, delimiter=";")
-        next(reader)
-        rows = list(reader)
-        todo_texto2 = " ".join([" ".join(r) for r in rows])
-        assert "DDU 168" in todo_texto2
+        assert "DDU 168" in todo_texto
 
 
 def test_tablas_extractor_sin_tablas_texto() -> None:
@@ -150,7 +139,7 @@ def test_tablas_extractor_texto_markdown(tmp_path: Path) -> None:
     tablas: List[Dict[str, Any]] = resultado.datos.get("tablas", [])
     assert len(tablas) == 1
     t = tablas[0]
-    assert t["pagina"] == 1
+    assert t["paginas"] == [1]
     assert t["filas"] == 2
     assert t["columnas"] == 3
     assert "DDU" in t["id"]

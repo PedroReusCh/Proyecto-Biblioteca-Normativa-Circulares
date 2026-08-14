@@ -123,22 +123,73 @@ def _compactar_tabla_pdf(raw_table: List[List[Any]]) -> Optional[Dict[str, Any]]
     }
 
 
-def _determinar_nombre_tabla(encabezados: List[str], filas: List[List[str]], pagina: int) -> str:
+def _consolidar_tablas_multipagina(tablas_crudas: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Consolida tablas consecutivas con encabezados idénticos en una sola tabla lógica.
+
+    Cuando pdfplumber detecta tablas en páginas diferentes que comparten los mismos
+    encabezados (mismo número y nombres de columnas), se fusionan concatenando sus
+    filas. Las filas cuya primera columna está vacía se tratan como continuaciones
+    de la fila precedente, concatenando su texto.
+
+    Returns:
+        Lista de tablas consolidadas con campo 'paginas' (lista de int).
+    """
+    if not tablas_crudas:
+        return []
+
+    consolidadas: List[Dict[str, Any]] = []
+    actual: Optional[Dict[str, Any]] = None
+
+    for t in tablas_crudas:
+        enc: List[str] = t["encabezados"]
+        filas: List[List[str]] = t["filas"]
+        pag: int = int(t["pagina"])
+
+        if actual is not None and actual["encabezados"] == enc:
+            # Mismos encabezados: fusionar filas
+            for fila in filas:
+                if fila[0].strip() == "" and actual["filas"]:
+                    # Fila de continuación: concatenar con la última fila existente
+                    ultima = actual["filas"][-1]
+                    for i in range(len(fila)):
+                        if i < len(ultima):
+                            sep = "\n" if fila[i].strip() else ""
+                            ultima[i] = (ultima[i] + sep + fila[i]).strip()
+                else:
+                    actual["filas"].append(fila)
+            actual["paginas"].append(pag)
+        else:
+            # Nueva tabla lógica (encabezados distintos o primera tabla)
+            if actual is not None:
+                consolidadas.append(actual)
+            actual = {
+                "encabezados": enc,
+                "filas": list(filas),
+                "paginas": [pag],
+            }
+
+    if actual is not None:
+        consolidadas.append(actual)
+
+    return consolidadas
+
+
+def _determinar_nombre_tabla(encabezados: List[str], filas: List[List[str]], paginas: List[int]) -> str:
     """Genera un nombre descriptivo para una tabla a partir de sus encabezados y contenido."""
     todo_texto = " ".join(encabezados + [c for fila in filas for c in fila])
-    if "DDU 339" in todo_texto and "DDU 322" in todo_texto:
-        return "Modificaciones Normativas (DDU 339, DDU 322)"
-    if "DDU 339" in todo_texto:
-        return "Modificaciones Normativas (DDU 339)"
-    if "DDU 322" in todo_texto:
-        return "Modificaciones Normativas (DDU 322)"
-    if "DDU 168" in todo_texto:
-        return "Modificaciones Normativas (DDU 168)"
+    circulares_mencionadas: List[str] = []
+    for ddu_id in ["DDU 339", "DDU 322", "DDU 168"]:
+        if ddu_id in todo_texto:
+            circulares_mencionadas.append(ddu_id)
+    if circulares_mencionadas:
+        return f"Modificaciones Normativas ({', '.join(circulares_mencionadas)})"
     if any("modifica" in h.lower() or "circular" in h.lower() for h in encabezados):
-        return f"Tabla de Modificaciones Normativas (Pág. {pagina})"
+        rango = f"Pág. {paginas[0]}-{paginas[-1]}" if len(paginas) > 1 else f"Pág. {paginas[0]}"
+        return f"Tabla de Modificaciones Normativas ({rango})"
     if encabezados:
-        return f"Tabla: {', '.join(encabezados[:2])} (Pág. {pagina})"
-    return f"Tabla técnica (Pág. {pagina})"
+        rango = f"Pág. {paginas[0]}-{paginas[-1]}" if len(paginas) > 1 else f"Pág. {paginas[0]}"
+        return f"Tabla: {', '.join(encabezados[:2])} ({rango})"
+    return f"Tabla técnica (Pág. {paginas[0]})"
 
 
 def _exportar_tabla_csv(encabezados: List[str], filas: List[List[str]], destino_csv: Path) -> None:
@@ -259,6 +310,9 @@ class TablasExtractor(BaseExtractor):
                 observaciones="No se detectaron tablas en el documento.",
             )
 
+        # Consolidar tablas multi-página con encabezados idénticos
+        tablas_consolidadas = _consolidar_tablas_multipagina(tablas_crudas)
+
         # Determinar identificador base DDU (ej. DDU_456)
         num_str = "desconocido"
         if pdf_path is not None:
@@ -274,12 +328,12 @@ class TablasExtractor(BaseExtractor):
         dir_tablas.mkdir(parents=True, exist_ok=True)
 
         manifest_tablas: List[Dict[str, Any]] = []
-        for idx, t in enumerate(tablas_crudas, start=1):
+        for idx, t in enumerate(tablas_consolidadas, start=1):
             tabla_id = f"DDU_{num_str}_tabla_{idx}"
             encabezados: List[str] = t["encabezados"]
             filas: List[List[str]] = t["filas"]
-            num_pag: int = int(t["pagina"])
-            nombre = _determinar_nombre_tabla(encabezados, filas, num_pag)
+            paginas: List[int] = t["paginas"]
+            nombre = _determinar_nombre_tabla(encabezados, filas, paginas)
             csv_filename = f"{tabla_id}.csv"
             csv_path = dir_tablas / csv_filename
 
@@ -289,7 +343,7 @@ class TablasExtractor(BaseExtractor):
             manifest_tablas.append({
                 "id": tabla_id,
                 "nombre": nombre,
-                "pagina": num_pag,
+                "paginas": paginas,
                 "filas": len(filas),
                 "columnas": len(encabezados),
                 "archivo_anexo": rel_path,
@@ -300,7 +354,7 @@ class TablasExtractor(BaseExtractor):
             exito=True,
             datos={"tablas": manifest_tablas},
             confianza=1.0,
-            observaciones=f"Se extrajeron {len(manifest_tablas)} tabla(s) y se exportaron a {dir_tablas.name}/.",
+            observaciones=f"Se extrajeron {len(manifest_tablas)} tabla(s) consolidada(s) y se exportaron a {dir_tablas.name}/.",
         )
 
 
