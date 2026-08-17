@@ -2,11 +2,12 @@
 
 import argparse
 from dataclasses import asdict
+import importlib
 import json
 from pathlib import Path
 import re
 import sys
-from typing import Any, Dict, List, Optional
+from typing import Any, List, Optional
 
 _PROYECTO_RAIZ = Path(__file__).resolve().parents[2]
 if str(_PROYECTO_RAIZ) not in sys.path:
@@ -32,22 +33,30 @@ def _extraer_notas_modificacion_desde_pdf(pdf_path: Path) -> List[str]:
     """Escanea las páginas iniciales del PDF extrayendo notas marginales de modificación posterior."""
     notas_encontradas: List[str] = []
     try:
-        import fitz  # PyMuPDF
-        with fitz.open(str(pdf_path)) as doc:
+        fitz_mod: Any = importlib.import_module("fitz")
+        doc: Any = fitz_mod.open(str(pdf_path))
+        try:
+            num_pages: int = int(len(doc))
+            pages_to_check: int = min(2, num_pages)
             # Las notas marginales de vigencia de la circular residen en la portada / primeras páginas
-            for page in doc[:2]:
-                for b in page.get_text("blocks"):
-                    txt = str(b[4]).strip()
+            for i in range(pages_to_check):
+                page: Any = doc[i]
+                blocks: List[Any] = list(page.get_text("blocks"))
+                for b in blocks:
+                    txt: str = str(b[4]).strip()
                     for patron in _PATRONES_MODIFICACION:
                         if re.search(patron, txt, re.IGNORECASE):
-                            limpio = limpiar_palabras_ocr(txt)
+                            limpio: str = limpiar_palabras_ocr(txt)
                             limpio = re.sub(r"\s+", " ", limpio).strip()
                             if limpio and limpio not in notas_encontradas:
                                 notas_encontradas.append(limpio)
                             break
+        finally:
+            doc.close()
     except Exception:
         pass
     return notas_encontradas
+
 
 
 def _extraer_notas_modificacion_texto(texto: str) -> List[str]:
