@@ -1,12 +1,12 @@
-"""Pruebas unitarias para BaseExtractor, ResultadoBloque y ExtractorRegistry."""
-
-from typing import List
+from pathlib import Path
+from typing import List, Optional
 from scripts.extractors.base import (
     BaseExtractor,
     ResultadoBloque,
     ExtractorRegistry,
     register_extractor,
 )
+
 
 
 def test_resultado_bloque_dataclass() -> None:
@@ -44,7 +44,12 @@ def test_register_and_get_extractors() -> None:
         def nombre_bloque(self) -> str:
             return "dummy"
 
-        def extract(self, raw_text: str, lines: List[str]) -> ResultadoBloque:
+        def extract(
+            self,
+            raw_text: str,
+            lines: List[str],
+            pdf_path: Optional[Path] = None,
+        ) -> ResultadoBloque:
             return ResultadoBloque(
                 nombre_bloque=self.nombre_bloque,
                 exito=True,
@@ -74,12 +79,18 @@ def test_extractor_registry_clear() -> None:
         def nombre_bloque(self) -> str:
             return "temp"
 
-        def extract(self, raw_text: str, lines: List[str]) -> ResultadoBloque:
+        def extract(
+            self,
+            raw_text: str,
+            lines: List[str],
+            pdf_path: Optional[Path] = None,
+        ) -> ResultadoBloque:
             return ResultadoBloque(
                 nombre_bloque=self.nombre_bloque,
                 exito=True,
                 datos={},
             )
+
 
     assert len(ExtractorRegistry.get_all_extractors()) == 1
     ExtractorRegistry.clear()

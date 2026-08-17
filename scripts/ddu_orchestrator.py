@@ -1,7 +1,7 @@
 """Orquestador Central y Exportador CSV para Circulares DDU.
 
 Este módulo define la clase DDUOrchestrator, encargada de coordinar la ejecución
-de los 11 extractores modulares (ETLs independientes en scripts/extractors/),
+de los 14 extractores modulares (ETLs independientes en scripts/extractors/),
 consolidar el diccionario de datos estricto DatosCircularDDU, y exportar
 archivos CSV estructurados (individuales o dataset acumulado).
 """
@@ -12,7 +12,7 @@ import json
 import re
 import sys
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 _PROYECTO_RAIZ = Path(__file__).resolve().parents[1]
 if str(_PROYECTO_RAIZ) not in sys.path:
@@ -24,19 +24,71 @@ from scripts.ddu_types import DatosCircularDDU
 from scripts.extractors import ExtractorRegistry, registrar_todos_los_extractores
 
 
+def formatear_manifiesto_plano(items: Any) -> str:
+
+    """Convierte una lista de diccionarios de metadatos (tablas/imágenes) a formato plano con ';'.
+
+    Elimina sintaxis JSON ([ ], { }, \") y produce pares clave: valor separados por ';'.
+
+    Args:
+        items: Lista de diccionarios, diccionario único o cadena JSON.
+
+    Returns:
+        Cadena formateada en texto plano sin caracteres JSON estructurales.
+    """
+    if not items:
+        return ""
+    if isinstance(items, str):
+        if not (items.startswith("[") or items.startswith("{")):
+            return items
+        try:
+            items = json.loads(items)
+        except Exception:
+            return items
+
+    if isinstance(items, dict):
+        items = [items]
+
+    if not isinstance(items, list):
+        return str(items)
+
+    elementos_str: List[str] = []
+    for elem in items:
+        if isinstance(elem, dict):
+            pares: List[str] = []
+            for k, v in elem.items():
+                if isinstance(v, list):
+                    v_str = ", ".join(str(x) for x in v)
+                else:
+                    v_str = str(v)
+                pares.append(f"{k}: {v_str}")
+            elementos_str.append("; ".join(pares))
+        else:
+            elementos_str.append(str(elem))
+
+    return " || ".join(elementos_str)
+
+
 class DDUOrchestrator:
+
     """Orquestador central para ejecutar ETLs modulares de circulares DDU y exportar a CSV."""
 
     def __init__(self) -> None:
         """Inicializa el orquestador."""
         pass
 
-    def process_text(self, raw_text: str, filename: str = "") -> DatosCircularDDU:
+    def process_text(
+        self,
+        raw_text: str,
+        filename: str = "",
+        pdf_path: Optional[Path] = None,
+    ) -> DatosCircularDDU:
         """Ejecuta dinámicamente los extractores registrados y consolida DatosCircularDDU.
 
         Args:
             raw_text: Texto plano completo extraído del documento.
             filename: Nombre del archivo PDF original (para deducir o validar el número DDU).
+            pdf_path: Ruta opcional al archivo PDF para extractores que requieren análisis estructural.
 
         Returns:
             Estructura DatosCircularDDU consolidada.
@@ -55,8 +107,14 @@ class DDUOrchestrator:
         for nombre_bloque, extractor_cls in extractores_dict.items():
             try:
                 instancia = extractor_cls()
-                resultado = instancia.extract(raw_text, lines)
+                if pdf_path is not None and nombre_bloque in ("tablas", "imagenes", "modificaciones_posteriores", "firma"):
+                    resultado = instancia.extract(raw_text, lines, pdf_path=pdf_path)
+                else:
+                    resultado = instancia.extract(raw_text, lines)
+
                 if resultado.datos:
+                    if nombre_bloque == "modificaciones_posteriores":
+                        datos_consolidados["modificaciones_posteriores"] = resultado.datos.get("texto", "")
                     datos_consolidados.update(resultado.datos)
             except Exception as e:
                 print(f"Advertencia: Error al ejecutar extractor '{nombre_bloque}': {e}")
@@ -90,12 +148,19 @@ class DDUOrchestrator:
             "lugar": str(datos_consolidados.get("lugar", "Santiago")),
             "destinatarios": str(datos_consolidados.get("destinatarios", "")),
             "firmante": str(datos_consolidados.get("firmante", "")),
+            "nombre_firmante": str(datos_consolidados.get("nombre_firmante", "")),
+            "cargo_firmante": str(datos_consolidados.get("cargo_firmante", "")),
             "lista_distribucion": datos_consolidados.get("lista_distribucion", []),
+
             "distribucion_texto": str(datos_consolidados.get("distribucion_texto", "")),
             "notas_al_pie": str(datos_consolidados.get("notas_al_pie", "")),
+            "tablas": datos_consolidados.get("tablas", []),
+            "imagenes": datos_consolidados.get("imagenes", []),
+            "modificaciones_posteriores": str(datos_consolidados.get("modificaciones_posteriores", "")),
         }
 
         return res_final
+
 
     def process_pdf(self, pdf_path: Path) -> DatosCircularDDU:
         """Extrae el texto de un PDF y procesa la circular con el pipeline de ETLs.
@@ -115,10 +180,10 @@ class DDUOrchestrator:
         text_list: List[str] = [str(getattr(p, "extract_text", lambda: "")() or "") for p in pdf_pages]
         raw_text: str = "\n".join(text_list)
 
-        return self.process_text(raw_text, filename=pdf_path.name)
+        return self.process_text(raw_text, filename=pdf_path.name, pdf_path=pdf_path)
 
     def export_individual_csv(self, pdf_path: Path, output_dir: Path) -> Path:
-        """Genera un archivo CSV individual estructurado para una circular DDU.
+        """Genera un archivo CSV individual estructurado para una circular DDU con los 14 bloques normativos.
 
         Args:
             pdf_path: Ruta al archivo PDF de entrada.
@@ -140,6 +205,10 @@ class DDUOrchestrator:
             fecha_str = str(datos.get("fecha", "")).strip()
             fecha_lugar_val = f"{lugar_str}, {fecha_str}" if lugar_str and fecha_str else (fecha_str or lugar_str)
 
+        tablas_val = formatear_manifiesto_plano(datos.get("tablas"))
+        imagenes_val = formatear_manifiesto_plano(datos.get("imagenes"))
+
+
         filas_csv: List[Dict[str, str]] = [
             {"bloque": "Encabezado", "campo": "numero_ddu", "valor_extraido": datos["numero"]},
             {"bloque": "Acto Administrativo", "campo": "numero_ord", "valor_extraido": datos.get("numero_ord", "")},
@@ -149,18 +218,14 @@ class DDUOrchestrator:
             {"bloque": "Fecha y Lugar", "campo": "fecha_emision", "valor_extraido": fecha_lugar_val},
             {"bloque": "Destinatarios", "campo": "destinatarios", "valor_extraido": datos.get("destinatarios", "")},
             {"bloque": "Emisión", "campo": "emisor", "valor_extraido": datos["emisor"]},
+            {"bloque": "Cuerpo", "campo": "cuerpo", "valor_extraido": str(datos.get("cuerpo") or "").strip()},
+            {"bloque": "Tablas", "campo": "tablas", "valor_extraido": tablas_val},
+            {"bloque": "Imágenes", "campo": "imagenes", "valor_extraido": imagenes_val},
+            {"bloque": "Modificaciones Posteriores", "campo": "modificaciones_posteriores", "valor_extraido": str(datos.get("modificaciones_posteriores") or "").strip()},
+            {"bloque": "Nota al Pie", "campo": "notas_al_pie", "valor_extraido": str(datos.get("notas_al_pie") or "").strip()},
+            {"bloque": "Firma", "campo": "firmante", "valor_extraido": datos.get("firmante", "")},
+            {"bloque": "Distribución", "campo": "lista_distribucion", "valor_extraido": str(datos.get("distribucion_texto") or "")},
         ]
-
-        cuerpo_val = str(datos.get("cuerpo") or "").strip()
-        filas_csv.append({"bloque": "Cuerpo", "campo": "cuerpo", "valor_extraido": cuerpo_val})
-
-        notas_val = str(datos.get("notas_al_pie") or "").strip()
-        filas_csv.append({"bloque": "Nota al Pie", "campo": "notas_al_pie", "valor_extraido": notas_val})
-
-        filas_csv.append({"bloque": "Firma", "campo": "firmante", "valor_extraido": datos.get("firmante", "")})
-
-        dist_val = str(datos.get("distribucion_texto") or "")
-        filas_csv.append({"bloque": "Distribución", "campo": "lista_distribucion", "valor_extraido": dist_val})
 
         with open(csv_path, "w", encoding="utf-8-sig", newline="") as f:
             writer = csv.DictWriter(
@@ -205,6 +270,7 @@ class DDUOrchestrator:
                     "destinatarios": datos.get("destinatarios", ""),
                     "emisor": datos["emisor"],
                     "cuerpo_resumen": cuerpo_resumen,
+                    "modificaciones_posteriores": str(datos.get("modificaciones_posteriores") or ""),
                     "notas_al_pie": datos.get("notas_al_pie", ""),
                     "firmante": datos.get("firmante", ""),
                     "lista_distribucion": dist_val,
@@ -224,12 +290,14 @@ class DDUOrchestrator:
             "destinatarios",
             "emisor",
             "cuerpo_resumen",
+            "modificaciones_posteriores",
             "notas_al_pie",
             "firmante",
             "lista_distribucion",
         ]
 
         with open(output_path, "w", encoding="utf-8-sig", newline="") as f:
+
             writer = csv.DictWriter(
                 f,
                 fieldnames=fieldnames,

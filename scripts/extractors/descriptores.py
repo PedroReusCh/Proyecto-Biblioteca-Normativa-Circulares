@@ -34,8 +34,9 @@ class DescriptoresExtractor(BaseExtractor):
 
         # Iniciar escaneo tras la materia / antecedentes / circular para omitir ruido de membrete
         idx_inicio = 0
-        for i in range(min(30, len(lines))):
-            if re.match(r"^(?:MAT\s*:|ANT\s*:|CIRCULAR|DDU|ORD\b)", lines[i].strip(), re.IGNORECASE):
+        for i in range(min(15, len(lines))):
+            line_str = lines[i].strip()
+            if re.match(r"^(?:MAT\s*:|ANT\s*:|CIRCULAR\s+ORD|DDU\s+\d+|ORD\b)", line_str, re.IGNORECASE):
                 idx_inicio = i + 1
 
         def _es_linea_descriptor(line_clean: str) -> bool:
@@ -44,7 +45,7 @@ class DescriptoresExtractor(BaseExtractor):
                 return False
             if re.match(r"^(?:DDU|CIRCULAR|ORD\b|ORO\b|ANT\b|MAT\b|SANTIAGO|VALPARA[ÍI]SO|COMPLEMENTA|TRABAJANDO|GOBIERNO|MINISTERIO)\b", line_clean, re.IGNORECASE):
                 return False
-            if re.match(r"^\d+", line_clean):
+            if re.match(r"^\d+\.", line_clean):
                 return False
 
             letras = [c for c in line_clean if c.isalpha()]
@@ -53,7 +54,7 @@ class DescriptoresExtractor(BaseExtractor):
             prop_mayus = sum(1 for c in letras if c.isupper()) / len(letras)
             return prop_mayus >= 0.65
 
-        for line in lines[idx_inicio:45]:
+        for line in lines[idx_inicio:35]:
             line_clean = line.strip()
             if not line_clean:
                 continue
@@ -72,8 +73,9 @@ class DescriptoresExtractor(BaseExtractor):
                 desc_lineas.append(line_clean)
                 en_descriptores = True
             elif en_descriptores:
-                if re.match(r"^(?:DE\s+(?:JEFE|MINISTRO|SUBSECRETARI|DIRECTOR|SECRETARI|DIVISI[ÓO]N)|DE\s*:|SANTIAGO|VALPARA[ÍI]SO)\b", line_clean, re.IGNORECASE):
+                if re.match(r"^(?:DE\s+(?:JEFE|MINISTRO|SUBSECRETARI|DIRECTOR|SECRETARI|DIVISI[ÓO]N)|DE\s*:|A\s*:|SANTIAGO|VALPARA[ÍI]SO)\b", line_clean, re.IGNORECASE):
                     break
+
 
         descriptores = " ".join(desc_lineas)
         descriptores = re.sub(r"\s+", " ", descriptores).strip()

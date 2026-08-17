@@ -92,6 +92,49 @@ def test_xml_generation() -> None:
     print("\nXML generado y validado con éxito.")
 
 
+def test_xml_generation_ddu_456_with_tables_images_and_lifecycle() -> None:
+    """Verifica que DDUToXML serialice canónicamente attachments, img, lifecycle y analysis en DDU 456."""
+    pdf_path = proyecto_raiz / "circulares" / "DDU 456.pdf"
+    if not pdf_path.exists():
+        return
 
-if __name__ == "__main__":
-    test_xml_generation()
+    parser = DDUParser(pdf_path)
+    datos = parser.parse_pdf()
+
+    generador = DDUToXML()
+    xml_str = generador.generar_xml(datos)
+
+    root = ET.fromstring(xml_str)
+    ns = {"akn": "http://www.akomantoso.org/2.0"}
+
+    # 1. Lifecycle y EventRef
+    lifecycle = root.find(".//akn:meta/akn:lifecycle", ns)
+    assert lifecycle is not None, "Falta el bloque <lifecycle> en <meta>"
+    event_ref = lifecycle.find(".//akn:eventRef", ns)
+    assert event_ref is not None, "Falta el elemento <eventRef> en <lifecycle>"
+    assert event_ref.attrib.get("type") == "amendment"
+    assert event_ref.attrib.get("date") == "2024-05-02"
+
+    # 2. Analysis y PassiveModifications
+    analysis = root.find(".//akn:meta/akn:analysis", ns)
+    assert analysis is not None, "Falta el bloque <analysis> en <meta>"
+    passive_mods = analysis.find(".//akn:passiveModifications", ns)
+    assert passive_mods is not None, "Falta <passiveModifications> en <analysis>"
+    textual_mod = passive_mods.find(".//akn:textualMod", ns)
+    assert textual_mod is not None, "Falta <textualMod> en <passiveModifications>"
+    assert textual_mod.attrib.get("type") == "substitution"
+
+    # 3. Elemento <img> en párrafo del esquema ilustrativo
+    img_elem = root.find(".//akn:mainBody//akn:img", ns)
+    assert img_elem is not None, "Falta el elemento <img> en el cuerpo de la circular"
+    assert "salidas_imagenes/DDU_456_img_1.png" in img_elem.attrib.get("src", "")
+    assert img_elem.attrib.get("width") == "2131"
+    assert img_elem.attrib.get("height") == "1906"
+
+    # 4. Bloque <attachments> con <componentRef> para tablas
+    attachments = root.find(".//akn:attachments", ns)
+    assert attachments is not None, "Falta el bloque <attachments> al final de <doc>"
+    component_ref = attachments.find(".//akn:componentRef", ns)
+    assert component_ref is not None, "Falta <componentRef> en <attachments>"
+    assert "salidas_tablas/DDU_456_tabla_1.csv" in component_ref.attrib.get("src", "")
+

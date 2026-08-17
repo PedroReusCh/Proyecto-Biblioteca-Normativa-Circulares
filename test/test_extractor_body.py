@@ -1,6 +1,10 @@
 """Pruebas unitarias para los extractores independientes de cuerpo, firma y distribución (ETLs 9 a 11)."""
 
+import importlib
+from pathlib import Path
+import re
 from typing import Any, List
+import pytest
 
 from scripts.ddu_types import SeccionDDU
 from scripts.extractors import registrar_todos_los_extractores
@@ -243,7 +247,26 @@ def test_firma_extractor_ddu_546_ocr() -> None:
     assert resultado.exito is True
     firmante = resultado.datos.get("firmante", "")
     assert firmante == "JUAN DIEGO IZQUIERDO HEVIA, DIVISIÓN DE DESARROLLO URBANO, MINISTERIO DE VIVIENDA Y URBANISMO"
+    assert resultado.datos.get("nombre_firmante") == "JUAN DIEGO IZQUIERDO HEVIA"
+    assert "DIVISIÓN DE DESARROLLO URBANO" in str(resultado.datos.get("cargo_firmante", ""))
     assert "Sr. Ministro" not in firmante
+
+
+def test_firma_extractor_nombre_y_cargo_separados() -> None:
+    """Verifica que el extractor de firma separe correctamente nombre y cargo en distintas líneas."""
+    lines = [
+        "Saluda atentamente a Ud.,",
+        "VICENTE BURGOS BOLAÑOS",
+        "Jefe División de Desarrollo Urbano",
+    ]
+    extractor = FirmaExtractor()
+    resultado = extractor.extract("\n".join(lines), lines)
+
+    assert resultado.exito is True
+    assert resultado.datos.get("nombre_firmante") == "VICENTE BURGOS BOLAÑOS"
+    assert resultado.datos.get("cargo_firmante") == "Jefe División de Desarrollo Urbano"
+    assert resultado.datos.get("firmante") == "VICENTE BURGOS BOLAÑOS, Jefe División de Desarrollo Urbano"
+
 
 
 def test_distribucion_extractor_limpieza_palabras_divididas() -> None:
@@ -306,3 +329,209 @@ def test_cuerpo_extractor_llamada_nota_imagenes_ocr() -> None:
     assert resultado.exito is True
     cuerpo = str(resultado.datos.get("cuerpo", ""))
     assert "imágenes [2]" in cuerpo
+
+
+def test_firma_extractor_ddu_456_tabla_motivo() -> None:
+    """Prueba que FirmaExtractor descarte cabeceras de tabla como 'Motivo y/o Consideraciones' y extraiga el cargo real."""
+    lines = [
+        "7. Para adecuarse a los cambios normativos...",
+        "Saluda atentamente a Ud.,",
+        "-",
+        "~",
+        "L",
+        "Motivo y/o",
+        "Consideraciones",
+        "-:.. f' .:s \"-Z, - ~",
+        "/ JPB  O~,  1_1-0",
+        "Jefe División de Desarrollo Urbano",
+        "871/(165-2)",
+        "DISTRIBUCIÓN:",
+        "1. Sr. Ministro de Vivienda y Urbanismo.",
+    ]
+    extractor = FirmaExtractor()
+    resultado = extractor.extract("\n".join(lines), lines)
+    assert resultado.exito is True
+    firmante = str(resultado.datos.get("firmante", ""))
+    assert "Consideraciones" not in firmante
+    assert "Motivo" not in firmante
+    assert "JEFE DIVISIÓN DE DESARROLLO URBANO" in firmante.upper()
+
+
+def test_distribucion_extractor_ddu_456() -> None:
+    """Prueba que DistribucionExtractor capture la nómina completa de distribución de DDU 456."""
+    lines = [
+        "DISTRIBUCIÓN:",
+        "1. Sr. Ministro de Vivienda y Urbanismo.",
+        "2. Sr. Subsecretario de Vivienda y Urbanismo.",
+        "3. Sr. Contralor General de la República.",
+        "4. Biblioteca del Congreso Nacional.",
+        "Ministerio de Vivienda y Urbanismo - Alameda 924 - Santiago - Chile Página 8 de 9",
+        "30. OIRS.",
+        "31. Jefe SIAC.",
+        "32. Archivo DDU.",
+        "33. Oficina de Partes D.D.U.",
+        "34. Oficina de Partes MINVU Ley 20.285",
+    ]
+    extractor = DistribucionExtractor()
+    resultado = extractor.extract("\n".join(lines), lines)
+    assert resultado.exito is True
+    dist_list = list(resultado.datos.get("lista_distribucion", []))
+    assert len(dist_list) >= 9
+    assert any("Oficina de Partes MINVU Ley 20.285" in d for d in dist_list)
+
+
+def test_cuerpo_extractor_ddu_456_sin_ruido_imagenes() -> None:
+    """Verifica que el cuerpo extraído de DDU 456 no contenga ruido de diagramas ni palabras rotas por OCR."""
+    pdf_path = Path("circulares/DDU 456.pdf")
+    if pdf_path.exists():
+        pypdf_mod: Any = importlib.import_module("pypdf")
+        pdf_reader: Any = pypdf_mod.PdfReader(pdf_path)
+        pdf_pages: Any = pdf_reader.pages
+        text_list: List[str] = [str(getattr(p, "extract_text", lambda: "")() or "") for p in pdf_pages]
+        raw_text: str = "\n".join(text_list)
+        lines: List[str] = [line.strip() for line in raw_text.splitlines()]
+    else:
+        raw_text = (
+            "DDU 456\n"
+            "CIRCULAR ORD. N° 0456\n"
+            "1. Se han recibido diversas consultas respecto a la aplicación a rtículo 2.6.3. de la OGUC.\n"
+            "2. En este sentido, los quinch os deben considerarse como relativo s a elementos exteriores.\n"
+            "3. Asimismo, el inciso s segundo establece las condiciones.\n"
+            "4. A continuación, se presenta un esquema ilustrativo que sintetiza algunos de los aspectos abordados en la presente Circular:\n"
+            "PLANTA AZOTEA\n"
+            "CORTE ESQUEMÁTICO\n"
+            "Piscina\n"
+            "Salida caja de escalera\n"
+            "Chimeneas\n"
+            "Pérgola\n"
+            "Ascensores\n"
+            "½\n"
+            "5. En el inciso vigésimo tercero se señalan los requerimientos.\n"
+            "Saluda atentamente a Ud.,\n"
+            "JEFE DIVISIÓN DE DESARROLLO URBANO"
+        )
+        lines = [line.strip() for line in raw_text.splitlines()]
+
+    extractor = CuerpoExtractor()
+    resultado = extractor.extract(raw_text, lines)
+
+    assert resultado.exito is True
+    secciones: List[SeccionDDU] = list(resultado.datos.get("secciones", []))
+    assert len(secciones) > 0
+
+    parrafos_cuerpo: List[str] = [p for s in secciones for p in s.get("parrafos", [])]
+    cuerpo_total = " ".join(parrafos_cuerpo)
+
+    # 1. Numeral 4 debe contener solo la frase narrativa introductoria
+    parrafos_num4 = [p for p in parrafos_cuerpo if p.startswith("4. A continuación")]
+    assert len(parrafos_num4) == 1
+    num4_texto = parrafos_num4[0]
+    assert "A continuación, se presenta un esquema ilustrativo que sintetiza algunos de los aspectos abordados en la presente Circular:" in num4_texto
+
+    # 2. Numeral 4 NO debe contener etiquetas o fragmentos sueltos de los diagramas/planos
+    ruidos_prohibidos = [
+        "PLANTA AZOTEA",
+        "CORTE ESQUEMÁTICO",
+        "Piscina",
+        "Salida caja de escalera",
+        "Chimeneas",
+        "Pérgola",
+        "Ascensores",
+        "½",
+    ]
+    for ruido in ruidos_prohibidos:
+        assert ruido not in num4_texto, f"Ruido de diagrama '{ruido}' encontrado en Numeral 4"
+
+    # 3. Verificar saneamiento OCR en el cuerpo
+    assert "quinch os" not in cuerpo_total
+    assert "quinchos" in cuerpo_total
+    assert not re.search(r"\ba\s+rt[íi]culo\b", cuerpo_total, re.IGNORECASE)
+    assert not re.search(r"\binciso\s+s\b", cuerpo_total, re.IGNORECASE)
+    assert not re.search(r"\brelativo\s+s\b", cuerpo_total, re.IGNORECASE)
+    assert "relativos" in cuerpo_total
+
+
+def test_firma_extractor_ddu_456_cargo_limpio() -> None:
+    """Verifica que FirmaExtractor en DDU 456 extraiga mediante OCR el nombre de Enrique Matuschka y su cargo."""
+    pdf_path = Path("circulares/DDU 456.pdf")
+    if pdf_path.exists():
+        pypdf_mod: Any = importlib.import_module("pypdf")
+        pdf_reader: Any = pypdf_mod.PdfReader(pdf_path)
+        pdf_pages: Any = pdf_reader.pages
+        text_list: List[str] = [str(getattr(p, "extract_text", lambda: "")() or "") for p in pdf_pages]
+        raw_text: str = "\n".join(text_list)
+        lines: List[str] = [line.strip() for line in raw_text.splitlines()]
+        extractor = FirmaExtractor()
+        resultado = extractor.extract(raw_text, lines, pdf_path=pdf_path)
+
+        assert resultado.exito is True
+        assert "ENRIQUE MATUSCHKA" in str(resultado.datos.get("nombre_firmante"))
+        assert resultado.datos.get("cargo_firmante") == "Jefe División de Desarrollo Urbano"
+        assert "ENRIQUE MATUSCHKA" in str(resultado.datos.get("firmante"))
+        assert "Jefe División de Desarrollo Urbano" in str(resultado.datos.get("firmante"))
+    else:
+        raw_text = (
+            "Saluda atentamente a Ud.,\n"
+            "ENRIQUE MATUSCHKA AYÇAGUER\n"
+            "Jefe DIVISIÓN de Desarrollo Urbano"
+        )
+        lines = [line.strip() for line in raw_text.splitlines()]
+        extractor = FirmaExtractor()
+        resultado = extractor.extract(raw_text, lines)
+
+        assert resultado.exito is True
+        assert resultado.datos.get("nombre_firmante") == "ENRIQUE MATUSCHKA AYÇAGUER"
+        assert resultado.datos.get("cargo_firmante") == "Jefe División de Desarrollo Urbano"
+
+
+
+
+
+def test_cuerpo_extractor_ddu_456_exclusion_tablas_e_imagenes() -> None:
+    """Verifica que el cuerpo de DDU 456 contenga exactamente 7 párrafos y excluya tablas e imágenes."""
+    pdf_path = Path("circulares/DDU 456.pdf")
+    if not pdf_path.exists():
+        pytest.skip(f"No se encontró el archivo PDF en {pdf_path}")
+
+
+    pypdf_mod: Any = importlib.import_module("pypdf")
+    reader = pypdf_mod.PdfReader(pdf_path)
+    raw_text = "\n".join([str(p.extract_text() or "") for p in reader.pages])
+    lines = [line.strip() for line in raw_text.splitlines() if line.strip()]
+
+    extractor = CuerpoExtractor()
+    resultado: ResultadoBloque = extractor.extract(raw_text, lines)
+
+    assert resultado.exito is True
+    secciones: List[SeccionDDU] = list(resultado.datos.get("secciones", []))
+    assert len(secciones) == 1
+    parrafos: List[str] = secciones[0].get("parrafos", [])
+
+    # Exactamente 7 párrafos (Numerales 1 al 7)
+    assert len(parrafos) == 7, f"Se esperaban 7 párrafos normativos, se obtuvieron {len(parrafos)}"
+
+    # Verificar numeral 2 limpio (sin nota marginal de modificación posterior DDU 498 y con texto completo)
+    assert parrafos[1].startswith("2.")
+    assert "Circular Modificada por" not in parrafos[1]
+    assert "DDU 498" not in parrafos[1]
+    assert "desde el nivel de la azotea." in parrafos[1]
+    assert "ocupada por los elementos" in parrafos[1]
+
+
+    # Verificar numeral 4 limpio
+    assert parrafos[3].startswith("4.")
+    assert "A continuación, se presenta un esquema ilustrativo" in parrafos[3]
+    assert "PLANTA AZOTEA" not in parrafos[3]
+    assert "CORTE ESQUEMÁTICO" not in parrafos[3]
+
+    # Verificar numeral 7 limpio (sin contenido de la tabla de circulares)
+    assert parrafos[6].startswith("7.")
+    assert "Circular Materia(s) que se modifica(n)" not in parrafos[6]
+    assert "DDU 339" not in parrafos[6]
+    assert "DDU 322" not in parrafos[6]
+    assert "DDU 168" not in parrafos[6]
+
+
+
+
+

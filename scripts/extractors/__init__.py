@@ -9,20 +9,34 @@ _PROYECTO_RAIZ = Path(__file__).resolve().parents[2]
 if str(_PROYECTO_RAIZ) not in sys.path:
     sys.path.insert(0, str(_PROYECTO_RAIZ))
 
-try:
+from typing import TYPE_CHECKING, Any, List
+
+if TYPE_CHECKING:
     from scripts.extractors.base import (
         BaseExtractor,
         ResultadoBloque,
         ExtractorRegistry,
         register_extractor,
     )
-except ImportError:
-    from extractors.base import (
-        BaseExtractor,
-        ResultadoBloque,
-        ExtractorRegistry,
-        register_extractor,
-    )
+    from scripts.extractors.tablas import TablasExtractor
+    from scripts.extractors.imagenes import ImagenesExtractor
+    from scripts.extractors.modificaciones_posteriores import ModificacionesPosterioresExtractor
+else:
+    try:
+        from scripts.extractors.base import (
+            BaseExtractor,
+            ResultadoBloque,
+            ExtractorRegistry,
+            register_extractor,
+        )
+    except ImportError:
+        from extractors.base import (
+            BaseExtractor,
+            ResultadoBloque,
+            ExtractorRegistry,
+            register_extractor,
+        )
+
 
 _EXTRACTOR_MODULES: List[str] = [
     "encabezado",
@@ -37,6 +51,9 @@ _EXTRACTOR_MODULES: List[str] = [
     "firma",
     "distribucion",
     "nota_al_pie",
+    "tablas",
+    "imagenes",
+    "modificaciones_posteriores",
 ]
 
 
@@ -57,10 +74,30 @@ def registrar_todos_los_extractores() -> None:
                 importlib.import_module(alt_name)
 
 
+def __getattr__(name: str) -> Any:
+    """Resuelve exportaciones de extractores bajo demanda para evitar RuntimeWarning al usar python -m."""
+    if name == "TablasExtractor":
+        from scripts.extractors.tablas import TablasExtractor
+        return TablasExtractor
+    elif name == "ImagenesExtractor":
+        from scripts.extractors.imagenes import ImagenesExtractor
+        return ImagenesExtractor
+    elif name == "ModificacionesPosterioresExtractor":
+        from scripts.extractors.modificaciones_posteriores import ModificacionesPosterioresExtractor
+        return ModificacionesPosterioresExtractor
+    raise AttributeError(f"El módulo 'scripts.extractors' no tiene el atributo '{name}'")
+
+
 __all__ = [
     "BaseExtractor",
     "ResultadoBloque",
     "ExtractorRegistry",
     "register_extractor",
+    "TablasExtractor",
+    "ImagenesExtractor",
+    "ModificacionesPosterioresExtractor",
     "registrar_todos_los_extractores",
 ]
+
+
+

@@ -101,5 +101,18 @@ def test_rdf_generation() -> None:
     print("\n¡TODAS LAS VALIDACIONES DE CONTENIDO PASARON CON ÉXITO!")
 
 
-if __name__ == "__main__":
-    test_rdf_generation()
+def test_rdf_generation_ddu_456_modificada_por() -> None:
+    """Verifica que el generador RDF incluya minvu-ddu:modificadaPor para DDU 456."""
+    pdf_path = proyecto_raiz / "circulares" / "DDU 456.pdf"
+    if not pdf_path.exists():
+        return
+
+    parser = DDUParser(pdf_path)
+    datos = parser.parse_pdf()
+
+    generador = DDUToRDF()
+    rdf_str = generador.generar_rdf(datos)
+
+    assert "minvu-ddu:modificadaPor" in rdf_str, "Falta la relación minvu-ddu:modificadaPor en el grafo RDF"
+    assert "498" in rdf_str, "Falta la referencia a la DDU 498 modificadora en RDF"
+

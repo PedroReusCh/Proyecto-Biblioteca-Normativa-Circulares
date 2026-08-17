@@ -185,6 +185,45 @@ class DDUToRDF:
 
         return "0000-00-00"
 
+    def _extraer_modificaciones_posteriores(self, datos: DatosCircularDDU) -> Set[str]:
+        """Extrae URIs de circulares que modifican a la actual a partir de notas marginales de vigencia."""
+        mod_texto = str(datos.get("modificaciones_posteriores", "")).strip()
+        if not mod_texto:
+            return set()
+
+        patron_ddu = re.compile(
+            r'\b(?:circular\s+(?:ord\.?\s+)?(?:n[°oº]?\s*\d+,?\s+de\s+fecha\s+[^,]+,\s+)?(?:ddu\s+)?(?P<num_ddu>\d+)|ddu\s+(?P<num_simple>\d+))\b',
+            re.IGNORECASE,
+        )
+
+        uris: Set[str] = set()
+        num_propio = re.sub(r"\D", "", str(datos.get("numero", "")))
+
+        for match in patron_ddu.finditer(mod_texto):
+            num = match.group("num_ddu") or match.group("num_simple")
+            if num and num != num_propio:
+                fecha = self._obtener_fecha_circular(num, mod_texto)
+                if fecha == "0000-00-00":
+                    m_fecha = re.search(r"(\d{1,2})\s+de\s+([a-zA-ZáéíóúÁÉÍÓÚ]+)\s+de\s+(\d{4})", mod_texto, re.IGNORECASE)
+                    meses = {
+                        "enero": "01", "febrero": "02", "marzo": "03", "abril": "04", "mayo": "05", "junio": "06",
+                        "julio": "07", "agosto": "08", "septiembre": "09", "octubre": "10", "noviembre": "11", "diciembre": "12"
+                    }
+                    if m_fecha:
+                        dia = m_fecha.group(1).zfill(2)
+                        mes = meses.get(m_fecha.group(2).lower(), "01")
+                        ano = m_fecha.group(3)
+                        fecha = f"{ano}-{mes}-{dia}"
+                    else:
+                        m_f_num = re.search(r"(\d{2})[\.\/](\d{2})[\.\/](\d{4})", mod_texto)
+                        if m_f_num:
+                            fecha = f"{m_f_num.group(3)}-{m_f_num.group(2)}-{m_f_num.group(1)}"
+
+                uri = f"http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/{fecha}/DDU {num}"
+                uris.add(uri)
+
+        return uris
+
     def generar_rdf(self, datos: DatosCircularDDU) -> str:
         """Genera el grafo semántico RDF en formato Turtle para una circular DDU.
 
@@ -223,6 +262,7 @@ class DDUToRDF:
 
         articulos_interpretados = sorted(list(self._extraer_articulos_interpretados(datos)))
         circulares_complementadas = sorted(list(self._extraer_circulares_complementadas(datos)))
+        circulares_modificadoras = sorted(list(self._extraer_modificaciones_posteriores(datos)))
 
         if numero == "533" and not circulares_complementadas:
             circulares_complementadas = ["http://datos.bcn.cl/recurso/cl/circular/minvu-ddu/2023-02-17/531"]
@@ -258,7 +298,12 @@ class DDUToRDF:
             valores_complementa = ", ".join(f"<{uri}>" for uri in circulares_complementadas)
             lineas.append(f"    minvu-ddu:complementaA {valores_complementa} ;")
 
+        if circulares_modificadoras:
+            valores_modificadoras = ", ".join(f"<{uri}>" for uri in circulares_modificadoras)
+            lineas.append(f"    minvu-ddu:modificadaPor {valores_modificadoras} ;")
+
         lineas.append(f"    bcn-resources:tieneDocumentoAkomaNtoso <{uri_xml}> .")
         lineas.append("")
 
         return "\n".join(lineas)
+

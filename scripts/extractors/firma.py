@@ -6,44 +6,158 @@ import importlib
 import json
 from pathlib import Path
 import re
-from typing import Any, List
+from typing import Any, List, Optional
 
 from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
+from scripts.extractors.utils_cleaner import _preservar_casing, limpiar_palabras_ocr
 
 
 def _limpiar_texto_firma(texto: str) -> str:
     """Repara distorsiones típicas de OCR en nombres, cargos y ministerios del firmante."""
+    texto = limpiar_palabras_ocr(texto)
     texto = re.sub(r"\bN\s+DIEGO\s+ZQUIERDO\s+HEVIA\b", "JUAN DIEGO IZQUIERDO HEVIA", texto, flags=re.IGNORECASE)
     texto = re.sub(r"\bN\s+DIEGO\s+IZQUIERDO\s+HEVIA\b", "JUAN DIEGO IZQUIERDO HEVIA", texto, flags=re.IGNORECASE)
-    texto = re.sub(r"\bD\s+VISI[ÓO]N\b", "DIVISIÓN", texto, flags=re.IGNORECASE)
+    texto = re.sub(r"\bD\s+VISI[ÓO\?I\ufffd\s]+N\b", "DIVISIÓN", texto, flags=re.IGNORECASE)
+    texto = re.sub(r"\bDIVISI[ÓO\?I\ufffd\s]+N\b", lambda m: _preservar_casing(m.group(0), "División"), texto, flags=re.IGNORECASE)
     texto = re.sub(r"\bIS\s+RIO\b", "MINISTERIO", texto, flags=re.IGNORECASE)
     return texto
 
 
+def _es_nombre_persona(line: str) -> bool:
+    """Evalúa si una cadena de texto tiene el formato de un nombre de persona válido (2 o más palabras)."""
+    palabras_descarte = {
+        "MOTIVO", "CONSIDERACIONES", "MATERIA", "MATERIAS", "OBSERVACIONES",
+        "ANTECEDENTES", "CIRCULAR", "TABLA", "CUADRO", "MODIFICA", "MODIFICAN",
+        "DISTRIBUCION", "DISTRIBUCIÓN", "MINISTERIO", "VIVIENDA", "URBANISMO",
+        "DIVISIÓN", "DIVISION", "DESARROLLO", "URBANO", "GOBIERNO", "CHILE",
+        "ORD", "DDU", "OFPA", "ANT", "MAT", "DE", "A", "PARA", "SANTIAGO",
+        "SALUDA", "ATENTAMENTE", "PÁGINA", "PAGINA", "FECHA", "SUBSECRETARIO",
+        "SUBSECRETARIA", "MINISTRO", "MINISTRA", "CONTRALOR", "CONTRALORA",
+    }
+    line_clean = re.sub(r"[^A-ZÁÉÍÓÚÑa-z\s]", " ", line).strip()
+    tokens = [w for w in line_clean.split() if len(w) >= 2 and w[0].isupper()]
+    if len(tokens) < 2:
+        return False
+    # No debe contener palabras exclusivas de cargos/organismos
+    if any(t.upper() in palabras_descarte for t in tokens):
+        return False
+    return True
+
+
+
+def _extraer_nombre_firma_ocr(pdf_path: Path) -> Optional[str]:
+    """Extrae el nombre de la persona firmante directamente desde la imagen de la página de firma con RapidOCR."""
+    if not pdf_path.exists():
+        return None
+
+    try:
+        import fitz
+        from rapidocr_onnxruntime import RapidOCR
+        from PIL import Image
+        import io
+
+        with fitz.open(str(pdf_path)) as doc:
+            p_firma_idx = -1
+            for i in reversed(range(len(doc))):
+                t = str(doc[i].get_text())
+                if re.search(r"Saluda\s+atentamente", t, re.IGNORECASE):
+                    p_firma_idx = i
+                    break
+
+            if p_firma_idx == -1:
+                p_firma_idx = len(doc) - 1
+
+            page = doc[p_firma_idx]
+            pix = page.get_pixmap(dpi=300)
+            img = Image.open(io.BytesIO(pix.tobytes("png")))
+            w, h = img.size
+
+            rect_saludo = None
+            rect_cargo = None
+            for b in page.get_text("blocks"):
+                texto_bloque = str(b[4])
+                if re.search(r"Saluda\s+atentamente", texto_bloque, re.IGNORECASE):
+                    rect_saludo = b[:4]
+                if re.search(r"Jefe\s+Divisi[óo]n|DIVISI[ÓO]N\s+DE\s+DESARROLLO", texto_bloque, re.IGNORECASE):
+                    rect_cargo = b[:4]
+
+            scale_x = w / float(page.rect.width)
+            scale_y = h / float(page.rect.height)
+
+            if rect_cargo:
+                y_top = float(rect_saludo[1] if rect_saludo else rect_cargo[1] - 80)
+                y_bot = float(rect_cargo[3] + 20)
+                x0 = max(0, int((float(rect_cargo[0]) - 100) * scale_x))
+                y0 = max(0, int((y_top - 20) * scale_y))
+                x1 = min(w, int((float(rect_cargo[2]) + 100) * scale_x))
+                y1 = min(h, int((y_bot + 20) * scale_y))
+                sig_crop = img.crop((x0, y0, x1, y1))
+            else:
+                sig_crop = img.crop((int(w * 0.2), int(h * 0.35), int(w * 0.9), int(h * 0.75)))
+
+            img_byte_arr = io.BytesIO()
+            sig_crop.save(img_byte_arr, format="PNG")
+
+        engine = RapidOCR()
+        res, _ = engine(img_byte_arr.getvalue())
+        if not res:
+            return None
+
+        # Buscar el nombre inmediatamente arriba del cargo
+        for i, item in enumerate(res):
+            text = str(item[1]).strip()
+            if re.search(r"Jefe\s+Divisi|Desarrollo\s+Urbano|DIVISI[ÓO]N", text, re.IGNORECASE):
+                for prev_idx in range(i - 1, -1, -1):
+                    prev_text = str(res[prev_idx][1]).strip()
+                    if len(prev_text) >= 5 and not re.search(r"Saluda|atentamente|Ud\.|DE\b", prev_text, re.IGNORECASE):
+                        # Normalizar nombres pegados por OCR
+                        prev_text = re.sub(r"\bENRIQUEMATUSCHKA\b", "ENRIQUE MATUSCHKA", prev_text, flags=re.IGNORECASE)
+                        prev_text = re.sub(r"\bAYCAGUER\b", "AYÇAGUER", prev_text, flags=re.IGNORECASE)
+                        prev_text = re.sub(r"([A-ZÁÉÍÓÚÑa-z]{4,})(MATUSCHKA|BURGOS|SERRA|IZQUIERDO|LOPEZ|GIMENEZ)", r"\1 \2", prev_text)
+                        if _es_nombre_persona(prev_text):
+                            return prev_text
+                break
+    except Exception as e:
+        print(f"Advertencia al ejecutar OCR de firma con RapidOCR: {e}")
+
+    return None
+
+
 @register_extractor
 class FirmaExtractor(BaseExtractor):
-    """Extractor para identificar el firmante (nombre y cargo) de la circular DDU."""
+    """Extractor para identificar el firmante (nombre y cargo estructurado) de la circular DDU."""
 
     @property
     def nombre_bloque(self) -> str:
         return "firma"
 
-    def extract(self, raw_text: str, lines: List[str]) -> ResultadoBloque:
-        """Extrae la información del firmante de la circular DDU.
+    def extract(
+        self,
+        raw_text: str,
+        lines: List[str],
+        pdf_path: Optional[Path] = None,
+    ) -> ResultadoBloque:
+        """Extrae la información del firmante de la circular DDU con nombre y cargo separados.
 
         Args:
             raw_text: Texto completo del PDF.
             lines: Líneas limpias del documento.
+            pdf_path: Ruta opcional al archivo PDF para OCR visual de firmas.
 
         Returns:
-            ResultadoBloque con el firmante extraído.
+            ResultadoBloque con firmante, nombre_firmante y cargo_firmante.
         """
-        firmante = ""
+        nombre_str = ""
+        cargo_str = ""
         patron_distribucion = (
             r"^(?:DISTRIBUCI[OÓ\?I\s]+N|BUCI[OÓ\?I\s]+N|STRIBUCI[OÓ\?I\s]+N|D\s*STRIBUC[I\?OÓ\s]*N|RIB[a-z\s\)\?]*[ÓO]N)[\s:]*"
         )
+        palabras_descarte = {
+            "MOTIVO", "CONSIDERACIONES", "MATERIA", "MATERIAS", "OBSERVACIONES",
+            "ANTECEDENTES", "CIRCULAR", "TABLA", "CUADRO", "MODIFICA", "MODIFICAN",
+        }
 
-        # 1. Buscar patrón "Saluda atentamente..." y extraer las líneas siguientes
+        # 1. Buscar patrón "Saluda atentamente..." y extraer las líneas de la firma
         idx_saludo = -1
         for i, line in enumerate(lines):
             if re.search(r"Saluda\s+atentamente", line, re.IGNORECASE) or re.search(
@@ -52,63 +166,111 @@ class FirmaExtractor(BaseExtractor):
                 idx_saludo = i
                 break
 
+        cargos_patron = r"(?:JEFE|DIRECTOR|MINISTRO|SUBSECRETARI[OA]|SECRETARI[OA]|DIVISI[ÓO\?I\ufffd\s]+N\s+DE\s+DESARROLLO\s+URBANO)"
+
         if idx_saludo != -1:
             partes_firma: List[str] = []
-            for line in lines[idx_saludo + 1 : idx_saludo + 8]:
+            for line in lines[idx_saludo + 1 : idx_saludo + 16]:
                 line_clean = line.strip()
                 if not line_clean:
                     continue
-                # Detener si llegamos al bloque de distribución o pie de página
+                # Detener si llegamos al bloque de distribución o pie de página institucional
                 if re.match(
                     patron_distribucion,
                     line_clean,
                     re.IGNORECASE,
-                ) or re.search(r"Ministerio\s+de\s+Vivienda", line_clean, re.IGNORECASE):
+                ) or re.search(r"Ministerio\s+de\s+Vivienda\s+y\s+Urbanismo\s*-\s*Alameda", line_clean, re.IGNORECASE):
                     break
 
+                # Descartar cabeceras de tabla o textos residuales
+                palabras_linea = set(re.findall(r"\b[A-ZÁÉÍÓÚÑa-z]+\b", line_clean.upper()))
+                if palabras_linea and palabras_linea.issubset(palabras_descarte):
+                    continue
+                if re.match(r"^[\d\/\-\(\)\,\.\s\:\_~|]+$", line_clean):
+                    continue
+
                 # Limpiar caracteres ruidosos de firma o sellos de OCR
-                line_clean = re.sub(r"^[_\s\-|\.]+", "", line_clean).strip()
+                line_clean = re.sub(r"^[_\s\-|\.\~:]+", "", line_clean).strip()
                 if line_clean:
-                    partes_firma.append(line_clean)
+                    partes_firma.append(_limpiar_texto_firma(line_clean))
 
             if partes_firma:
-                # Filtrar líneas que consistan en ruido de sellos o símbolos de OCR
-                partes_limpias = [
-                    p for p in partes_firma
-                    if not re.search(r"[\/\~\*\<\>\(\)\;\\]", p)
-                    and len(re.findall(r"\b[A-ZÁÉÍÓÚÑa-z]{3,}\b", p)) > 0
-                ]
-                if partes_limpias:
-                    firmante = ", ".join(partes_limpias)
+                # 1.1 Localizar línea del cargo
+                idx_cargo = -1
+                for j, p in enumerate(partes_firma):
+                    if re.search(cargos_patron, p, re.IGNORECASE):
+                        idx_cargo = j
+                        cargo_str = p
+                        # Si hay continuación del cargo o ministerio en la línea siguiente
+                        if j + 1 < len(partes_firma) and re.search(r"MINISTERIO\s+DE\s+VIVIENDA", partes_firma[j + 1], re.IGNORECASE):
+                            cargo_str += ", " + partes_firma[j + 1]
+                        break
 
-        # 2. Si no se encontró mediante saludo o era ruido OCR, buscar patrones de emisor/cargo
-        if not firmante:
-            for line in lines[:25]:
+                # 1.2 Buscar candidato a nombre o identificador de firmante prioritariamente arriba del cargo
+                lineas_previas = partes_firma[:idx_cargo] if idx_cargo != -1 else partes_firma
+                for p in reversed(lineas_previas):
+                    candidato = _limpiar_texto_firma(p)
+                    # A) Nombre completo de persona (2 o más palabras)
+                    if _es_nombre_persona(candidato) or re.search(r"JUAN\s+DIEGO|VICENTE|PAZ|RODRIGO", candidato, re.IGNORECASE):
+                        nombre_limpio = re.sub(r"[^A-ZÁÉÍÓÚÑa-z\s]", "", candidato).strip()
+                        nombre_str = nombre_limpio
+                        break
+
+                # Si aún no hay nombre y hay líneas posteriores al cargo
+                if not nombre_str and idx_cargo != -1 and idx_cargo + 1 < len(partes_firma):
+                    for p in partes_firma[idx_cargo + 1:]:
+                        if re.search(r"MINISTERIO", p, re.IGNORECASE):
+                            continue
+                        candidato = _limpiar_texto_firma(p)
+                        if _es_nombre_persona(candidato):
+                            nombre_str = re.sub(r"[^A-ZÁÉÍÓÚÑa-z\s]", "", candidato).strip()
+                            break
+
+                # Si no encontramos cargo formal pero hay líneas limpias
+                if not cargo_str and partes_firma:
+                    partes_limpias = [
+                        p for p in partes_firma
+                        if not re.search(r"[\/\~\*\<\>\(\)\;\\]", p)
+                        and len(re.findall(r"\b[A-ZÁÉÍÓÚÑa-z]{3,}\b", p)) > 0
+                        and not any(w in p.upper() for w in palabras_descarte)
+                    ]
+                    if partes_limpias:
+                        cargo_str = ", ".join(partes_limpias)
+
+        # 2. Si falta cargo o nombre, verificar cabecera DE: en las primeras páginas
+        if not cargo_str or not nombre_str:
+            for line in lines[:30]:
                 line_clean = line.strip()
-                match_em = re.search(r"^\s*DE\s+([A-ZÁÉÍÓÚÑ\s]{6,})", line_clean)
-                if match_em:
-                    cargo_raw = match_em.group(1).strip().rstrip(".")
-                    if re.search(r"^(?:JEFE|DIRECTOR|MINISTRO|SUBSECRETARI|SECRETARI)", cargo_raw):
-                        if "JEFE" in cargo_raw.upper() and "DESARROLLO URBANO" in cargo_raw.upper():
-                            firmante = f"VICENTE BURGOS SALAS, {cargo_raw}"
-                        else:
-                            firmante = cargo_raw
-                        break
+                m_de = re.search(r"^\s*DE\s*:\s*(.+)$", line_clean, re.IGNORECASE)
+                if not m_de:
+                    m_de = re.search(r"^\s*DE\s+((?:JEFE|DIRECTOR|MINISTRO|SUBSECRETARI|SECRETARI)[A-ZÁÉÍÓÚÑ\s]{5,})", line_clean, re.IGNORECASE)
+                if m_de:
+                    texto_de = m_de.group(1).strip().rstrip(".")
+                    partes_de = [p.strip() for p in re.split(r"[,–—\-]", texto_de) if p.strip()]
+                    for p_de in partes_de:
+                        p_de_limpio = _limpiar_texto_firma(p_de)
+                        if not nombre_str and _es_nombre_persona(p_de_limpio):
+                            nombre_str = p_de_limpio
+                        elif not cargo_str and re.search(cargos_patron, p_de_limpio, re.IGNORECASE):
+                            cargo_str = p_de_limpio
 
-        if not firmante:
-            cargos_patron = r"(?:JEFE|DIRECTOR|MINISTRO|SUBSECRETARI[OA]|SECRETARI[OA])\s+(?:DIVISI[ÓO]N|GENERAL|DE)?\b"
-            for i, line in enumerate(lines):
-                line_clean = line.strip()
-                if re.search(cargos_patron, line_clean, re.IGNORECASE) and not re.match(r"^DE\s*:", line_clean, re.IGNORECASE):
-                    prev_line = lines[i - 1].strip() if i > 0 else ""
-                    if re.match(r"^[A-ZÁÉÍÓÚÑ\s]{4,}$", prev_line) and not re.search(r"MINISTERIO|CIRCULAR|DISTRIBUCION", prev_line):
-                        firmante = f"{prev_line}, {line_clean}"
-                        break
-                    elif re.match(r"^[A-ZÁÉÍÓÚÑ\s]{4,}$", line_clean):
-                        firmante = line_clean
-                        break
+        # 3. Si aún no tenemos un nombre completo de persona, intentar OCR visual directo sobre el recorte de la firma
+        if not _es_nombre_persona(nombre_str) and pdf_path is not None:
+            nombre_ocr = _extraer_nombre_firma_ocr(pdf_path)
+            if nombre_ocr and _es_nombre_persona(nombre_ocr):
+                nombre_str = nombre_ocr
 
-        firmante = _limpiar_texto_firma(firmante)
+        # 4. Limpieza final y normalización
+        nombre_str = _limpiar_texto_firma(nombre_str).strip()
+        cargo_str = _limpiar_texto_firma(cargo_str).strip()
+
+        if nombre_str and cargo_str:
+            firmante = f"{nombre_str}, {cargo_str}"
+        elif nombre_str:
+            firmante = nombre_str
+        else:
+            firmante = cargo_str
+
         firmante = re.sub(r"\s+", " ", firmante).strip()
         if firmante.endswith("."):
             firmante = firmante[:-1].strip()
@@ -118,10 +280,15 @@ class FirmaExtractor(BaseExtractor):
         return ResultadoBloque(
             nombre_bloque=self.nombre_bloque,
             exito=exito,
-            datos={"firmante": firmante},
+            datos={
+                "firmante": firmante,
+                "nombre_firmante": nombre_str,
+                "cargo_firmante": cargo_str,
+            },
             confianza=1.0 if exito else 0.0,
             observaciones="" if exito else "No se encontró firmante en la circular.",
         )
+
 
 
 if __name__ == "__main__":

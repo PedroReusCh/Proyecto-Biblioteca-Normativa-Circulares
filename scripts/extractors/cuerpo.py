@@ -10,51 +10,165 @@ from typing import Any, List
 
 from scripts.ddu_types import SeccionDDU
 from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
+from scripts.extractors.utils_cleaner import limpiar_palabras_ocr
+
+
+_PATRON_DIAGRAMA_ESQUEMA = re.compile(
+    r"^(?:"
+    r"EDIFICIO|"
+    r"Piscinas?\.?|"
+    r"Chimeneas?\.?|"
+    r"P[eé]rgolas?\.?|"
+    r"Ascensores\.?|"
+    r"Barandas?\.?|"
+    r"Paramentos(?:\s+perimetrales)?\.?|"
+    r"perimetrales\.?|"
+    r"escalera\.?|"
+    r"jardineras\.?|"
+    r"ornamentales\.?|"
+    r"quinchos?\.?|"
+    r"otros\.?|"
+    r"Salida\s+caja\s+de(?:\s+escalera)?\.?|"
+    r"Terraza(?:\s+Terraza)?\.?|"
+    r"Vegetaci[oó]n,?(?:\s+jardineras)?\.?|"
+    r"M[aá]ximo\s+25%\s+de\s+la\s+superficie\s+de\s+la\s+azotea\.?|"
+    r"Altura\s+m[aá]xima\s+de\s+edificaci[oó]n\s+permitida\s+por\s+el\s+IPT\.?|"
+    r"Piscinas,\s+vegetaci[oó]n,?\s+jardineras,?\s+elementos\s+ornamentales\.?|"
+    r"Salas\s+de\s+M[aá]quinas,?\s+Cajas\s+de\s+escalera,?\s+Chimeneas\.?|"
+    r"\(con\s+un\s+m[aá]ximo\s+de\s+99%\)|"
+    r"P[eé]rgolas,?\s+quinchos,?\s+otros\.?"
+    r")$",
+    re.IGNORECASE,
+)
+
+
+
+
+def _es_inicio_diagrama(line: str) -> bool:
+    """Detecta el inicio de un diagrama o esquema técnico."""
+    line_clean = line.strip()
+    if not line_clean:
+        return False
+    return bool(re.search(r"\b(?:PLANTA\s+AZOTEA|CORTE\s+ESQUEM[AÁ]TICO|SIN\s+ESCALA)\b", line_clean, re.IGNORECASE))
+
+
+def _es_etiqueta_diagrama(line: str) -> bool:
+    """Detecta fragmentos de texto y etiquetas de planos, diagramas o esquemas técnicos."""
+    line_clean = line.strip()
+    if not line_clean:
+        return False
+    # Símbolos y fracciones aisladas (ej. ½, ¼, ¾, \ufffd)
+    if re.match(r"^[\u00bd\u00bc\u00be\ufffd\?]+$", line_clean):
+        return True
+
+    # Encabezados típicos de planos o esquemas técnicos
+    if _es_inicio_diagrama(line_clean):
+        return True
+
+    # Etiquetas cortas (< 80 caracteres) de diagramas
+    if len(line_clean) < 80 and _PATRON_DIAGRAMA_ESQUEMA.match(line_clean):
+        return True
+    return False
+
+
+def _es_inicio_bloque_tabla(line: str) -> bool:
+    """Detecta el inicio de un bloque tabular normativo para excluirlo del cuerpo."""
+    line_clean = line.strip()
+    if not line_clean:
+        return False
+    if re.search(r"Circular\s+Materia\(s\)\s+que\s+se\s+modifica\(n\)", line_clean, re.IGNORECASE):
+        return True
+    if re.search(r"\bMateria\(s\)\s+que\s+se\s+modifica\(n\)", line_clean, re.IGNORECASE):
+        return True
+    if re.match(r"^\|\s*Circular\b", line_clean, re.IGNORECASE):
+        return True
+    return False
+
+
+def _es_nota_modificacion_posterior(line: str) -> bool:
+    """Detecta líneas de notas marginales de modificación posterior / vigencia jurídica."""
+    line_clean = line.strip()
+    if not line_clean:
+        return False
+    if re.search(r"Circular\s+Modificada\s+por\b", line_clean, re.IGNORECASE):
+        return True
+    if re.search(r"Modificada\s+por\s+Circular\b", line_clean, re.IGNORECASE):
+        return True
+    if re.search(r"Dejada\s+sin\s+efecto\s+por\b", line_clean, re.IGNORECASE):
+        return True
+    if re.match(r"^Circular\s+Ord\.?\s*N[°º\?]?\s*\d+\s*,?$", line_clean, re.IGNORECASE):
+        return True
+    if re.match(r"^de\s+fecha\s+\d{1,2}\s+de\s+[a-záéíóúñ]+", line_clean, re.IGNORECASE):
+        return True
+    if re.match(r"^de\s+\d{4},\s*DDU\s*\d+", line_clean, re.IGNORECASE):
+        return True
+    if re.search(r"\bde\s+fecha\s+\d{1,2}\s+de\s+[a-záéíóúñ]+\s+de\s+\d{4},\s*DDU\s*\d+", line_clean, re.IGNORECASE):
+        return True
+    if re.match(r"^\(?numeral\s+\d+\.?\)?$", line_clean, re.IGNORECASE):
+        return True
+    return False
 
 
 def _limpiar_texto_cuerpo(texto: str) -> str:
-    """Repara palabras rotas y espacios antes de signos de puntuación producidos por OCR."""
-    patrones_reemplazo = [
-        (r"\binst\s+rumen\s+to\b", "instrumento"),
-        (r"\bpermi\s+so\b", "permiso"),
-        (r"\bpermi\s+sos\b", "permisos"),
-        (r"\bedifi\s+cad([aaos])\b", r"edificad\1"),
-        (r"\bedifi\s+cac(i[oó]n|iones)\b", r"edificac\1"),
-        (r"\bincrement\s+o\b", "incremento"),
-        (r"\bcircunscribi\s+rse\b", "circunscribirse"),
-        (r"\bporcentua\s+l\b", "porcentual"),
-        (r"\bante\s+s\b", "antes"),
-        (r"\baplicab\s+le([s]?)\b", r"aplicable\1"),
-        (r"\bmod\s+ificac(i[oó]n|iones)\b", r"modificac\1"),
-        (r"\bmod\s+ificad([aaos])\b", r"modificad\1"),
-        (r"\bespec[ií]f\s+ic([aaos])\b", r"específic\1"),
-        (r"\bconstruid\s+a\b", "construida"),
-        (r"\bcorrespond\s+ient([es]?)\b", r"correspondient\1"),
-        (r"\binst\s+rucc(i[oó]n|iones)\b", r"instrucc\1"),
-        (r"\bcircul\s+ar([es]?)\b", r"circular\1"),
-        (r"\bsuperf\s+ic(ie[s]?)\b", r"superfic\1"),
-        (r"\bdispos\s+ic(i[oó]n|iones)\b", r"disposic\1"),
-        (r"\burban[íi]st\s+ic([aaos])\b", r"urbanístic\1"),
-        (r"\bterritor\s+ial\b", "territorial"),
-        (r"\bsolic\s+itud\b", "solicitud"),
-        (r"\baprob\s+ad([aaos])\b", r"aprobad\1"),
-        (r"\baprob\s+ac(i[oó]n|iones)\b", r"aprobac\1"),
-        (r"\bexpuest\s+os\b", "expuestos"),
-        (r"\bim[áa]\s+genes\b", "imágenes"),
-        (r"\bOS\s+33\b", "DS 33"),
-        # Reglas genéricas para plurales con 's' o 'es' aisladas por OCR
-        (r"\b([a-záéíóúñ]{3,}[aeiouáéíóú])\s+s\b", r"\1s"),
-        (r"\b([a-záéíóúñ]{3,}[bcdfghjklmnñpqrstvwxyz])\s+es\b", r"\1es"),
-        (r"\s+\.", "."),
-        (r"\s+,", ","),
-        (r"\s+;", ";"),
-        (r"\s+:", ":"),
-    ]
+    """Repara palabras rotas y preserva el casing original de mayúsculas/minúsculas."""
+    res = limpiar_palabras_ocr(texto)
 
-    res = texto
-    for pat, repl in patrones_reemplazo:
-        res = re.sub(pat, repl, res, flags=re.IGNORECASE)
+    # Reparaciones morfológicas agrupadas para preservar casing exacto (\1\2)
+    res = re.sub(r"\b(inst)\s+(rumen\s+to|rucc[ií]on\w*)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(permi)\s+(so[s]?)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(edifi)\s+(cad\w+|cac[ií]on\w*)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(increment)\s+(o[s]?)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(circunscribi)\s+(rse)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(porcentua)\s+(l[es]?)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(ante)\s+(s)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(aplicab)\s+(le[s]?)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(mod)\s+(ificac[ií]on\w*|ificad\w+)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(espec[ií]f)\s+(ic\w+)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(construid)\s+(a[s]?|o[s]?)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(correspond)\s+(ient\w*)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(circul)\s+(ar\w*)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(superf)\s+(ic\w+)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(dispos)\s+(ic\w+)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(urban[íi]st)\s+(ic\w+)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(territor)\s+(ial\w*)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(solic)\s+(itud\w*)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(aprob)\s+(ad\w+|ac[ií]on\w*)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\b(expuest)\s+(o[s]?|a[s]?)\b", r"\1\2", res, flags=re.IGNORECASE)
+    res = re.sub(r"\bOS\s+33\b", "DS 33", res)
+
+    # Remover notas marginales de modificación posterior incrustadas
+    res = re.sub(
+        r"(?:Circular\s+Modificada\s+por\s+)?Circular\s+Ord\.?\s*N[°º\?]?\s*\d+[^\n]*(?:,\s*de\s+fecha\s+[^\n]+)?(?:,\s*DDU\s*\d+)?(?:\s*\([^)]*\))?",
+        "",
+        res,
+        flags=re.IGNORECASE,
+    )
+    res = re.sub(
+        r"Circular\s+Ord\.?\s*N[°º\?]?\s*\d+,\s*de\s+fecha\s+\d{1,2}\s+de\s+[a-záéíóúñ]+\s+de\s+\d{4},\s*DDU\s*\d+(?:\s*\(numeral\s+\d+\.?\))?",
+        "",
+        res,
+        flags=re.IGNORECASE,
+    )
+    res = re.sub(
+        r"de\s+fecha\s+\d{1,2}\s+de\s+[a-záéíóúñ]+\s+de\s+\d{4},\s*DDU\s*\d+",
+        "",
+        res,
+        flags=re.IGNORECASE,
+    )
+
+    # Remover remanentes de encabezados de tablas al final de párrafos
+    m_tbl = re.search(r"\s*(?:Circular\s+)?Materia\(s\)\s+que\s+se\s+modifica\(n\).*", res, re.IGNORECASE)
+    if m_tbl:
+        res = res[:m_tbl.start()].strip()
+        if res.endswith(";"):
+            res = res[:-1] + ":"
+
+    res = re.sub(r"\s+", " ", res).strip()
     return res
+
+
+
+
 
 
 def _normalizar_prefijo_numeral_ocr(line: str) -> str:
@@ -225,6 +339,9 @@ class CuerpoExtractor(BaseExtractor):
         seccion_actual: SeccionDDU = {"titulo": "", "parrafos": []}
         parrafo_actual = ""
         omitiendo_nota_al_pie = False
+        omitiendo_tabla = False
+        omitiendo_diagrama = False
+
 
         lines_cuerpo = lines[inicio_cuerpo:]
         total_lineas = len(lines_cuerpo)
@@ -242,10 +359,62 @@ class CuerpoExtractor(BaseExtractor):
                 curr_idx += 1
                 continue
 
+            # Detectar e ignorar bloques de diagramas o esquemas técnicos dentro del cuerpo
+            if _es_inicio_diagrama(line_clean):
+                if parrafo_actual:
+                    seccion_actual["parrafos"].append(parrafo_actual.strip())
+                    parrafo_actual = ""
+                omitiendo_diagrama = True
+                curr_idx += 1
+                continue
+
+            if omitiendo_diagrama:
+                if re.match(r"^\d+\.\s+", line_clean) or re.match(r"^[IVXLCDM]+\.\s+", line_clean, re.IGNORECASE) or re.search(r"Saluda\s+atent", line_clean, re.IGNORECASE):
+                    omitiendo_diagrama = False
+                else:
+                    curr_idx += 1
+                    continue
+
+            # Descartar fragmentos y etiquetas sueltas de diagramas/planos técnicos
+            if _es_etiqueta_diagrama(line_clean):
+                curr_idx += 1
+                continue
+
+            # Descartar notas marginales de modificación posterior / timbres de vigencia
+            if _es_nota_modificacion_posterior(line_clean):
+                curr_idx += 1
+                continue
+
+
+
+            # Detectar e ignorar bloques de tablas normativas dentro del cuerpo
+            if _es_inicio_bloque_tabla(line_clean):
+                if parrafo_actual:
+                    m_th = re.search(r"(?:Circular\s+)?Materia\(s\)\s+que\s+se\s+modifica\(n\).*", parrafo_actual, re.IGNORECASE)
+                    if m_th:
+                        parrafo_actual = parrafo_actual[:m_th.start()].strip()
+                    if parrafo_actual.endswith(";"):
+                        parrafo_actual = parrafo_actual[:-1] + ":"
+                    seccion_actual["parrafos"].append(parrafo_actual.strip())
+                    parrafo_actual = ""
+                omitiendo_tabla = True
+                curr_idx += 1
+                continue
+
+            if omitiendo_tabla:
+                if re.search(r"Saluda\s+atent", line_clean, re.IGNORECASE) or re.match(
+                    r"^(?:DISTRIBUCI[ÓO\?I\s]+N|BUCI[ÓO\?I\s]+N|STRIBUCI[ÓO\?I\s]+N)[\s:]*", line_clean, re.IGNORECASE
+                ):
+                    omitiendo_tabla = False
+                else:
+                    curr_idx += 1
+                    continue
+
             # Aplicar normalización de numerales distorsionados por OCR (l. -> 1., S. -> 5., B. -> 8.)
             line_clean = _normalizar_prefijo_numeral_ocr(line_clean)
             # Aplicar formateo de llamadas a notas al pie [1], [2], [3]
             line_clean = _normalizar_llamadas_nota_al_pie(line_clean)
+
 
             # Detectar e ignorar bloques de notas al pie dentro del cuerpo
             if _es_inicio_nota_al_pie(line_clean):
@@ -257,11 +426,12 @@ class CuerpoExtractor(BaseExtractor):
                 continue
 
             if omitiendo_nota_al_pie:
-                if re.match(r"^\d+\.\s+", line_clean) or re.match(r"^[I|V|X]+\.\s+", line_clean, re.IGNORECASE):
+                if re.match(r"^\d+\.\s+", line_clean) or re.match(r"^[IVXLCDM]+\.\s+", line_clean, re.IGNORECASE):
                     omitiendo_nota_al_pie = False
                 else:
                     curr_idx += 1
                     continue
+
 
             # Detener extracción si llegamos a la firma o distribución
             if re.search(r"Saluda\s+atent", line_clean, re.IGNORECASE) or re.match(
@@ -350,9 +520,16 @@ class CuerpoExtractor(BaseExtractor):
             curr_idx += 1
 
         if parrafo_actual:
-            seccion_actual["parrafos"].append(parrafo_actual)
+            m_th = re.search(r"(?:Circular\s+)?Materia\(s\)\s+que\s+se\s+modifica\(n\).*", parrafo_actual, re.IGNORECASE)
+            if m_th:
+                parrafo_actual = parrafo_actual[:m_th.start()].strip()
+            if parrafo_actual.endswith(";"):
+                parrafo_actual = parrafo_actual[:-1] + ":"
+            if parrafo_actual:
+                seccion_actual["parrafos"].append(parrafo_actual)
 
         if seccion_actual["titulo"] or seccion_actual["parrafos"]:
+
             secciones.append(seccion_actual)
 
         # Aplicar reparación de palabras OCR a cada párrafo de las secciones

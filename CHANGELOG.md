@@ -4,6 +4,64 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/) y este proyecto se adhiere a las prácticas de control de versiones semántico.
 
+## [0.11.0] - 2026-08-14
+
+### Added
+
+* **Arquitectura Desacoplada de Tablas e Imágenes con Manifiestos Ligeros e IDs Canónicos**:
+  * **Exportación Desacoplada de Tablas (`salidas_tablas/`)**: `TablasExtractor` ahora exporta cada tabla extraída como archivo CSV estructurado individual (`DDU_{num}_tabla_{idx}.csv`, `utf-8-sig`, delimitador `;`, `QUOTE_ALL`) y emite un manifiesto compacto con IDs canónicos.
+  * **Normalización de Flujo Continuo Inteligente en Celdas de Tablas**: Se implementó `normalizar_texto_celda_tabla` para unir los saltos de línea duros provocados por el ancho de columna estrecho en PDFs, convirtiéndolos en texto continuo, fluido y legible para humanos, preservando adaptativamente la separación de párrafos e ítems lógicos (`a)`, `b)`, `1.`, `2.`, `i)`, etc.).
+  * **Consolidación Inteligente de Tablas Multi-Página**: Tablas consecutivas con encabezados idénticos se fusionan automáticamente en una sola tabla lógica. Las filas de continuación (primera columna vacía por paginación) se concatenan con la fila precedente. DDU 456: 4 tablas parciales (pág. 5-8) → 1 tabla consolidada con 3 filas (DDU 339, DDU 322, DDU 168) y campo `paginas: [5, 6, 7, 8]`.
+
+  * **Exportación Desacoplada de Imágenes en PNG Sin Pérdida (`salidas_imagenes/`)**: `ImagenesExtractor` ahora exporta esquemas y diagramas técnicos en formato PNG sin pérdida (`salidas_imagenes/DDU_{num}_img_{idx}.png`) con captura de área envolvente completa (`300 DPI`), garantizando nitidez técnica en planos, líneas, cotas y texto.
+  * **Nuevo ETL Modular `ModificacionesPosterioresExtractor` (`scripts/extractors/modificaciones_posteriores.py`)**: Extractor dinámico independiente que captura notas marginales de vigencia y timbres de modificación posterior de la circular como **texto libre** íntegro (ej. `"Circular Modificada por Circular Ord. N°214, de fecha 02 de mayo de 2024, DDU 498 (numeral 7.)"`), delimitando su alcance para no interferir con las tablas ni el cuerpo normativo.
+
+  * **Descontaminación del Numeral 2 en `CuerpoExtractor` y Preservación de Texto Completo de Incisos**: Se implementó el filtro `_es_nota_modificacion_posterior`, el estado `omitiendo_diagrama` y limpieza en `_limpiar_texto_cuerpo`, eliminando la intrusión de recuadros marginales y restaurando la totalidad del texto legal en el inciso vigésimo primero (*"...los que no podrán sobrepasar los 2 m de altura desde el nivel de la azotea."*).
+  * **Extracción Estructurada de Firma y OCR Visual con RapidOCR**: Se rediseñó `FirmaExtractor` para desglosar y extraer independientemente `nombre_firmante`, `cargo_firmante` y el consolidado `firmante`. En circulares donde el nombre de la persona no está presente en la capa de texto vectorial (ej. facsímil en DDU 456), se ejecuta un OCR visual directo en alta resolución sobre el recuadro de firma mediante `RapidOCR`, extrayendo con precisión el nombre completo inmediatamente arriba del cargo (`nombre_firmante = "ENRIQUE MATUSCHKA AYÇAGUER"`, `cargo_firmante = "Jefe División de Desarrollo Urbano"`), saneando caracteres y garantizando 100% de dinamismo.
+
+  * **Formato Plano sin Caracteres JSON en CSV Principal**: En `salidas_csv/DDU_456_extraido.csv`, los campos de los bloques `Tablas` e `Imágenes` se formatean como pares clave-valor limpios delimitados por `; ` (ej. `id: DDU_456_tabla_1; nombre: ...; paginas: 5, 6, 7, 8; filas: 3; columnas: 3; archivo_anexo: salidas_tablas/...`), eliminando completamente la sintaxis y caracteres JSON (`[`, `]`, `{`, `}`, `"`), facilitando su lectura directa e integración en hojas de cálculo.
+  * **Integración Canónica en Akoma Ntoso XML (`scripts/ddu_to_xml.py`) y RDF (`scripts/ddu_to_rdf.py`)**:
+    * **Tablas**: Inyección del contenedor `<attachments>` tras `<conclusions>` con elementos `<componentRef id="..." src="salidas_tablas/..." showAs="..."/>`.
+    * **Imágenes**: Inyección de etiquetas inline `<img>` (`src`, `alt`, `width`, `height`, `id`) dentro de los párrafos que introducen esquemas o figuras técnicas.
+    * **Modificaciones Posteriores**: Incorporación de metadatos `<lifecycle>` (`<eventRef type="amendment"/>`), análisis de modificaciones pasivas `<analysis>` (`<passiveModifications>` con `<textualMod type="substitution">`) y referencia `<TLCReference>` en XML, junto con la tripleta semántica `minvu-ddu:modificadaPor` en el grafo RDF Turtle, validado al 100% contra el XSD oficial de la BCN con `lxml.etree.XMLSchema`.
+
+## [0.10.0] - 2026-08-14
+
+### Added
+
+* **Arquitectura Ampliada de 14 Bloques ETL Modulares e Independientes**:
+  * Extensión del ecosistema de extractores en [`scripts/extractors/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/) coordinados por [`scripts/ddu_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_orchestrator.py) (`DDUOrchestrator`).
+  * **Extractor de Tablas (`TablasExtractor` en `scripts/extractors/tablas.py`)**: Extracción y normalización de tablas comparativas y modificaciones normativas en formato Markdown/estructurado mediante `pdfplumber` (`bloque="Tablas"`).
+  * **Extractor de Imágenes y Esquemas Técnicos (`ImagenesExtractor` en `scripts/extractors/imagenes.py`)**: Inventario de imágenes, diagramas de arquitectura y esquemas técnicos mediante PyMuPDF (`fitz`), con filtrado automático de membretes institucionales, filetes decorativos y descripción contextual (`bloque="Imágenes"`).
+  * **Saneamiento Tipográfico OCR Universal (`scripts/extractors/utils_cleaner.py`)**: Módulo de reparación determinista de fragmentaciones tipográficas de escaneo OCR (`a rtículo` ➔ `artículo`, `inciso s` ➔ `incisos`, `relativo s` ➔ `relativos`, `vigési mo` ➔ `vigésimo`, `quinch os` ➔ `quinchos`).
+  * **Soporte Estricto de Tipos**: Inclusión de campos `tablas` e `imagenes` en `DatosCircularDDU` en [`scripts/ddu_types.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_types.py).
+  * **Nuevas Pruebas Unitarias y de Integración**: Pruebas en [`test/test_utils_cleaner.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_utils_cleaner.py), [`test/test_extractor_tablas.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_extractor_tablas.py), [`test/test_extractor_imagenes.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_extractor_imagenes.py), y ampliación de [`test/test_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_orchestrator.py) con verificación de los 14 bloques normativos.
+
+### Changed
+
+* **Descontaminación de Cuerpo y Refinamiento de Firma**:
+  * [`scripts/extractors/cuerpo.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/cuerpo.py): Aislamiento del texto narrativo formal, excluyendo volcados desordenados de etiquetas de diagramas (ej. etiquetas del esquema de planta azotea y corte).
+  * [`scripts/extractors/firma.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/firma.py): Captura depurada del cargo y emisor formal sin absorción de encabezados de tablas ni texto residual.
+  * [`scripts/ddu_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_orchestrator.py): Actualización de `export_individual_csv()` para emitir los 14 bloques normativos estructurados.
+  * Regeneración de salidas para la circular DDU 456 (`salidas_csv/DDU_456_extraido.csv`, `salidas_xml/DDU_456_akoma.xml`, `salidas_rdf/DDU_456_rdf.ttl`).
+
+## [0.9.0] - 2026-08-14
+
+### Added
+
+* **Soporte y Transformación Integral de la Circular DDU 456**:
+  * Procesamiento completo del PDF `circulares/DDU 456.pdf` (9 páginas, año 2021) con extracción estructurada de 7 numerales y 34 destinatarios.
+  * Generación de archivos de salida: `salidas_csv/DDU_456_extraido.csv`, `salidas_xml/DDU_456_akoma.xml` y `salidas_rdf/DDU_456_rdf.ttl`.
+  * Indexación en el Grafo RDF de relaciones normativas hacia la LGUC (DFL 458), OGUC (DTO 47 y artículos 1.1.2, 2.6.3, 2.6.11, 2.6.12, 6.1.8) y precedencia de circulares (`DDU 168`, `DDU 322`, `DDU 339`, `DDU 498`).
+  * Inclusión de nuevas pruebas unitarias en [`test/test_extractor_metadata.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_extractor_metadata.py) y [`test/test_extractor_body.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_extractor_body.py) elevando la suite a **48 pruebas exitosas**.
+
+### Changed
+
+* **Refinamiento de Extractores de Metadatos y Firma**:
+  * [`scripts/extractors/firma.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/firma.py): Descarte de falsos positivos de cabeceras de tablas (`Motivo y/o Consideraciones`) y captura precisa del cargo del firmante.
+  * [`scripts/extractors/materia.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/materia.py) y [`scripts/extractors/descriptores.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/descriptores.py): Detección y separación exacta de descriptores en mayúsculas sin prefijo explícito (ej. `NORMAS URBANISTICAS`).
+  * [`scripts/ddu_to_xml.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_xml.py): Normalización de `docNumber` para prevenir duplicación de prefijos `DDU`.
+
 ## [0.8.0] - 2026-08-14
 
 ### Added
@@ -27,10 +85,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 * **Limpieza de Archivos Obsoletos**:
   * Remoción definitiva de `.github/copilot-instructions.md` y unificación de directrices en `GEMINI.md`.
 
----
-
 ## [0.7.1] - 2026-08-06
-
 
 ### Added
 
@@ -38,10 +93,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
   * Integración formal de la regla de diagramación y modelos visuales basada en [`.github/instructions/mermaid.instructions.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/.github/instructions/mermaid.instructions.md) y [`.github/copilot-instructions.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/.github/copilot-instructions.md) en [`AGENTS.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/AGENTS.md).
   * Exigencia de persistencia en archivos `.mmd` y validación sintáctica obligatoria para diagramas de secuencia, arquitectura y flujos del proyecto.
 
----
-
 ## [0.7.0] - 2026-07-31
-
 
 ### Added
 
@@ -61,10 +113,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
   * Reemplazada la etiqueta no estándar `<br/>` por la etiqueta nativa Akoma Ntoso `<eol/>`.
   * Ajustada la lectura en `DDUToXML` para renderizar completamente la nómina de distribución desde `distribucion_texto` y `lista_distribucion`.
 
----
-
 ## [0.6.0] - 2026-07-30
-
 
 ### Added
 
@@ -92,8 +141,6 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 * **Estrategia Arquitectónica: Modelo de Datos de Dominio y Extensibilidad Evolutiva**:
   * Adopción del modelo de datos de dominio plano en CSV (`numero_ddu`, `fecha_emision`, `cuerpo`, `firmante`) para preservar la legibilidad humana e intuitiva del negocio, delegando la traducción a Akoma Ntoso XML (`FRBRWork`, `docDate`, `mainBody`) a los transformadores [`scripts/ddu_to_xml.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_xml.py) y [`scripts/ddu_to_rdf.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_rdf.py).
   * Formalización de la extensibilidad del pipeline de ETLs modulares ([`scripts/extractors/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/)): ante la evolución o mutación futura de las circulares DDU, es posible incorporar dinámicamente nuevos extractores mediante `@register_extractor` e integrarlos automáticamente en el orquestador central ([`scripts/ddu_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_orchestrator.py)).
-
----
 
 ## [0.5.0] - 2026-07-28
 
