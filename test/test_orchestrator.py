@@ -10,6 +10,8 @@ from scripts.ddu_types import DatosCircularDDU
 PROYECTO_RAIZ = Path(__file__).resolve().parents[1]
 PDF_DDU_533 = PROYECTO_RAIZ / "circulares" / "DDU 533.pdf"
 PDF_DDU_456 = PROYECTO_RAIZ / "circulares" / "DDU 456.pdf"
+PDF_DDU_547 = PROYECTO_RAIZ / "circulares" / "DDU 547.pdf"
+
 
 
 def test_orchestrator_process_pdf_ddu_533() -> None:
@@ -276,5 +278,67 @@ def test_formatear_manifiesto_plano() -> None:
     assert formatear_manifiesto_plano(None) == ""
     assert formatear_manifiesto_plano([]) == ""
     assert formatear_manifiesto_plano("") == ""
+
+
+def test_orchestrator_process_pdf_ddu_547() -> None:
+    """Verifica el procesamiento integral de DDU 547 con sus 14 bloques normativos."""
+    if not PDF_DDU_547.exists():
+        pytest.skip(f"No se encontró {PDF_DDU_547}")
+
+    orchestrator = DDUOrchestrator()
+    datos: DatosCircularDDU = orchestrator.process_pdf(PDF_DDU_547)
+
+    # 1. Metadatos principales saneados
+    assert "547" in datos["numero"]
+    assert datos["fecha"] == "2026-06-25"
+    assert "Decreto Supremo" in datos["materia"]
+    assert "urbanizaciones voluntarias" in datos["materia"]
+    assert "JEFE" in datos["emisor"] and "DESARROLLO URBANO" in datos["emisor"]
+    assert datos.get("numero_ord") == "CIRCULAR ORD. N° 362"
+    assert "URBANIZACIONES VOLUNTARIAS" in str(datos.get("descriptores", ""))
+    assert "SEGÚN DISTRIBUCIÓN" in str(datos.get("destinatarios", ""))
+    assert str(datos.get("lugar", "")) == "Santiago"
+
+    # 2. Firma del emisor
+    assert "JUAN DIEGO IZQUIERDO HEVIA" in str(datos.get("firmante", ""))
+    assert "JUAN DIEGO IZQUIERDO HEVIA" in str(datos.get("nombre_firmante", ""))
+
+    # 3. Estructura y secciones
+    secciones = datos.get("secciones", [])
+    assert isinstance(secciones, list)
+    assert len(secciones) > 0
+
+    # 4. Tablas e imágenes
+    tablas = datos.get("tablas") or []
+    assert isinstance(tablas, list)
+    assert len(tablas) > 0
+
+
+def test_export_individual_csv_ddu_547(tmp_path: Path) -> None:
+    """Verifica la exportación individual de CSV para DDU 547 con formato delimitado limpio."""
+    if not PDF_DDU_547.exists():
+        pytest.skip(f"No se encontró {PDF_DDU_547}")
+
+    orchestrator = DDUOrchestrator()
+    res_path = orchestrator.export_individual_csv(PDF_DDU_547, output_dir=tmp_path)
+
+    assert res_path.exists()
+    assert res_path.name == "DDU_547_extraido.csv"
+
+    with open(res_path, "r", encoding="utf-8-sig") as f:
+        reader = csv.reader(f, delimiter=";")
+        header = next(reader)
+        assert header == ["bloque", "campo", "valor_extraido"]
+
+        rows = list(reader)
+        assert len(rows) == 15, f"Se esperaban 15 bloques, se encontraron {len(rows)}"
+
+        bloques = [row[0] for row in rows]
+        assert "Materia" in bloques
+        assert "Firma" in bloques
+        assert "Tablas" in bloques
+        assert "Imágenes" in bloques
+
+
 
 

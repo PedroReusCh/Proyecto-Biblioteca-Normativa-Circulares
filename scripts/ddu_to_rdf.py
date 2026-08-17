@@ -8,7 +8,11 @@ import re
 from pathlib import Path
 from typing import List, Set
 
-from ddu_types import DatosCircularDDU, SeccionDDU
+try:
+    from scripts.ddu_types import DatosCircularDDU, SeccionDDU
+except ImportError:
+    from ddu_types import DatosCircularDDU, SeccionDDU
+
 
 
 class DDUToRDF:

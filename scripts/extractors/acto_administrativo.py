@@ -33,9 +33,10 @@ class ActoAdministrativoExtractor(BaseExtractor):
 
         # Patrón flexible para "CIRCULAR ORD. N° 112", "CIRCULAR ORO. N ___ 0_8_, 8 ___ /", "ORD. N° 088", etc.
         pattern_ord = re.compile(
-            r"(?:CIRCULAR\s+)?(?:ORD|ORO|OR0|OR)\.?\s*(?:N[°oº\?\s_]*\s*)?([0-9\s_lI\|·\-,°º]+)",
+            r"(?:CIRCULAR\s+)?(?:ORD|ORO|OR0|OR)\.?\s*(?:N[°oº\?\s_\-]*\s*)?([0-9\s_lI\|·\-,°º\.\;\~\'\/\-]+)",
             re.IGNORECASE,
         )
+
 
         def _limpiar_digitos_ord(raw_val: str) -> str:
             # Reemplazar confusiones OCR de dígito 1 (l, I, i, |)

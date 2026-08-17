@@ -4,7 +4,26 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/) y este proyecto se adhiere a las prácticas de control de versiones semántico.
 
+## [0.12.0] - 2026-08-17
+
+### Added
+
+* **Integración y Procesamiento de la Circular DDU 547**:
+  * **Procesamiento de Documento Extenso (25 Páginas)**: Soporte e integración completa para la circular DDU 547 sobre el *Decreto Supremo Nº 5 (V. y U.) de 2025* en materia de *Urbanizaciones Voluntarias*.
+  * **Generación de Entregables Certificados**: Generación de `salidas_csv/DDU_547_extraido.csv`, `salidas_xml/DDU_547_akoma.xml` y `salidas_rdf/DDU_547_rdf.ttl`.
+  * **Pruebas de Integración y Regresión**: Se añadieron pruebas unitarias y de integración `test_orchestrator_process_pdf_ddu_547` y `test_export_individual_csv_ddu_547` en [`test/test_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test/test_orchestrator.py).
+
+### Changed
+
+* **Refinamiento de Extractores Modulares y Generador XML**:
+  * **Materia (`scripts/extractors/materia.py`)**: Coincidencia estricta de prefijos (`MAT.:`, `MAT:`, `MATERIA:`) previniendo capturas espurias en párrafos que contienen la palabra *materia*.
+  * **Acto Administrativo (`scripts/extractors/acto_administrativo.py`)**: Extracción flexible de dígitos en números ordinarios con caracteres intermedios de ruido OCR (`CIRCULAR ORD. N° 362`).
+  * **Firma (`scripts/extractors/firma.py`)**: Búsqueda en el bloque de cierre previo a la lista de distribución final en documentos multi-página y normalización precisa del nombre de persona (*JUAN DIEGO IZQUIERDO HEVIA*).
+  * **Limpieza Tipográfica OCR (`scripts/extractors/utils_cleaner.py`)**: Incorporación de reglas directas para variantes de *Decreto Supremo N° 5*.
+  * **Unicidad de Atributos `xs:ID` en XML Akoma Ntoso (`scripts/ddu_to_xml.py`)**: Control estricto de inyección única por imagen técnica para garantizar el cumplimiento del tipo `xs:ID` del esquema XSD de la BCN.
+
 ## [0.11.0] - 2026-08-14
+
 
 ### Added
 

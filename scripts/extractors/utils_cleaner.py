@@ -13,7 +13,9 @@ CORRECCIONES_DIRECTAS: Dict[str, str] = {
     r"\binst ituto\b": "instituto",
     r"\bAD!\b": "ADI",
     r"\bpo\s+r\b": "por",
+    r"\bN[°º\?]?S,\s*\(V\.\s*y\s*U\.\)": "N° 5, (V. y U.)",
 }
+
 
 
 

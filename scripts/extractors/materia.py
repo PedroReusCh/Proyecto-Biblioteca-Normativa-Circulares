@@ -80,13 +80,14 @@ class MateriaExtractor(BaseExtractor):
                     materia += " " + line_clean
             else:
                 match_mat = re.match(
-                    r"^(?:MAT|MATERIA)[\s\.:]+(.+)$",
+                    r"^(?:MAT|MATERIA)\s*[\.:]+\s*(.+)$",
                     line_clean,
                     re.IGNORECASE,
                 )
-                if match_mat:
+                if match_mat and not materia:
                     materia = match_mat.group(1).strip()
                     en_materia = True
+
 
         materia = re.sub(r"\s+", " ", materia).strip()
         materia = limpiar_palabras_ocr(materia)

@@ -8,7 +8,11 @@ from datetime import date
 import re
 from typing import Any, Dict, List, Optional
 
-from ddu_types import DatosCircularDDU, SeccionDDU
+try:
+    from scripts.ddu_types import DatosCircularDDU, SeccionDDU
+except ImportError:
+    from ddu_types import DatosCircularDDU, SeccionDDU
+
 
 
 
@@ -356,6 +360,7 @@ class DDUToXML:
 
         # Extraer lista de imágenes si existen
         imagenes_list = self._parsear_manifiesto_o_lista(datos.get("imagenes") or datos.get("imagenes_manifiesto"))
+        imagenes_pendientes: List[Dict[str, Any]] = list(imagenes_list)
 
         # Bloque <mainBody>
         builder.add('<mainBody>')
@@ -428,15 +433,23 @@ class DDUToXML:
                 builder.indent()
                 builder.add(f'<p>{texto_procesado}</p>')
 
-                # Inyectar elemento <img> si el párrafo introduce un esquema o plano técnico
-                if imagenes_list and (
-                    "esquema ilustrativo" in texto_par.lower()
-                    or "plano" in texto_par.lower()
-                    or "figura" in texto_par.lower()
-                    or num_par in ["4.", "4"]
-                ):
-                    for img in imagenes_list:
-                        img_id = self._xml_escape(str(img.get("id", "img_1")))
+                # Inyectar elemento <img> si el párrafo introduce un esquema o plano técnico (máximo una vez por imagen)
+                if imagenes_pendientes:
+                    texto_lower = texto_par.lower()
+                    imgs_a_inyectar: List[Dict[str, Any]] = []
+                    for img in list(imagenes_pendientes):
+                        es_ddu_456 = "ddu 456" in numero.lower()
+                        if (
+                            "esquema ilustrativo" in texto_lower
+                            or "siguiente esquema" in texto_lower
+                            or "siguiente figura" in texto_lower
+                            or (es_ddu_456 and num_par in ["4.", "4"])
+                        ):
+                            imgs_a_inyectar.append(img)
+                            imagenes_pendientes.remove(img)
+
+                    for img in imgs_a_inyectar:
+                        img_id = self._xml_escape(str(img.get("id", f"img_{idx_sec}_{idx_par}")))
                         img_src = self._xml_escape(str(img.get("archivo_anexo", "salidas_imagenes/DDU_456_img_1.png")))
                         img_alt = self._xml_escape(str(img.get("descripcion", img.get("nombre", "Esquema ilustrativo"))))
                         img_w = str(img.get("ancho", "2131"))
@@ -448,6 +461,7 @@ class DDUToXML:
 
                 builder.dedent()
                 builder.add('</paragraph>')
+
 
             builder.dedent()
             builder.add('</section>')

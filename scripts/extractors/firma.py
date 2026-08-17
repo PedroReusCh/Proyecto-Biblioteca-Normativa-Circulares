@@ -15,12 +15,14 @@ from scripts.extractors.utils_cleaner import limpiar_palabras_ocr, preservar_cas
 def _limpiar_texto_firma(texto: str) -> str:
     """Repara distorsiones típicas de OCR en nombres, cargos y ministerios del firmante."""
     texto = limpiar_palabras_ocr(texto)
-    texto = re.sub(r"\bN\s+DIEGO\s+ZQUIERDO\s+HEVIA\b", "JUAN DIEGO IZQUIERDO HEVIA", texto, flags=re.IGNORECASE)
-    texto = re.sub(r"\bN\s+DIEGO\s+IZQUIERDO\s+HEVIA\b", "JUAN DIEGO IZQUIERDO HEVIA", texto, flags=re.IGNORECASE)
+    texto = re.sub(r"^(?:[_\s\-|\.\~:\xad,]+)?(?:JUAN\s+|N\s+)?DIEGO\s+[IZ]*QUIERDO\s+HEVIA\b", "JUAN DIEGO IZQUIERDO HEVIA", texto, flags=re.IGNORECASE)
+    texto = re.sub(r"\b(?:JUAN\s+|N\s+)?DIEGO\s+[IZ]*QUIERDO\s+HEVIA\b", "JUAN DIEGO IZQUIERDO HEVIA", texto, flags=re.IGNORECASE)
+    texto = re.sub(r"\b(?:D\s+VISI|IS[IÍÓ\?I\ufffd\s]+N)\s+DE\s+DESARROLLO\s+URBANO\b", "DIVISIÓN DE DESARROLLO URBANO", texto, flags=re.IGNORECASE)
     texto = re.sub(r"\bD\s+VISI[ÓO\?I\ufffd\s]+N\b", "DIVISIÓN", texto, flags=re.IGNORECASE)
     texto = re.sub(r"\bDIVISI[ÓO\?I\ufffd\s]+N\b", lambda m: preservar_casing(m.group(0), "División"), texto, flags=re.IGNORECASE)
-    texto = re.sub(r"\bIS\s+RIO\b", "MINISTERIO", texto, flags=re.IGNORECASE)
+    texto = re.sub(r"\b(?:MINIST\s*RIO|IS\s+RIO)\b", "MINISTERIO", texto, flags=re.IGNORECASE)
     return texto
+
 
 
 def _es_nombre_persona(line: str) -> bool:
@@ -261,6 +263,34 @@ class FirmaExtractor(BaseExtractor):
                     if partes_limpias:
                         cargo_str = ", ".join(partes_limpias)
 
+        # 1.3 Si aún no tenemos nombre completo, buscar en el bloque de cierre previo a la distribución final
+        if not nombre_str:
+            idx_dist_final = -1
+            mitad_doc = int(len(lines) * 0.5)
+            for i in range(len(lines) - 1, mitad_doc, -1):
+                l_cand = lines[i]
+                if re.search(r"^(?:DISTRIBUCI[ÓO]N|1\.\s+Sr\.\s+Ministro|Sr\.\s+Ministro\s+de\s+Vivienda)", l_cand, re.IGNORECASE):
+                    idx_dist_final = i
+                    for prev_d in range(i - 1, max(mitad_doc, i - 4), -1):
+                        if re.search(r"^(?:DISTRIBUCI[ÓO]N)", lines[prev_d], re.IGNORECASE):
+                            idx_dist_final = prev_d
+                            break
+                    break
+
+            if idx_dist_final != -1:
+                pre_lineas = lines[max(0, idx_dist_final - 10) : idx_dist_final]
+                for pl in reversed(pre_lineas):
+                    pl_limpia = _limpiar_texto_firma(pl)
+                    if _es_nombre_persona(pl_limpia) or re.search(r"JUAN\s+DIEGO|VICENTE|PAZ|RODRIGO", pl_limpia, re.IGNORECASE):
+                        nombre_str = re.sub(r"[^A-ZÁÉÍÓÚÑa-z\s]", "", pl_limpia).strip()
+                        break
+                if not cargo_str:
+                    for pl in pre_lineas:
+                        pl_limpia = _limpiar_texto_firma(pl)
+                        if re.search(cargos_patron, pl_limpia, re.IGNORECASE):
+                            cargo_str = pl_limpia
+                            break
+
         # 2. Si falta cargo o nombre, verificar cabecera DE: en las primeras páginas
         if not cargo_str or not nombre_str:
             for line in lines[:30]:
@@ -271,6 +301,7 @@ class FirmaExtractor(BaseExtractor):
                 if m_de:
                     texto_de = m_de.group(1).strip().rstrip(".")
                     partes_de = [p.strip() for p in re.split(r"[,–—\-]", texto_de) if p.strip()]
+
                     for p_de in partes_de:
                         p_de_limpio = _limpiar_texto_firma(p_de)
                         if not nombre_str and _es_nombre_persona(p_de_limpio):
