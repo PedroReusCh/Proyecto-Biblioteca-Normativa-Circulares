@@ -33,7 +33,7 @@ El proyecto se estructura en los siguientes directorios clave:
 El proyecto adopta una **arquitectura en capas con separación clara de responsabilidades**:
 
 1. **Capa de Dominio Plano e Intuitivo (CSV)**:
-   Los datos extraídos se organizan bajo términos de dominio claros y legibles para analistas e ingenieros de datos (`numero_ddu`, `fecha_emision`, `cuerpo`, `firmante`, `tablas`, `imagenes`, `modificaciones_posteriores`, etc.) en formato CSV. Los campos complejos se formatean como manifiestos clave-valor delimitados por `; ` (sin sintaxis JSON invasiva).
+   Los datos extraídos se organizan bajo términos de dominio claros y legibles para analistas e ingenieros de datos (`numero_ddu`, `fecha_emision`, `cuerpo`, `firmante`, `tablas`, `imagenes`, `modificaciones_posteriores`, etc.) en formato CSV. Los campos complejos se formatean como manifiestos clave-valor delimitados por `;` (sin sintaxis JSON invasiva).
 2. **Capa de Interoperabilidad Semántica (Akoma Ntoso XML & RDF)**:
    Los módulos [`scripts/ddu_to_xml.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_xml.py) y [`scripts/ddu_to_rdf.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_rdf.py) actúan como traductores que mapean automáticamente los campos de dominio a la taxonomía XML Akoma Ntoso v2.0 BCN (`FRBRWork`, `lifecycle`, `analysis`, `mainBody`, `img`, `conclusions`, `attachments`) y a grafos semánticos RDF/Turtle (`minvu-ddu:interpretaA`, `minvu-ddu:complementaA`, `minvu-ddu:modificadaPor`).
 3. **Extensibilidad Evolutiva del Pipeline ETL**:
@@ -133,7 +133,6 @@ py -3 scripts/ddu_orchestrator.py --pdf "circulares/DDU 531.pdf" --export-csv
 
 * **Salida / Visualización**: Genera un archivo CSV codificado en UTF-8 con BOM y delimitado por punto y coma (`;`) en la carpeta `salidas_csv/` (ej. [`salidas_csv/DDU_531_extraido.csv`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/salidas_csv/DDU_531_extraido.csv)).
 
-
 ## Dependencias e Instalación
 
 Este proyecto utiliza módulos estándar de Python 3 y requiere las siguientes librerías externas:
@@ -159,4 +158,3 @@ pytest -v
 ```
 
 Actualmente, **81 de 81 pruebas pasan exitosamente** (100% de cobertura de la suite en estructura modular y plana).
-
