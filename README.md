@@ -124,6 +124,7 @@ Para verificar o instalar dependencias, ejecute:
 ```powershell
 pip install pypdf
 ```
+
 ## Ejecución de la Suite de Pruebas
 
 Para garantizar que el sistema y sus modelos semánticos de datos cumplen al 100% con los contratos estructurales definidos por el XSD, los CSV de la BCN y la suite de extractores, ejecute en la raíz del repositorio:
