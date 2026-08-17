@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import re
 import sys
-from typing import Any, List
+from typing import Any, List, Optional, Sequence
 
 _PROYECTO_RAIZ = Path(__file__).resolve().parents[2]
 if str(_PROYECTO_RAIZ) not in sys.path:
@@ -53,12 +53,14 @@ class NotaAlPieExtractor(BaseExtractor):
     def nombre_bloque(self) -> str:
         return "nota_al_pie"
 
-    def extract(self, raw_text: str, lines: List[str]) -> ResultadoBloque:
+    def extract(self, raw_text: str, lines: Sequence[str] | List[str], pdf_path: Optional[Path] = None) -> ResultadoBloque:
         """Extrae la lista concatenada de notas aclaratorias al pie de página de la circular DDU.
 
         Args:
             raw_text: Texto completo del PDF.
             lines: Líneas limpias del documento.
+            pdf_path: Ruta opcional al archivo PDF.
+
 
         Returns:
             ResultadoBloque con la cadena de notas al pie extraídas.
@@ -67,6 +69,7 @@ class NotaAlPieExtractor(BaseExtractor):
         nota_actual_lines: List[str] = []
 
         def _guardar_nota_actual() -> None:
+
             if nota_actual_lines:
                 texto_completo = " ".join(nota_actual_lines).strip()
                 texto_completo = _limpiar_palabras_divididas_ocr(texto_completo)
@@ -80,23 +83,23 @@ class NotaAlPieExtractor(BaseExtractor):
                 continue
 
             # Detener si llegamos al pie institucional o firma/cierre de página
-            if re.search(r"P[áa]gina\s+\d+\s+de\s+\d+", line_clean, re.IGNORECASE) or re.search(
-                r"(?:Saluda\s+atent|DISTRIBUCI[ÓO\?I\s]+N|GOBIERNO\s+DE\s+CHILE)", line_clean, re.IGNORECASE
+            if (
+                re.search(r"P[áa]gina\s+\d+\s+de\s+\d+", line_clean, re.IGNORECASE)
+                or re.search(r"(?:Saluda\s+atent|DISTRIBUCI[ÓO\?I\s]+N|GOBIERNO\s+DE\s+CHILE|Alameda\s+924)", line_clean, re.IGNORECASE)
             ):
                 _guardar_nota_actual()
                 continue
 
-            match_nota = re.match(r"^(\d{1,2})\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñA-ZÁÉÍÓÚÑ\s\.,\(\)\"\'-].+)$", line_clean)
+            match_nota = re.match(r"^(\d{1,2})\s+([A-ZÁÉÍÓÚÑ\"“'‘\(][a-záéíóúñA-ZÁÉÍÓÚÑ\s\.,\(\)\"\'\‘\’\-].+)$", line_clean)
             if match_nota:
                 num_nota = match_nota.group(1)
                 texto_nota = match_nota.group(2).strip()
 
-                if int(num_nota) <= 20 and not line_clean.startswith(f"{num_nota}. "):
-                    if not re.match(r"^\d+\s+(?:de\s+la|de\s+los|del|en\s+la|con\s+la|que|por|para)\b", line_clean, re.IGNORECASE):
-                        if re.search(r"(?:Art[íi]culo|Circular|Orientaci[óo]n|Gu[íi]a|Decreto|Ley|Construcci[óo]n|Edificaci[óo]n|OGUC|LGUC)\b", texto_nota, re.IGNORECASE):
-                            _guardar_nota_actual()
-                            nota_actual_lines.append(f"{num_nota} {texto_nota}")
-                            continue
+                if 1 <= int(num_nota) <= 60 and not line_clean.startswith(f"{num_nota}. "):
+                    if not re.match(r"^\d+\s+(?:o\s+m[áa]s|para\s+todas|y\s+cumplan|de\s+la\s+Ley|de\s+la\s+LGUC|de\s+la\s+OGUC|de\s+enero|de\s+febrero|de\s+marzo|de\s+abril|de\s+mayo|de\s+junio|de\s+julio|de\s+agosto|de\s+septiembre|de\s+octubre|de\s+noviembre|de\s+diciembre)\b", line_clean, re.IGNORECASE):
+                        _guardar_nota_actual()
+                        nota_actual_lines.append(f"{num_nota} {texto_nota}")
+                        continue
 
             # Si hay una nota en curso, acumular las líneas continuas
             if nota_actual_lines:
@@ -115,6 +118,7 @@ class NotaAlPieExtractor(BaseExtractor):
             confianza=1.0 if exito else 0.0,
             observaciones="" if exito else "No se identificaron notas al pie de página en la circular.",
         )
+
 
 
 if __name__ == "__main__":

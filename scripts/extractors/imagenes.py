@@ -6,7 +6,8 @@ import json
 from pathlib import Path
 import re
 import sys
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Sequence, Set
+
 
 _PROYECTO_RAIZ = Path(__file__).resolve().parents[2]
 if str(_PROYECTO_RAIZ) not in sys.path:
@@ -61,10 +62,11 @@ def _generar_descripcion_tecnica(page_text: str, pagina: int, ancho: int, alto: 
 
 
 def _extraer_imagenes_lineas(
-    lines: List[str],
+    lines: Sequence[str] | List[str],
     num_str: str = "desconocido",
     dir_imagenes: Optional[Path] = None,
 ) -> List[Dict[str, Any]]:
+
     """Extrae metadatos de imágenes definidas en formato Markdown dentro del texto plano."""
     imagenes_manifest: List[Dict[str, Any]] = []
     patron_md_img = re.compile(r"!\[([^\]]*)\]\(([^)]+)\)")
@@ -146,10 +148,11 @@ class ImagenesExtractor(BaseExtractor):
     def extract(
         self,
         raw_text: str,
-        lines: List[str],
+        lines: Sequence[str] | List[str],
         pdf_path: Optional[Path] = None,
         output_dir: Optional[Path] = None,
     ) -> ResultadoBloque:
+
         """Extrae e inventaría imágenes y esquemas técnicos con PyMuPDF (fitz) y exporta en formato PNG sin pérdida.
 
         Args:

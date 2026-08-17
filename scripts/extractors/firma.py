@@ -6,10 +6,11 @@ import importlib
 import json
 from pathlib import Path
 import re
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Sequence
 
 from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
 from scripts.extractors.utils_cleaner import limpiar_palabras_ocr, preservar_casing
+
 
 
 def _limpiar_texto_firma(texto: str) -> str:
@@ -160,9 +161,10 @@ class FirmaExtractor(BaseExtractor):
     def extract(
         self,
         raw_text: str,
-        lines: List[str],
+        lines: Sequence[str] | List[str],
         pdf_path: Optional[Path] = None,
     ) -> ResultadoBloque:
+
         """Extrae la información del firmante de la circular DDU con nombre y cargo separados.
 
         Args:

@@ -6,10 +6,11 @@ import importlib
 import json
 from pathlib import Path
 import re
-from typing import Any, List
+from typing import Any, List, Optional, Sequence
 
 from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
 from scripts.extractors.utils_cleaner import limpiar_palabras_ocr
+
 
 
 def _es_inicio_descriptores(line: str) -> bool:
@@ -44,12 +45,14 @@ class MateriaExtractor(BaseExtractor):
     def nombre_bloque(self) -> str:
         return "materia"
 
-    def extract(self, raw_text: str, lines: List[str]) -> ResultadoBloque:
+    def extract(self, raw_text: str, lines: Sequence[str] | List[str], pdf_path: Optional[Path] = None) -> ResultadoBloque:
         """Extrae el texto del campo MAT. / MATERIA.
 
         Args:
             raw_text: Texto completo del PDF.
             lines: Líneas limpias del documento.
+            pdf_path: Ruta opcional al archivo PDF.
+
 
         Returns:
             ResultadoBloque con la materia extraída.

@@ -315,18 +315,21 @@ def test_orchestrator_process_pdf_ddu_547() -> None:
     assert "ÍNDICE" not in cuerpo.upper()
     assert not re.search(r"\.{4,}", cuerpo)
 
-    # 3.1. Formateo de llamadas a notas al pie en [N°]
-    assert "[1]" in cuerpo
-    assert "[2]" in cuerpo
-    assert "[3]" in cuerpo
-    assert "[4]" in cuerpo
+    # 3.1. Formateo de llamadas a notas al pie en [N°] (100% de las 31 notas presentes)
+    for fn_num in range(1, 32):
+        assert f"[{fn_num}]" in cuerpo, f"Falta la llamada a la nota al pie [{fn_num}] en el cuerpo de DDU 547"
 
-    # 3.2. Exclusión total de texto de notas al pie en el cuerpo
+    # 3.2. Presencia íntegra de subnumerales
+    for subnum in ["1.", "2.1.", "2.2.", "3.1.", "4.1.", "5.1.", "6.1.", "7.1.", "8.1.", "8.3.", "9.1.", "10.1.", "11.1.", "12.1.", "12.2."]:
+        assert subnum in cuerpo, f"Falta el subnumeral {subnum} en el cuerpo de DDU 547"
+    assert len(cuerpo) > 50000, f"El cuerpo es demasiado corto ({len(cuerpo)} chars)"
+
+    # 3.3. Exclusión total de texto de notas al pie en el cuerpo
     assert "En estos términos se indica" not in cuerpo
     assert "Tal como se señaló anteriormente" not in cuerpo
     assert "Que excedan el porcentaje calculado" not in cuerpo
 
-    # 3.3. Exclusión total de contenido de tablas en el cuerpo
+    # 3.4. Exclusión total de contenido de tablas en el cuerpo
     assert "TIPO DE GESTIÓN" not in cuerpo
     assert "224 643" not in cuerpo
 
@@ -345,6 +348,7 @@ def test_orchestrator_process_pdf_ddu_547() -> None:
         anexo = t.get("archivo_anexo", "")
         assert anexo != ""
         assert (PROYECTO_RAIZ / anexo).exists()
+
 
 
 

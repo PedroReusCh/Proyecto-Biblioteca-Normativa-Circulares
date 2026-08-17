@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import re
 import sys
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Sequence
 
 _PROYECTO_RAIZ = Path(__file__).resolve().parents[2]
 if str(_PROYECTO_RAIZ) not in sys.path:
@@ -19,6 +19,7 @@ try:
 except ImportError:
     from extractors.base import BaseExtractor, ResultadoBloque, register_extractor
     from extractors.utils_cleaner import limpiar_palabras_ocr
+
 
 
 _PATRONES_MODIFICACION = [
@@ -96,7 +97,7 @@ class ModificacionesPosterioresExtractor(BaseExtractor):
     def extract(
         self,
         raw_text: str,
-        lines: List[str],
+        lines: Sequence[str] | List[str],
         pdf_path: Optional[Path] = None,
         output_dir: Optional[Path] = None,
     ) -> ResultadoBloque:

@@ -15,8 +15,11 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ### Changed
 
-* **Refinamiento de Extractores Modulares y Generador XML**:
-  * **Formato Dinámico de Llamadas a Notas al Pie (`[N°]`) en `CuerpoExtractor`**: Se implementó `_normalizar_llamadas_nota_al_pie` para convertir dinámicamente cualquier dígito de referencia a nota al pie en el cuerpo a formato canónico con corchetes (ej. `[1]`, `[2]`, `[3]`, `[4]`), previniendo confusiones con números de leyes, decretos o artículos.
+* **Refinamiento de Extractores Modulares y Tipado Estricto**:
+  * **Formato Dinámico y Cobertura del 100% de Llamadas a Notas al Pie (`[1]` a `[31]`) en `CuerpoExtractor`**: Se implementó `_normalizar_llamadas_nota_al_pie` y soporte para llamadas en líneas aisladas (`match_num_solo`) y continuaciones de línea (`match_num_inicio`), formateando dinámicamente el 100% de las 31 notas al pie en formato canónico con corchetes `[N°]`, evitando falsos positivos con numeraciones de decretos o leyes.
+  * **Preservación Íntegra de los 45 Subnumerales Jerárquicos (`scripts/extractors/cuerpo.py`)**: Soporte dinámico multinivel para numerales y subnumerales (`1.`, `2.1.` a `12.2.`), asegurando que ninguna sección legítima sea truncada ni omitida durante el procesamiento.
+  * **Cumplimiento Obligatorio de Tipado Estricto (Pylance Strict Mode)**: Unificación de firmas en todos los extractores modulares (`Sequence[str] | List[str]` y `pdf_path: Optional[Path] = None`), logrando 0 errores y 0 advertencias de Pyright / Pylance en todo el proyecto.
+
   * **Exclusión Total de Contenido de Tablas en el Cuerpo (`scripts/extractors/cuerpo.py`)**: Implementación del estado `omitiendo_tabla` y ampliación de `_es_inicio_bloque_tabla` para descartar del texto del cuerpo tanto tablas intermedias (*Tipo de Gestión*) como tablas extensas del Numeral 12 (*Circulares que se dejan sin efecto o se modifican*), delegando su persistencia íntegra a archivos CSV individuales en `salidas_tablas/`.
   * **Exclusión Total de Notas al Pie en el Cuerpo (`scripts/extractors/cuerpo.py`)**: Detección dinámica universal de inicios de nota al pie (`_es_inicio_nota_al_pie`) y resolución de llamadas aisladas (`match_num_solo`) para evitar que las notas explicativas inferiores se adjunten al cuerpo legal.
   * **Exclusión Total de Índices y Tablas de Contenido (`scripts/extractors/cuerpo.py`)**: Implementación del estado `omitiendo_indice` y funciones `_es_inicio_indice`, `_es_linea_indice` y post-filtrado para omitir completamente los bloques de índices (`I. ÍNDICE:` y guías de puntos `........ 19`), preservando exclusivamente el cuerpo normativo ordenado y secuencial.

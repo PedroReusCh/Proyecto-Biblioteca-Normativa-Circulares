@@ -6,9 +6,10 @@ import importlib
 import json
 from pathlib import Path
 import re
-from typing import Any, List
+from typing import Any, List, Optional, Sequence
 
 from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
+
 
 
 def _reparar_digitos_anio_ocr(anio_str: str) -> str:
@@ -31,12 +32,14 @@ class FechaLugarExtractor(BaseExtractor):
     def nombre_bloque(self) -> str:
         return "fecha_lugar"
 
-    def extract(self, raw_text: str, lines: List[str]) -> ResultadoBloque:
+    def extract(self, raw_text: str, lines: Sequence[str] | List[str], pdf_path: Optional[Path] = None) -> ResultadoBloque:
         """Extrae la fecha normalizada y el lugar de emisión.
 
         Args:
             raw_text: Texto completo del PDF.
             lines: Líneas limpias del documento.
+            pdf_path: Ruta opcional al archivo PDF.
+
 
         Returns:
             ResultadoBloque con la fecha y el lugar extraídos.

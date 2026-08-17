@@ -7,7 +7,8 @@ import json
 from pathlib import Path
 import re
 import sys
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Sequence
+
 
 _PROYECTO_RAIZ = Path(__file__).resolve().parents[2]
 if str(_PROYECTO_RAIZ) not in sys.path:
@@ -250,8 +251,9 @@ def _exportar_tabla_csv(encabezados: List[str], filas: List[List[str]], destino_
 
 
 
-def _extraer_tablas_lineas(lines: List[str]) -> List[Dict[str, Any]]:
+def _extraer_tablas_lineas(lines: Sequence[str] | List[str]) -> List[Dict[str, Any]]:
     """Extrae tablas en formato Markdown presentes en una lista de líneas de texto."""
+
     tablas: List[Dict[str, Any]] = []
     idx = 0
     n = len(lines)
@@ -301,10 +303,11 @@ class TablasExtractor(BaseExtractor):
     def extract(
         self,
         raw_text: str,
-        lines: List[str],
+        lines: Sequence[str] | List[str],
         pdf_path: Optional[Path] = None,
         output_dir: Optional[Path] = None,
     ) -> ResultadoBloque:
+
         """Extrae tablas estructuradas usando pdfplumber o análisis de líneas de texto y genera manifiesto.
 
         Args:

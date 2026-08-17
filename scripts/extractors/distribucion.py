@@ -6,38 +6,15 @@ import importlib
 import json
 from pathlib import Path
 import re
-from typing import Any, List
+from typing import Any, List, Optional, Sequence
 
 from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
 
 
-@register_extractor
-class DistribucionExtractor(BaseExtractor):
-    """Extractor para la lista de distribución formal de la circular DDU."""
-
-    @property
-    def nombre_bloque(self) -> str:
-        return "distribucion"
-
-    def extract(self, raw_text: str, lines: List[str]) -> ResultadoBloque:
-        """Extrae la nómina de receptores de la lista de distribución al final de la circular.
-
-        Args:
-            raw_text: Texto completo del PDF.
-            lines: Líneas limpias del documento.
-
-        Returns:
-            ResultadoBloque con la lista_distribucion extraída.
-        """
-        lista_distribucion: List[str] = []
-        en_distribucion = False
-
-        patron_encabezado_distribucion = (
-            r"^(?:DISTRIBUCI[OÓ\?I\s]+N|BUCI[OÓ\?I\s]+N|STRIBUCI[OÓ\?I\s]+N|D\s*STRIBUC[I\?OÓ\s]*N|RIB[a-z\s\)\?]*[ÓO]N)[\s:]*"
-        )
 
 def _limpiar_item_distribucion(item: str) -> str:
     """Limpia y repara distorsiones tipográficas de OCR en destinatarios de la lista de distribución."""
+
     # 1. Normalizar prefijo numérico ruidoso o confundido por OCR (ej: ",2.", "l.", "I.", "1!", "1 !", "2 .") -> "1. ", "2. ", "4. "
     item = re.sub(r"^[\,\!\;\:\_\-\s]+(\d+)", r"\1", item)
     item = re.sub(r"^[lIi\|][\.\!\;\:\,\_\-\s]+\s*", "1. ", item)
@@ -118,16 +95,18 @@ class DistribucionExtractor(BaseExtractor):
     def nombre_bloque(self) -> str:
         return "distribucion"
 
-    def extract(self, raw_text: str, lines: List[str]) -> ResultadoBloque:
+    def extract(self, raw_text: str, lines: Sequence[str] | List[str], pdf_path: Optional[Path] = None) -> ResultadoBloque:
         """Extrae la nómina de receptores de la lista de distribución al final de la circular.
 
         Args:
             raw_text: Texto completo del PDF.
             lines: Líneas limpias del documento.
+            pdf_path: Ruta opcional al archivo PDF.
 
         Returns:
             ResultadoBloque con la lista_distribucion extraída.
         """
+
         lista_distribucion: List[str] = []
         en_distribucion = False
 

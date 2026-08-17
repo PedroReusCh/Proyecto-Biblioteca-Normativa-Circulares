@@ -8,10 +8,11 @@ import pytest
 
 from scripts.ddu_types import SeccionDDU
 from scripts.extractors import registrar_todos_los_extractores
-from scripts.extractors.base import ExtractorRegistry
+from scripts.extractors.base import ExtractorRegistry, ResultadoBloque
 from scripts.extractors.cuerpo import CuerpoExtractor
 from scripts.extractors.firma import FirmaExtractor
 from scripts.extractors.distribucion import DistribucionExtractor
+
 
 SAMPLE_TEXT_DDU_533_BODY = """A SEGÚN DISTRIBUCIÓN.
 DDU 533

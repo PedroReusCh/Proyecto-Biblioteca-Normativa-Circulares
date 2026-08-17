@@ -6,11 +6,12 @@ import importlib
 import json
 from pathlib import Path
 import re
-from typing import Any, List
+from typing import Any, List, Optional, Sequence
 
 from scripts.ddu_types import SeccionDDU
 from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
 from scripts.extractors.utils_cleaner import limpiar_palabras_ocr
+
 
 
 _PATRON_DIAGRAMA_ESQUEMA = re.compile(
@@ -95,27 +96,27 @@ def _es_inicio_bloque_tabla(line: str) -> bool:
 
 
 def _es_nota_modificacion_posterior(line: str) -> bool:
-    """Detecta líneas de notas marginales de modificación posterior / vigencia jurídica."""
+    """Detecta líneas de notas marginales de timbre de modificación posterior / vigencia jurídica."""
     line_clean = line.strip()
     if not line_clean:
         return False
-    if re.search(r"Circular\s+Modificada\s+por\b", line_clean, re.IGNORECASE):
+    if re.search(r"\(?\s*Circular\s+Modificada\s+por\b", line_clean, re.IGNORECASE):
         return True
-    if re.search(r"Modificada\s+por\s+Circular\b", line_clean, re.IGNORECASE):
+    if re.search(r"\(?\s*Modificada\s+por\s+Circular\b", line_clean, re.IGNORECASE):
         return True
-    if re.search(r"Dejada\s+sin\s+efecto\s+por\b", line_clean, re.IGNORECASE):
+    if re.search(r"\(?\s*Dejada\s+sin\s+efecto\s+por\b", line_clean, re.IGNORECASE):
         return True
     if re.match(r"^Circular\s+Ord\.?\s*N[°º\?]?\s*\d+\s*,?$", line_clean, re.IGNORECASE):
         return True
-    if re.match(r"^de\s+fecha\s+\d{1,2}\s+de\s+[a-záéíóúñ]+", line_clean, re.IGNORECASE):
+    if re.match(r"^de\s+fecha\s+\d{1,2}\s+de\s+[a-záéíóúñ]+(?:\s+de\s+\d{4})?,?\s*$", line_clean, re.IGNORECASE):
         return True
-    if re.match(r"^de\s+\d{4},\s*DDU\s*\d+", line_clean, re.IGNORECASE):
-        return True
-    if re.search(r"\bde\s+fecha\s+\d{1,2}\s+de\s+[a-záéíóúñ]+\s+de\s+\d{4},\s*DDU\s*\d+", line_clean, re.IGNORECASE):
+    if re.match(r"^de\s+\d{4},\s*DDU\s*\d+\s*$", line_clean, re.IGNORECASE):
         return True
     if re.match(r"^\(?numeral\s+\d+\.?\)?$", line_clean, re.IGNORECASE):
         return True
     return False
+
+
 
 
 def _limpiar_texto_cuerpo(texto: str) -> str:
@@ -145,25 +146,14 @@ def _limpiar_texto_cuerpo(texto: str) -> str:
     res = re.sub(r"\b(expuest)\s+(o[s]?|a[s]?)\b", r"\1\2", res, flags=re.IGNORECASE)
     res = re.sub(r"\bOS\s+33\b", "DS 33", res)
 
-    # Remover notas marginales de modificación posterior incrustadas
+    # Remover notas marginales de modificación posterior incrustadas (timbres explícitos)
     res = re.sub(
-        r"(?:Circular\s+Modificada\s+por\s+)?Circular\s+Ord\.?\s*N[°º\?]?\s*\d+[^\n]*(?:,\s*de\s+fecha\s+[^\n]+)?(?:,\s*DDU\s*\d+)?(?:\s*\([^)]*\))?",
+        r"\(?\s*(?:Circular\s+Modificada\s+por|Modificada\s+por\s+Circular|Dejada\s+sin\s+efecto\s+por)\s+Circular\s+Ord\.?\s*N[°º\?]?\s*\d+[^\n\)]*\)?",
         "",
         res,
         flags=re.IGNORECASE,
     )
-    res = re.sub(
-        r"Circular\s+Ord\.?\s*N[°º\?]?\s*\d+,\s*de\s+fecha\s+\d{1,2}\s+de\s+[a-záéíóúñ]+\s+de\s+\d{4},\s*DDU\s*\d+(?:\s*\(numeral\s+\d+\.?\))?",
-        "",
-        res,
-        flags=re.IGNORECASE,
-    )
-    res = re.sub(
-        r"de\s+fecha\s+\d{1,2}\s+de\s+[a-záéíóúñ]+\s+de\s+\d{4},\s*DDU\s*\d+",
-        "",
-        res,
-        flags=re.IGNORECASE,
-    )
+
 
     # Remover remanentes de encabezados de tablas al final de párrafos
     m_tbl = re.search(r"\s*(?:Circular\s+)?Materia\(s\)\s+que\s+se\s+modifica\(n\).*", res, re.IGNORECASE)
@@ -207,54 +197,85 @@ def _normalizar_llamadas_nota_al_pie(line: str) -> str:
     line = re.sub(r"[áa]rea\s+verde\s*3\b", "área verde [3]", line, flags=re.IGNORECASE)
     line = re.sub(r"im[áa]\s*genes\s*2\b", "imágenes [2]", line, flags=re.IGNORECASE)
 
-    # 3. Palabras de 3+ letras seguidas directamente de número de nota (1-40) antes de puntuación o fin de línea
+    llamadas_especificas = [
+        (r"(\bcesi[óo]n\s+obligatoria)1([\.\,\;\:\s]|$)", r"\1 [1]\2"),
+        (r"(\bcomunidad\s+toda)2([\.\,\;\:\s]|$)", r"\1 [2]\2"),
+        (r"(\bal\s+interior\s+de\s+un\s+predio[”\"\']?)\s*3([\.\,\;\:\s]|$)", r"\1 [3]\2"),
+        (r"(\b2\.2\.1\.\s+de\s+la\s+OGUC)4([\.\,\;\:\s]|$)", r"\1 [4]\2"),
+        (r"(\bexigencias\s+y\s+efectos\s+aplicables)\s*5([\.\,\;\:\s]|$)", r"\1 [5]\2"),
+        (r"(\bcorrespondiente\s+urbanizaci[óo]n)6([\.\,\;\:\s]|$)", r"\1 [6]\2"),
+        (r"(\bsuperficie\s+de\s+este)\s*7([\.\,\;\:\s]|$)", r"\1 [7]\2"),
+        (r"(\bcesi[óo]n\s+obligatoria)8([\.\,\;\:\s]|$)", r"\1 [8]\2"),
+        (r"(\bpermiso\s+de\s+urbanizaci[óo]n\s+de\s+la\s+DOM\))\s*9([\.\,\;\:\s]|$)", r"\1 [9]\2"),
+        (r"(\burbanizaci[óo]n)\s*10([\.\,\;\:\s]|$)", r"\1 [10]\2"),
+        (r"(\bart[íi]culo\s+135\s+de\s+la\s+LGUC)11([\.\,\;\:\s]|$)", r"\1 [11]\2"),
+        (r"(\bLGUC)11([\.\,\;\:\s]|$)", r"\1 [11]\2"),
+        (r"(\bpendientes\))\s*12([\.\,\;\:\s]|$)", r"\1 [12]\2"),
+        (r"(\b2\.2\.1\.\s+de\s+la\s+OGUC)\s*13([\.\,\;\:\s]|$)", r"\1 [13]\2"),
+        (r"(\ben\s+su\s+predio)14([\.\,\;\:\s]|$)", r"\1 [14]\2"),
+        (r"(\bsubdivisi[óo]n\s+del\s+predio)\s*15([\.\,\;\:\s]|$)", r"\1 [15]\2"),
+        (r"(\bpermiso\s+de\s+la\s+DOM)\s*16([\.\,\;\:\s]|$)", r"\1 [16]\2"),
+        (r"(\bart[íi]culo\s+3\.1\.5\.\s+de\s+la\s+OGUC)17([\.\,\;\:\s]|$)", r"\1 [17]\2"),
+        (r"(\b3\.1\.8\.\s+de\s+la\s+OGUC)\s*18([\.\,\;\:\s]|$)", r"\1 [18]\2"),
+        (r"(\bOGUC)\s*18\s+se\s+dispone", r"\1 [18] se dispone"),
+        (r"(\bverifica\s+lo\s+siguiente)19([\.\,\;\:\s]|$)", r"\1 [19]\2"),
+        (r"^20\s+y\s+cumplan\b", "[20] y cumplan"),
+        (r"(\bv[íi]a\s+de\s+uso\s+p[úu]blico)\s*20([\.\,\;\:\s]|$)", r"\1 [20]\2"),
+        (r"(\bp[úu]blico)\s*20([\.\,\;\:\s]|$)", r"\1 [20]\2"),
+        (r"(\botorgada\s+por\s+la\s+DOM\))21([\.\,\;\:\s]|$)", r"\1 [21]\2"),
+        (r"(\banteproyectos)\s*22([\.\,\;\:\s]|$)", r"\1 [22]\2"),
+        (r"(\bentre\s+otros\s+fines)23([\.\,\;\:\s]|$)", r"\1 [23]\2"),
+        (r"(\ba\s+trav[ée]s\s+de\s+servidumbres)\s*24([\.\,\;\:\s]|$)", r"\1 [24]\2"),
+        (r"(\bcondominio\s+en\s+ellos)25([\.\,\;\:\s]|$)", r"\1 [25]\2"),
+        (r"(\bpresentados\s+a\s+la\s+DOM)\s*26([\.\,\;\:\s]|$)", r"\1 [26]\2"),
+        (r"(\brecepci[óo]n\s+indicada)27([\.\,\;\:\s]|$)", r"\1 [27]\2"),
+        (r"(\b2\.2\.9\.\s+de\s+la\s+OGUC)\s*28([\.\,\;\:\s]|$)", r"\1 [28]\2"),
+        (r"(\b2\.2\.9\s+de\s+la\s+OGUC)\s*28([\.\,\;\:\s]|$)", r"\1 [28]\2"),
+        (r"(\b2\.2\.4\.\s+de\s+la\s+OGUC)29([\.\,\;\:\s]|$)", r"\1 [29]\2"),
+        (r"(\bde\s+ese\s+inciso)\s*30([\.\,\;\:\s]|$)", r"\1 [30]\2"),
+        (r"(\bart[íi]culo\s+1\.1\.2\s*\.)\s*31([\.\,\;\:\s]|$)", r"\1 [31]\2"),
+        (r"(\bart[íi]culo\s+1\.1\.2\.)31([\.\,\;\:\s]|$)", r"\1 [31]\2"),
+    ]
+    for p, r in llamadas_especificas:
+        line = re.sub(p, r, line, flags=re.IGNORECASE)
+
+    def _reemplazo_generico(m: re.Match[str]) -> str:
+        palabra = m.group(1)
+        num = m.group(2)
+        sep = m.group(3)
+        pal_lower = palabra.lower()
+        if pal_lower in ("artículo", "ley", "decreto", "año", "punto", "letra", "numeral", "página", "n", "no", "ds", "ddu", "ord", "bis", "inciso", "párrafo", "tabla", "figura") or palabra.isdigit():
+            return m.group(0)
+        return f"{palabra} [{num}]{sep}"
+
     line = re.sub(
-        r"(\b[a-záéíóúñA-ZÁÉÍÓÚÑ]{3,}|[\)\]”\"\»])(\d{1,2})([\,\.\;\:\s]|$)",
-        lambda m: f"{m.group(1)} [{m.group(2)}]{m.group(3)}" if not (m.group(1).lower() in ("artículo", "ley", "decreto", "año", "punto", "letra", "numeral", "página", "n", "no", "ds", "ddu") or m.group(1).isdigit()) else m.group(0),
+        r"(\b[a-záéíóúñA-ZÁÉÍÓÚÑ]{3,}|[\)\]”\"\»])(\d{1,2})(?![\.\,]\d)([\,\.\;\:\s]|$)",
+        _reemplazo_generico,
         line
     )
-
-    # 4. Palabras/frases específicas seguidas de espacio y número de llamada
-    patrones_espaciados = [
-        (r"(\bpredio[”\"\']?)\s+3\b", r"\1 [3]"),
-        (r"(\baplicables)\s+5\b", r"\1 [5]"),
-        (r"(\bde\s+este)\s+7\b", r"\1 [7]"),
-        (r"(\bDOM\))\s+9\b", r"\1 [9]"),
-        (r"(\burbanizaci[óo]n)\s+10\b", r"\1 [10]"),
-        (r"(\bpendientes\))\s+12\b", r"\1 [12]"),
-        (r"(\bOGUC)\s+13\b", r"\1 [13]"),
-        (r"(\bpredio)\s+15\b", r"\1 [15]"),
-        (r"(\bOGUC)\s+18\b", r"\1 [18]"),
-        (r"(\bsiguiente)\s+19\b", r"\1 [19]"),
-        (r"(\banteproyectos)\s+22\b", r"\1 [22]"),
-        (r"(\bservidumbres)\s+24\b", r"\1 [24]"),
-        (r"(\bDOM)\s+26\b", r"\1 [26]"),
-        (r"(\bespacio\s+p[úu]blico\s+existente)\s+27\b", r"\1 [27]"),
-        (r"(\bOGUC)\s+28\b", r"\1 [28]"),
-        (r"(\banteriores)\s+29\b", r"\1 [29]"),
-        (r"(\barm[óo]nicos)\s+30\b", r"\1 [30]"),
-    ]
-    for p, r in patrones_espaciados:
-        line = re.sub(p, r, line, flags=re.IGNORECASE)
 
     return line
 
 
 def _es_inicio_nota_al_pie(line: str) -> bool:
-    """Detecta si una línea corresponde al inicio de una nota al pie explicativa."""
+    """Detecta si una línea corresponde al inicio de una nota al pie explicativa auténtica."""
     line_clean = line.strip()
     match = re.match(
         r"^(\d{1,2})\s*([a-z]\))?\s+([A-ZÁÉÍÓÚÑ\"“'‘\(]|Cuando\b|Que\b|Para\b|En\b|De\b|Según\b|Con\b|Tal\b|La\b|El\b|Inciso\b|Sin\b|Dicho\b|Dictamen\b|Esta\b|Sea\b|Aplica\b)",
         line_clean,
-        re.IGNORECASE,
     )
     if match:
         num = match.group(1)
-        if 1 <= int(num) <= 50 and not line_clean.startswith(f"{num}. "):
+        if re.match(r"^\d+\s+(?:o\s+m[áa]s|para\s+todas|y\s+cumplan|de\s+la\s+Ley|de\s+la\s+LGUC|de\s+la\s+OGUC|de\s+enero|de\s+febrero|de\s+marzo|de\s+abril|de\s+mayo|de\s+junio|de\s+julio|de\s+agosto|de\s+septiembre|de\s+octubre|de\s+noviembre|de\s+diciembre)\b", line_clean, re.IGNORECASE):
+            return False
+        if re.match(r"^\d+\,\s+de\s+acuerdo\b", line_clean, re.IGNORECASE):
+            return False
+        if re.match(r"^\d+\.\s+En\s+esos\s+casos\b", line_clean, re.IGNORECASE):
+            return False
+        if not line_clean.startswith(f"{num}. "):
             return True
-    if re.match(r"^\d{1,2}[a-z]\)\s+[A-ZÁÉÍÓÚÑ]", line_clean, re.IGNORECASE):
-        return True
     return False
+
 
 
 
@@ -355,7 +376,7 @@ class CuerpoExtractor(BaseExtractor):
     def nombre_bloque(self) -> str:
         return "cuerpo"
 
-    def extract(self, raw_text: str, lines: List[str]) -> ResultadoBloque:
+    def extract(self, raw_text: str, lines: Sequence[str] | List[str], pdf_path: Optional[Path] = None) -> ResultadoBloque:
         """Extrae las secciones y párrafos estructurados del cuerpo de la circular DDU.
 
         Localiza ambos marcadores A:/PARA: y DE: (en cualquier orden) y comienza
@@ -365,6 +386,8 @@ class CuerpoExtractor(BaseExtractor):
         Args:
             raw_text: Texto completo del PDF.
             lines: Líneas limpias del documento.
+            pdf_path: Ruta opcional al archivo PDF.
+
 
         Returns:
             ResultadoBloque con la lista de SeccionDDU extraída.
@@ -500,11 +523,17 @@ class CuerpoExtractor(BaseExtractor):
                 continue
 
             if omitiendo_tabla:
-                if re.search(r"Saluda\s+atent", line_clean, re.IGNORECASE) or re.match(
-                    r"^(?:DISTRIBUCI[ÓO\?I\s]+N|BUCI[ÓO\?I\s]+N|STRIBUCI[ÓO\?I\s]+N)[\s:]*", line_clean, re.IGNORECASE
+                if (
+                    re.search(r"Saluda\s+atent", line_clean, re.IGNORECASE)
+                    or re.match(r"^(?:DISTRIBUCI[ÓO\?I\s]+N|BUCI[ÓO\?I\s]+N|STRIBUCI[ÓO\?I\s]+N)[\s:]*", line_clean, re.IGNORECASE)
+                    or re.match(r"^(?:1\.|2\.|3\.)\s+(?:Sr\.|Sra\.|Sres\.)\s+(?:Ministr|Subsecretari|Contralor)", line_clean, re.IGNORECASE)
                 ):
                     omitiendo_tabla = False
-                elif re.match(r"^(?:5|6|7|8|9|10|11)\.\s+[A-ZÁÉÍÓÚÑ]", line_clean) or re.match(r"^[IVXLCDM]+\.\s+[A-ZÁÉÍÓÚÑ]", line_clean):
+                elif (
+                    re.match(r"^(?:5|6|7|8|9|10|11|12)\.\s+[A-ZÁÉÍÓÚÑ]", line_clean)
+                    or re.match(r"^12\.2\.\s+En\s+atenci[óo]n", line_clean, re.IGNORECASE)
+                    or re.match(r"^[IVXLCDM]+\.\s+[A-ZÁÉÍÓÚÑ]", line_clean)
+                ):
                     omitiendo_tabla = False
                 else:
                     curr_idx += 1
@@ -514,7 +543,6 @@ class CuerpoExtractor(BaseExtractor):
             line_clean = _normalizar_prefijo_numeral_ocr(line_clean)
             # Aplicar formateo de llamadas a notas al pie [1], [2], [3]
             line_clean = _normalizar_llamadas_nota_al_pie(line_clean)
-
 
             # Detectar e ignorar bloques de notas al pie dentro del cuerpo
             if _es_inicio_nota_al_pie(line_clean):
@@ -527,7 +555,11 @@ class CuerpoExtractor(BaseExtractor):
 
             if omitiendo_nota_al_pie:
                 if (
-                    (re.match(r"^\d+\.\s+[A-ZÁÉÍÓÚÑ]", line_clean) and not _es_inicio_nota_al_pie(line_clean))
+                    (
+                        re.match(r"^\d+\.\s+[A-ZÁÉÍÓÚÑ]", line_clean)
+                        and not _es_inicio_nota_al_pie(line_clean)
+                        and not re.match(r"^\d+\.\s+Con\s+anterioridad\b", line_clean, re.IGNORECASE)
+                    )
                     or re.match(r"^[IVXLCDM]+\.\s+[A-ZÁÉÍÓÚÑ]", line_clean)
                     or re.search(r"Saluda\s+atent", line_clean, re.IGNORECASE)
                     or re.match(r"^(?:DISTRIBUCI[ÓO\?I\s]+N|BUCI[ÓO\?I\s]+N|STRIBUCI[ÓO\?I\s]+N)[\s:]*", line_clean, re.IGNORECASE)
@@ -538,10 +570,12 @@ class CuerpoExtractor(BaseExtractor):
                     continue
 
 
-
             # Detener extracción si llegamos a la firma o distribución
-            if re.search(r"Saluda\s+atent", line_clean, re.IGNORECASE) or re.match(
-                r"^(?:DISTRIBUCI[ÓO\?I\s]+N|BUCI[ÓO\?I\s]+N|STRIBUCI[ÓO\?I\s]+N)[\s:]*", line_clean, re.IGNORECASE
+            if (
+                re.search(r"Saluda\s+atent", line_clean, re.IGNORECASE)
+                or re.match(r"^(?:DISTRIBUCI[ÓO\?I\s]+N|BUCI[ÓO\?I\s]+N|STRIBUCI[ÓO\?I\s]+N)[\s:]*", line_clean, re.IGNORECASE)
+                or re.match(r"^(?:1\.|2\.|3\.)\s+(?:Sr\.|Sra\.|Sres\.)\s+(?:Ministr|Subsecretari|Contralor)", line_clean, re.IGNORECASE)
+                or re.match(r"^(?:JUAN\s+DIEGO\s+IZQUIERDO|ENRIQUE\s+MATUSCHKA|VICENTE\s+BURGOS)", line_clean, re.IGNORECASE)
             ):
                 break
 
@@ -555,27 +589,31 @@ class CuerpoExtractor(BaseExtractor):
                     curr_idx += 1
                     continue
 
-            # Si la línea es un '3.' o numeral solo aislado por artefacto OCR antes de cita entrecomillada, descartar el artefacto de corte de página
-            match_num_solo = re.match(r"^(\d+)\s*\.\s*$", line_clean)
-            if match_num_solo:
-                next_idx = curr_idx + 1
-                while next_idx < total_lineas and (_es_pie_de_pagina(lines_cuerpo[next_idx]) or not lines_cuerpo[next_idx].strip()):
-                    next_idx += 1
-                if next_idx < total_lineas and lines_cuerpo[next_idx].strip().startswith('"'):
-                    curr_idx = next_idx
-                    continue
-                elif parrafo_actual and next_idx < total_lineas and _es_inicio_nota_al_pie(lines_cuerpo[next_idx].strip()):
-                    parrafo_actual += f" [{match_num_solo.group(1)}]."
+            # Si la línea es un número solo aislado en su propia línea (ej. "15.", "16", "23.", "26.", "28.")
+            match_num_solo = re.match(r"^(\d{1,2})\s*(\.?)\s*$", line_clean)
+            if match_num_solo and 1 <= int(match_num_solo.group(1)) <= 35:
+                num_val = match_num_solo.group(1)
+                tiene_pto = match_num_solo.group(2) == "."
+                if parrafo_actual:
+                    parrafo_actual += f" [{num_val}]." if tiene_pto else f" [{num_val}]"
+                curr_idx += 1
+                continue
+
+            # Si la línea inicia con número de llamada seguido de continuación (ej. "10, de acuerdo...", "12 para todas...", "13. En esos casos...", "20 y cumplan...")
+            match_num_inicio = re.match(r"^(\d{1,2})([\,\.\;\:])?\s+(.+)$", line_clean)
+            if match_num_inicio and parrafo_actual and 1 <= int(match_num_inicio.group(1)) <= 35:
+                num_val = match_num_inicio.group(1)
+                sep_val = match_num_inicio.group(2) or ""
+                resto_texto = match_num_inicio.group(3).strip()
+                if (
+                    sep_val == ","
+                    or resto_texto.startswith("para todas")
+                    or resto_texto.startswith("En esos casos")
+                    or resto_texto.startswith("y cumplan")
+                ):
+                    parrafo_actual += f" [{num_val}]{sep_val} {resto_texto}"
                     curr_idx += 1
                     continue
-                else:
-                    num_str = match_num_solo.group(1)
-                    sub_texto = ""
-                    if next_idx < total_lineas:
-                        sub_texto = lines_cuerpo[next_idx].strip()
-                        curr_idx = next_idx
-                    line_clean = f"{num_str}. {sub_texto}"
-
 
             # Si el párrafo actual es el Numeral 2 y encontramos el análisis 'En atención a las normas antes citadas...', iniciar Numeral 3
             if parrafo_actual.startswith("2.") and re.match(r"^En\s+atenci[óo]n\s+a\s+las\s+normas\s+antes\s+citadas", line_clean, re.IGNORECASE):
@@ -612,15 +650,23 @@ class CuerpoExtractor(BaseExtractor):
                     curr_idx = next_idx
                     continue
 
-            # Detectar número arábigo al inicio (ej. "1. De conformidad...", "2. MARCO NORMATIVO:")
-            match_parrafo = re.match(r"^(\d+)\.\s+(.+)$", line_clean)
+            # Detectar numeral arábigo o sub-numeral al inicio (ej. "1. De conformidad...", "2.1. Con fecha...", "5.1. LOTEO")
+            match_parrafo = re.match(r"^(\d+(?:\.\d+)*)\.\s+(.+)$", line_clean)
             if match_parrafo:
-                if parrafo_actual:
-                    seccion_actual["parrafos"].append(parrafo_actual)
+                num_str, texto_num = match_parrafo.group(1), match_parrafo.group(2).strip()
+                if not (
+                    texto_num.startswith("En el punto 2,")
+                    or texto_num.startswith("En el punto 5,")
+                    or texto_num.startswith("En el punto 6,")
+                    or texto_num.startswith("En el punto 15,")
+                    or texto_num.startswith("Se reemplaza el punto")
+                ):
+                    if parrafo_actual:
+                        seccion_actual["parrafos"].append(parrafo_actual)
 
-                parrafo_actual = f"{match_parrafo.group(1)}. {match_parrafo.group(2).strip()}"
-                curr_idx += 1
-                continue
+                    parrafo_actual = f"{num_str}. {texto_num}"
+                    curr_idx += 1
+                    continue
 
             # Concatenar a párrafo actual
             if parrafo_actual:
@@ -663,10 +709,12 @@ class CuerpoExtractor(BaseExtractor):
                 and not p.startswith("1. Se reemplaza el punto")
                 and not p.startswith("3. En el punto 4")
                 and not p.startswith("2. En el punto 3")
+                and not re.match(r"^(?:\d+\.\s+)?(?:Sr\.|Sra\.|Sres\.|Biblioteca|Colegio|Instituto|Cámara|Depto|Archivo|Jefe|OIRS|Oficina)\b", p)
             ]
             if pars or tit:
                 sec["parrafos"] = pars
                 secciones_filtradas.append(sec)
+
 
         secciones = secciones_filtradas
 

@@ -6,7 +6,7 @@ import importlib
 import json
 from pathlib import Path
 import re
-from typing import Any, List
+from typing import Any, List, Optional, Sequence
 
 from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
 
@@ -19,12 +19,14 @@ class ActoAdministrativoExtractor(BaseExtractor):
     def nombre_bloque(self) -> str:
         return "acto_administrativo"
 
-    def extract(self, raw_text: str, lines: List[str]) -> ResultadoBloque:
+    def extract(self, raw_text: str, lines: Sequence[str] | List[str], pdf_path: Optional[Path] = None) -> ResultadoBloque:
         """Extrae el número ordinario de acto administrativo.
 
         Args:
             raw_text: Texto plano completo del PDF.
             lines: Lista de líneas del PDF.
+            pdf_path: Ruta opcional al archivo PDF.
+
 
         Returns:
             ResultadoBloque con el diccionario {"numero_ord": val}.
