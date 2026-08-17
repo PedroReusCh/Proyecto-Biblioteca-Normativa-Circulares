@@ -40,12 +40,19 @@ def normalizar_texto_celda_tabla(texto: str) -> str:
         r"[-•*]\s+|"                                # viñetas
         r"Mediante\s+Circular| "                    # Notas de modificación
         r"Por\s+la\s+siguiente:| "                  # Cláusulas de sustitución
-        r"Reemplázase\b| "
-        r"Se\s+deja\s+sin\s+efecto\b"
+        r"Reemplázase\b|"
+        r"Se\s+deja\s+sin\s+efecto\b|"
+        r"Lo\s+anterior\b|"
+        r"En\s+el\s+mismo\s+contexto\b|"
+        r"Luego,\s+el\s+artículo\b|"
+        r"A\s+su\s+vez,\s+el\s+primer\b|"
+        r"Luego,\s+el\s+inciso\b|"
+        r"«Artículo\s+134\b|"
+        r"El\s+artículo\s+1\.1\.2\.\b|"
+        r"[“\"]?5\.\s+Obras\s+de\b"
         r")",
         re.IGNORECASE,
     )
-
 
     parrafos: List[str] = []
     parrafo_actual: List[str] = []
@@ -63,6 +70,8 @@ def normalizar_texto_celda_tabla(texto: str) -> str:
     resultado = "\n".join(parrafos)
     resultado = re.sub(r" +", " ", resultado)
     return resultado.strip()
+
+
 
 
 def _limpiar_texto_celda(celda: Any) -> str:
@@ -186,9 +195,10 @@ def _exportar_tabla_csv(encabezados: List[str], filas: List[List[str]], destino_
         writer = csv.writer(f, delimiter=";", quoting=csv.QUOTE_ALL, lineterminator="\r\n")
         writer.writerow([normalizar_texto_celda_tabla(h).replace("\n", " ") for h in encabezados])
         filas_limpias = [
-            [normalizar_texto_celda_tabla(c) for c in fila]
+            [c if "\n\n" in c else normalizar_texto_celda_tabla(c) for c in fila]
             for fila in filas
         ]
+
         writer.writerows(filas_limpias)
 
 
@@ -301,6 +311,41 @@ def _clean_cell_str(val: Any) -> str:
     return "" if s.lower() == "none" else s
 
 
+def formatear_modificaciones_celda(texto: str) -> str:
+    """Formatea y estructura la columna MODIFICACIONES saneando OCR y separando párrafos y numerales."""
+    if not texto:
+        return ""
+    texto = limpiar_palabras_ocr(texto.strip())
+
+    # Correcciones OCR puntuales
+    texto = texto.replace("en Joteos", "en loteos")
+    texto = texto.replace("/as plantaciones", "las plantaciones")
+    texto = texto.replace("iluminacin.", "iluminación,").replace("iluminación.", "iluminación,")
+    texto = texto.replace("correspondientes. como", "correspondientes, como")
+    texto = re.sub(r'[\'"]+Urbanizar[\'"]+:', '“«Urbanizar»:', texto)
+    texto = re.sub(r'cuando\s*\n+\s*un\s+proyecto', 'cuando un proyecto', texto, flags=re.IGNORECASE)
+
+
+    # Separar numerales y párrafos estructurados
+    patrones = [
+        r"(?<=[^\n])\s+(?=\d+\.\s+)",                       # 1. , 2. , 3.
+        r"(?<=[^\n])\s+(?=Lo anterior\b)",                 # Lo anterior...
+        r"(?<=[^\n])\s+(?=En el mismo contexto\b)",         # En el mismo contexto...
+        r"(?<=[^\n])\s+(?=Luego,\s+el\s+artículo)",        # Luego, el artículo
+        r"(?<=[^\n])\s+(?=A su vez,\s+el\s+primer)",       # A su vez, el primer
+        r"(?<=[^\n])\s+(?=Luego,\s+el\s+inciso)",          # Luego, el inciso
+        r"(?<=[^\n])\s+(?=«Artículo\s+134)",               # «Artículo 134
+        r"(?<=[^\n])\s+(?=El\s+artículo\s+1\.1\.2\.)",     # El artículo 1.1.2.
+        r"(?<=[^\n])\s+(?=[“\"]?5\.\s+Obras\s+de)",        # “5. Obras de
+    ]
+    for pat in patrones:
+        texto = re.sub(pat, "\n\n", texto)
+
+    lineas = [l.strip() for l in texto.splitlines() if l.strip()]
+    return "\n\n".join(lineas)
+
+
+
 def _extraer_tablas_ddu_547(pdf_path: Path) -> List[Dict[str, Any]]:
     """Extrae con 100% de fidelidad geométrica las 3 tablas de DDU 547 sin fragmentación."""
     import importlib
@@ -390,7 +435,7 @@ def _extraer_tablas_ddu_547(pdf_path: Path) -> List[Dict[str, Any]]:
                     c3 = (c3 + " " + txt).strip()
                 elif x_mid > 322:
                     c4 = (c4 + "\n\n" + txt if c4 else txt).strip()
-        t3_filas.append([ddu_num, ord_num, fecha, c3, c4])
+        t3_filas.append([ddu_num, ord_num, fecha, c3, formatear_modificaciones_celda(c4)])
 
     # Pág. 22 (Filas 4 a 7)
     p22 = doc[21]
@@ -411,7 +456,7 @@ def _extraer_tablas_ddu_547(pdf_path: Path) -> List[Dict[str, Any]]:
                     c3 = (c3 + " " + txt).strip()
                 elif x_mid > 322:
                     c4 = (c4 + "\n\n" + txt if c4 else txt).strip()
-        t3_filas.append([ddu_num, ord_num, fecha, c3, c4])
+        t3_filas.append([ddu_num, ord_num, fecha, c3, formatear_modificaciones_celda(c4)])
 
     # Págs. 23 y 24 (Filas 8 a 11)
     p23 = doc[22]
@@ -429,7 +474,7 @@ def _extraer_tablas_ddu_547(pdf_path: Path) -> List[Dict[str, Any]]:
                 c3_455 = (c3_455 + " " + txt).strip()
             elif x_mid > 322:
                 c4_455 = (c4_455 + "\n\n" + txt if c4_455 else txt).strip()
-    t3_filas.append(["455", "12", "18.01.21", c3_455, c4_455])
+    t3_filas.append(["455", "12", "18.01.21", c3_455, formatear_modificaciones_celda(c4_455)])
 
     # 9. 502
     c3_502, c4_502 = "", ""
@@ -441,7 +486,7 @@ def _extraer_tablas_ddu_547(pdf_path: Path) -> List[Dict[str, Any]]:
                 c3_502 = (c3_502 + " " + txt).strip()
             elif x_mid > 322:
                 c4_502 = (c4_502 + "\n\n" + txt if c4_502 else txt).strip()
-    t3_filas.append(["502", "304", "18-06-24", c3_502, c4_502])
+    t3_filas.append(["502", "304", "18-06-24", c3_502, formatear_modificaciones_celda(c4_502)])
 
     # 10. 528 (Págs. 23 y 24)
     c3_528, c4_528 = "", ""
@@ -461,7 +506,7 @@ def _extraer_tablas_ddu_547(pdf_path: Path) -> List[Dict[str, Any]]:
                 c3_528 = (c3_528 + " " + txt).strip()
             elif x_mid > 322:
                 c4_528 = (c4_528 + "\n\n" + txt if c4_528 else txt).strip()
-    t3_filas.append(["528", "413", "26-09-25", c3_528, c4_528])
+    t3_filas.append(["528", "413", "26-09-25", c3_528, formatear_modificaciones_celda(c4_528)])
 
     # 11. 536 (Pág. 24)
     c3_536, c4_536 = "", ""
@@ -473,7 +518,7 @@ def _extraer_tablas_ddu_547(pdf_path: Path) -> List[Dict[str, Any]]:
                 c3_536 = (c3_536 + " " + txt).strip()
             elif x_mid > 322:
                 c4_536 = (c4_536 + "\n\n" + txt if c4_536 else txt).strip()
-    t3_filas.append(["536", "136", "06-03-26", c3_536, c4_536])
+    t3_filas.append(["536", "136", "06-03-26", c3_536, formatear_modificaciones_celda(c4_536)])
 
     tabla_3: Dict[str, Any] = {
         "encabezados": ["DDU N°", "N° ORD", "FECHA", "MATERIA", "MODIFICACIONES"],
@@ -482,6 +527,7 @@ def _extraer_tablas_ddu_547(pdf_path: Path) -> List[Dict[str, Any]]:
     }
 
     return [tabla_1, tabla_2, tabla_3]
+
 
 
 @register_extractor
