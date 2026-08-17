@@ -305,7 +305,7 @@ def test_orchestrator_process_pdf_ddu_547() -> None:
     assert "JUAN DIEGO IZQUIERDO HEVIA" in str(datos.get("firmante", ""))
     assert "JUAN DIEGO IZQUIERDO HEVIA" in str(datos.get("nombre_firmante", ""))
 
-    # 3. Estructura y secciones sin índice o tabla de contenidos
+    # 3. Estructura y secciones sin índice, sin notas al pie incrustadas y sin contenido de tablas
     secciones = datos.get("secciones", [])
     assert isinstance(secciones, list)
     assert len(secciones) > 0
@@ -315,6 +315,21 @@ def test_orchestrator_process_pdf_ddu_547() -> None:
     assert "ÍNDICE" not in cuerpo.upper()
     assert not re.search(r"\.{4,}", cuerpo)
 
+    # 3.1. Formateo de llamadas a notas al pie en [N°]
+    assert "[1]" in cuerpo
+    assert "[2]" in cuerpo
+    assert "[3]" in cuerpo
+    assert "[4]" in cuerpo
+
+    # 3.2. Exclusión total de texto de notas al pie en el cuerpo
+    assert "En estos términos se indica" not in cuerpo
+    assert "Tal como se señaló anteriormente" not in cuerpo
+    assert "Que excedan el porcentaje calculado" not in cuerpo
+
+    # 3.3. Exclusión total de contenido de tablas en el cuerpo
+    assert "TIPO DE GESTIÓN" not in cuerpo
+    assert "224 643" not in cuerpo
+
     # 4. Distribución completa
     dist_list = datos.get("lista_distribucion", [])
     assert isinstance(dist_list, list)
@@ -322,10 +337,15 @@ def test_orchestrator_process_pdf_ddu_547() -> None:
     assert "Ministro de Vivienda y Urbanismo" in dist_list[0]
     assert "Oficina de Partes MINVU" in dist_list[-1]
 
-    # 5. Tablas e imágenes
+    # 5. Tablas desacopladas exportadas en salidas_tablas/
     tablas = datos.get("tablas") or []
     assert isinstance(tablas, list)
     assert len(tablas) > 0
+    for t in tablas:
+        anexo = t.get("archivo_anexo", "")
+        assert anexo != ""
+        assert (PROYECTO_RAIZ / anexo).exists()
+
 
 
 

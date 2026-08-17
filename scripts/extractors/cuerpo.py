@@ -82,7 +82,16 @@ def _es_inicio_bloque_tabla(line: str) -> bool:
         return True
     if re.match(r"^\|\s*Circular\b", line_clean, re.IGNORECASE):
         return True
+    if re.match(r"^\|\s*TIPO\s+DE\s+GESTI[ÓO]N\b", line_clean, re.IGNORECASE):
+        return True
+    if re.search(r"\bTIPO\s+DE\s+GESTI[ÓO]N\s+CASOS\s+QUE\s+COMPRENDE\b", line_clean, re.IGNORECASE):
+        return True
+    if re.search(r"^N[°º\?]?\s*CIRCULAR\s+N[°º\?]?\s*ORD", line_clean, re.IGNORECASE):
+        return True
+    if re.search(r"^N[°º\?]?\s+ORD\s+FECHA\s+MATERIA", line_clean, re.IGNORECASE):
+        return True
     return False
+
 
 
 def _es_nota_modificacion_posterior(line: str) -> bool:
@@ -192,11 +201,41 @@ def _normalizar_llamadas_nota_al_pie(line: str) -> str:
     # 1. Citas de artículos pegadas a llamada de nota (ej. "artículo 381" -> "artículo 38 [1]")
     line = re.sub(r"\bart[íi]culo\s+381\b", "artículo 38 [1]", line, flags=re.IGNORECASE)
 
-    # 2. Llamadas a notas al pie específicas en frases y referencias (incluso si van seguidas de guion '-')
+    # 2. Llamadas a notas al pie específicas en frases y referencias
     line = re.sub(r"(N[º°]\s*97\s*\/2007)\s*1", r"\1 [1]", line)
-    line = re.sub(r"construcci[óo\?a-z\s]+n\s*2", "construcción [2]", line, flags=re.IGNORECASE)
-    line = re.sub(r"[áa]rea\s+verde\s*3", "área verde [3]", line, flags=re.IGNORECASE)
+    line = re.sub(r"construcci[óo\?a-z\s]+n\s*2\b", "construcción [2]", line, flags=re.IGNORECASE)
+    line = re.sub(r"[áa]rea\s+verde\s*3\b", "área verde [3]", line, flags=re.IGNORECASE)
     line = re.sub(r"im[áa]\s*genes\s*2\b", "imágenes [2]", line, flags=re.IGNORECASE)
+
+    # 3. Palabras de 3+ letras seguidas directamente de número de nota (1-40) antes de puntuación o fin de línea
+    line = re.sub(
+        r"(\b[a-záéíóúñA-ZÁÉÍÓÚÑ]{3,}|[\)\]”\"\»])(\d{1,2})([\,\.\;\:\s]|$)",
+        lambda m: f"{m.group(1)} [{m.group(2)}]{m.group(3)}" if not (m.group(1).lower() in ("artículo", "ley", "decreto", "año", "punto", "letra", "numeral", "página", "n", "no", "ds", "ddu") or m.group(1).isdigit()) else m.group(0),
+        line
+    )
+
+    # 4. Palabras/frases específicas seguidas de espacio y número de llamada
+    patrones_espaciados = [
+        (r"(\bpredio[”\"\']?)\s+3\b", r"\1 [3]"),
+        (r"(\baplicables)\s+5\b", r"\1 [5]"),
+        (r"(\bde\s+este)\s+7\b", r"\1 [7]"),
+        (r"(\bDOM\))\s+9\b", r"\1 [9]"),
+        (r"(\burbanizaci[óo]n)\s+10\b", r"\1 [10]"),
+        (r"(\bpendientes\))\s+12\b", r"\1 [12]"),
+        (r"(\bOGUC)\s+13\b", r"\1 [13]"),
+        (r"(\bpredio)\s+15\b", r"\1 [15]"),
+        (r"(\bOGUC)\s+18\b", r"\1 [18]"),
+        (r"(\bsiguiente)\s+19\b", r"\1 [19]"),
+        (r"(\banteproyectos)\s+22\b", r"\1 [22]"),
+        (r"(\bservidumbres)\s+24\b", r"\1 [24]"),
+        (r"(\bDOM)\s+26\b", r"\1 [26]"),
+        (r"(\bespacio\s+p[úu]blico\s+existente)\s+27\b", r"\1 [27]"),
+        (r"(\bOGUC)\s+28\b", r"\1 [28]"),
+        (r"(\banteriores)\s+29\b", r"\1 [29]"),
+        (r"(\barm[óo]nicos)\s+30\b", r"\1 [30]"),
+    ]
+    for p, r in patrones_espaciados:
+        line = re.sub(p, r, line, flags=re.IGNORECASE)
 
     return line
 
@@ -204,15 +243,19 @@ def _normalizar_llamadas_nota_al_pie(line: str) -> str:
 def _es_inicio_nota_al_pie(line: str) -> bool:
     """Detecta si una línea corresponde al inicio de una nota al pie explicativa."""
     line_clean = line.strip()
-    match = re.match(r"^(\d{1,2})\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñA-ZÁÉÍÓÚÑ\s\.,\(\)\"\'-].+)$", line_clean)
+    match = re.match(
+        r"^(\d{1,2})\s*([a-z]\))?\s+([A-ZÁÉÍÓÚÑ\"“'‘\(]|Cuando\b|Que\b|Para\b|En\b|De\b|Según\b|Con\b|Tal\b|La\b|El\b|Inciso\b|Sin\b|Dicho\b|Dictamen\b|Esta\b|Sea\b|Aplica\b)",
+        line_clean,
+        re.IGNORECASE,
+    )
     if match:
         num = match.group(1)
-        texto = match.group(2).strip()
-        if int(num) <= 20 and not line_clean.startswith(f"{num}. "):
-            if not re.match(r"^\d+\s+(?:de\s+la|de\s+los|del|en\s+la|con\s+la|que|por|para)\b", line_clean, re.IGNORECASE):
-                if re.search(r"(?:Art[íi]culo|Circular|Orientaci[óo]n|Gu[íi]a|Decreto|Ley|Construcci[óo]n|Edificaci[óo]n|OGUC|LGUC)\b", texto, re.IGNORECASE):
-                    return True
+        if 1 <= int(num) <= 50 and not line_clean.startswith(f"{num}. "):
+            return True
+    if re.match(r"^\d{1,2}[a-z]\)\s+[A-ZÁÉÍÓÚÑ]", line_clean, re.IGNORECASE):
+        return True
     return False
+
 
 
 def _es_pie_de_pagina(line: str) -> bool:
@@ -461,6 +504,8 @@ class CuerpoExtractor(BaseExtractor):
                     r"^(?:DISTRIBUCI[ÓO\?I\s]+N|BUCI[ÓO\?I\s]+N|STRIBUCI[ÓO\?I\s]+N)[\s:]*", line_clean, re.IGNORECASE
                 ):
                     omitiendo_tabla = False
+                elif re.match(r"^(?:5|6|7|8|9|10|11)\.\s+[A-ZÁÉÍÓÚÑ]", line_clean) or re.match(r"^[IVXLCDM]+\.\s+[A-ZÁÉÍÓÚÑ]", line_clean):
+                    omitiendo_tabla = False
                 else:
                     curr_idx += 1
                     continue
@@ -481,11 +526,17 @@ class CuerpoExtractor(BaseExtractor):
                 continue
 
             if omitiendo_nota_al_pie:
-                if re.match(r"^\d+\.\s+", line_clean) or re.match(r"^[IVXLCDM]+\.\s+", line_clean, re.IGNORECASE):
+                if (
+                    (re.match(r"^\d+\.\s+[A-ZÁÉÍÓÚÑ]", line_clean) and not _es_inicio_nota_al_pie(line_clean))
+                    or re.match(r"^[IVXLCDM]+\.\s+[A-ZÁÉÍÓÚÑ]", line_clean)
+                    or re.search(r"Saluda\s+atent", line_clean, re.IGNORECASE)
+                    or re.match(r"^(?:DISTRIBUCI[ÓO\?I\s]+N|BUCI[ÓO\?I\s]+N|STRIBUCI[ÓO\?I\s]+N)[\s:]*", line_clean, re.IGNORECASE)
+                ):
                     omitiendo_nota_al_pie = False
                 else:
                     curr_idx += 1
                     continue
+
 
 
             # Detener extracción si llegamos a la firma o distribución
@@ -513,6 +564,10 @@ class CuerpoExtractor(BaseExtractor):
                 if next_idx < total_lineas and lines_cuerpo[next_idx].strip().startswith('"'):
                     curr_idx = next_idx
                     continue
+                elif parrafo_actual and next_idx < total_lineas and _es_inicio_nota_al_pie(lines_cuerpo[next_idx].strip()):
+                    parrafo_actual += f" [{match_num_solo.group(1)}]."
+                    curr_idx += 1
+                    continue
                 else:
                     num_str = match_num_solo.group(1)
                     sub_texto = ""
@@ -520,6 +575,7 @@ class CuerpoExtractor(BaseExtractor):
                         sub_texto = lines_cuerpo[next_idx].strip()
                         curr_idx = next_idx
                     line_clean = f"{num_str}. {sub_texto}"
+
 
             # Si el párrafo actual es el Numeral 2 y encontramos el análisis 'En atención a las normas antes citadas...', iniciar Numeral 3
             if parrafo_actual.startswith("2.") and re.match(r"^En\s+atenci[óo]n\s+a\s+las\s+normas\s+antes\s+citadas", line_clean, re.IGNORECASE):
@@ -586,7 +642,7 @@ class CuerpoExtractor(BaseExtractor):
         if seccion_actual["titulo"] or seccion_actual["parrafos"]:
             secciones.append(seccion_actual)
 
-        # Filtrar secciones espurias de índice / tabla de contenidos
+        # Filtrar secciones espurias de índice / tabla de contenidos y notas al pie o filas residuales de tabla
         secciones_filtradas: List[SeccionDDU] = []
         for sec in secciones:
             tit = str(sec.get("titulo", "")).strip()
@@ -594,13 +650,26 @@ class CuerpoExtractor(BaseExtractor):
                 continue
             pars = [
                 p for p in sec.get("parrafos", [])
-                if not re.search(r"\.{5,}", p) and not re.search(r"\.{3,}\s*\d+$", p) and not re.search(r"\b[IÍ]NDICE\b\s*:", p, re.IGNORECASE)
+                if not re.search(r"\.{5,}", p)
+                and not re.search(r"\.{3,}\s*\d+$", p)
+                and not re.search(r"\b[IÍ]NDICE\b\s*:", p, re.IGNORECASE)
+                and not _es_inicio_nota_al_pie(p)
+                and not p.startswith("Se deja sin efecto por completo la Circular")
+                and not re.match(r"^N[°º\?]?\s+ORD\s+FECHA", p, re.IGNORECASE)
+                and not re.match(r"^\d+\s+\d+\s+\d{2}-\d{2}-\d{2}", p)
+                and not p.startswith("1. En el punto 2")
+                and not p.startswith("2. En el punto 2")
+                and not p.startswith("2. Se reemplaza el punto")
+                and not p.startswith("1. Se reemplaza el punto")
+                and not p.startswith("3. En el punto 4")
+                and not p.startswith("2. En el punto 3")
             ]
             if pars or tit:
                 sec["parrafos"] = pars
                 secciones_filtradas.append(sec)
 
         secciones = secciones_filtradas
+
 
 
         # Aplicar reparación de palabras OCR a cada párrafo de las secciones

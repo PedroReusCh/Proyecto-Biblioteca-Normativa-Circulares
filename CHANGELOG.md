@@ -16,6 +16,9 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 ### Changed
 
 * **Refinamiento de Extractores Modulares y Generador XML**:
+  * **Formato Dinámico de Llamadas a Notas al Pie (`[N°]`) en `CuerpoExtractor`**: Se implementó `_normalizar_llamadas_nota_al_pie` para convertir dinámicamente cualquier dígito de referencia a nota al pie en el cuerpo a formato canónico con corchetes (ej. `[1]`, `[2]`, `[3]`, `[4]`), previniendo confusiones con números de leyes, decretos o artículos.
+  * **Exclusión Total de Contenido de Tablas en el Cuerpo (`scripts/extractors/cuerpo.py`)**: Implementación del estado `omitiendo_tabla` y ampliación de `_es_inicio_bloque_tabla` para descartar del texto del cuerpo tanto tablas intermedias (*Tipo de Gestión*) como tablas extensas del Numeral 12 (*Circulares que se dejan sin efecto o se modifican*), delegando su persistencia íntegra a archivos CSV individuales en `salidas_tablas/`.
+  * **Exclusión Total de Notas al Pie en el Cuerpo (`scripts/extractors/cuerpo.py`)**: Detección dinámica universal de inicios de nota al pie (`_es_inicio_nota_al_pie`) y resolución de llamadas aisladas (`match_num_solo`) para evitar que las notas explicativas inferiores se adjunten al cuerpo legal.
   * **Exclusión Total de Índices y Tablas de Contenido (`scripts/extractors/cuerpo.py`)**: Implementación del estado `omitiendo_indice` y funciones `_es_inicio_indice`, `_es_linea_indice` y post-filtrado para omitir completamente los bloques de índices (`I. ÍNDICE:` y guías de puntos `........ 19`), preservando exclusivamente el cuerpo normativo ordenado y secuencial.
   * **Captura Completa y Desinfección de Distribución (`scripts/extractors/distribucion.py`)**: Activación robusta en encabezados formales y soporte de líneas continuas partidas por OCR (ej. *Ministerio de Economía, Fomento y Turismo*), desinfección de *fa Construcción* ➔ *la Construcción*, garantizando la captura de los 33 destinatarios institucionales en DDU 547.
   * **Acto Administrativo (`scripts/extractors/acto_administrativo.py`)**: Extracción flexible de dígitos en números ordinarios con caracteres intermedios de ruido OCR (`CIRCULAR ORD. N° 362`).
@@ -23,6 +26,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
   * **Firma (`scripts/extractors/firma.py`)**: Búsqueda en el bloque de cierre previo a la lista de distribución final en documentos multi-página y normalización precisa del nombre de persona (*JUAN DIEGO IZQUIERDO HEVIA*).
   * **Limpieza Tipográfica OCR (`scripts/extractors/utils_cleaner.py`)**: Incorporación de reglas directas para variantes de *Decreto Supremo N° 5*.
   * **Unicidad de Atributos `xs:ID` en XML Akoma Ntoso (`scripts/ddu_to_xml.py`)**: Control estricto de inyección única por imagen técnica para garantizar el cumplimiento del tipo `xs:ID` del esquema XSD de la BCN.
+
 
 
 ## [0.11.0] - 2026-08-14
