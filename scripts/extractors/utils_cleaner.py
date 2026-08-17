@@ -17,13 +17,17 @@ CORRECCIONES_DIRECTAS: Dict[str, str] = {
 
 
 
-def _preservar_casing(texto_original: str, texto_reemplazo: str) -> str:
+def preservar_casing(texto_original: str, texto_reemplazo: str) -> str:
     """Ajusta las mayúsculas/minúsculas del reemplazo según el texto original."""
     if texto_original.isupper():
         return texto_reemplazo.upper()
     if texto_original and texto_original[0].isupper() and not texto_reemplazo[0].isupper():
         return texto_reemplazo.capitalize()
     return texto_reemplazo
+
+
+_preservar_casing = preservar_casing
+
 
 
 def limpiar_palabras_ocr(texto: str) -> str:
@@ -80,4 +84,8 @@ def limpiar_palabras_ocr(texto: str) -> str:
     resultado = re.sub(r"[ \t]+", " ", resultado).strip()
 
     return resultado
+
+
+__all__ = ["limpiar_palabras_ocr", "preservar_casing", "CORRECCIONES_DIRECTAS"]
+
 

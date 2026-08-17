@@ -9,7 +9,7 @@ import re
 from typing import Any, List, Optional
 
 from scripts.extractors.base import BaseExtractor, ResultadoBloque, register_extractor
-from scripts.extractors.utils_cleaner import _preservar_casing, limpiar_palabras_ocr
+from scripts.extractors.utils_cleaner import limpiar_palabras_ocr, preservar_casing
 
 
 def _limpiar_texto_firma(texto: str) -> str:
@@ -18,7 +18,7 @@ def _limpiar_texto_firma(texto: str) -> str:
     texto = re.sub(r"\bN\s+DIEGO\s+ZQUIERDO\s+HEVIA\b", "JUAN DIEGO IZQUIERDO HEVIA", texto, flags=re.IGNORECASE)
     texto = re.sub(r"\bN\s+DIEGO\s+IZQUIERDO\s+HEVIA\b", "JUAN DIEGO IZQUIERDO HEVIA", texto, flags=re.IGNORECASE)
     texto = re.sub(r"\bD\s+VISI[ÓO\?I\ufffd\s]+N\b", "DIVISIÓN", texto, flags=re.IGNORECASE)
-    texto = re.sub(r"\bDIVISI[ÓO\?I\ufffd\s]+N\b", lambda m: _preservar_casing(m.group(0), "División"), texto, flags=re.IGNORECASE)
+    texto = re.sub(r"\bDIVISI[ÓO\?I\ufffd\s]+N\b", lambda m: preservar_casing(m.group(0), "División"), texto, flags=re.IGNORECASE)
     texto = re.sub(r"\bIS\s+RIO\b", "MINISTERIO", texto, flags=re.IGNORECASE)
     return texto
 
@@ -51,64 +51,87 @@ def _extraer_nombre_firma_ocr(pdf_path: Path) -> Optional[str]:
         return None
 
     try:
-        import fitz
-        from rapidocr_onnxruntime import RapidOCR
-        from PIL import Image
         import io
+        fitz_mod: Any = importlib.import_module("fitz")
+        rapidocr_mod: Any = importlib.import_module("rapidocr_onnxruntime")
+        pil_image_mod: Any = importlib.import_module("PIL.Image")
 
-        with fitz.open(str(pdf_path)) as doc:
-            p_firma_idx = -1
-            for i in reversed(range(len(doc))):
-                t = str(doc[i].get_text())
+        doc: Any = fitz_mod.open(str(pdf_path))
+        img_byte_arr = io.BytesIO()
+        try:
+            p_firma_idx: int = -1
+            num_pages: int = int(len(doc))
+            for i in reversed(range(num_pages)):
+                page_i: Any = doc[i]
+                t: str = str(page_i.get_text())
                 if re.search(r"Saluda\s+atentamente", t, re.IGNORECASE):
                     p_firma_idx = i
                     break
 
             if p_firma_idx == -1:
-                p_firma_idx = len(doc) - 1
+                p_firma_idx = num_pages - 1
 
-            page = doc[p_firma_idx]
-            pix = page.get_pixmap(dpi=300)
-            img = Image.open(io.BytesIO(pix.tobytes("png")))
-            w, h = img.size
+            page: Any = doc[p_firma_idx]
+            pix: Any = page.get_pixmap(dpi=300)
+            img_bytes: bytes = bytes(pix.tobytes("png"))
+            img: Any = pil_image_mod.open(io.BytesIO(img_bytes))
+            size_tuple: Any = getattr(img, "size")
+            w: int = int(size_tuple[0])
+            h: int = int(size_tuple[1])
 
-            rect_saludo = None
-            rect_cargo = None
-            for b in page.get_text("blocks"):
-                texto_bloque = str(b[4])
+            rect_saludo: Optional[Any] = None
+            rect_cargo: Optional[Any] = None
+            blocks: List[Any] = list(page.get_text("blocks"))
+            for b in blocks:
+                texto_bloque: str = str(b[4])
                 if re.search(r"Saluda\s+atentamente", texto_bloque, re.IGNORECASE):
                     rect_saludo = b[:4]
                 if re.search(r"Jefe\s+Divisi[óo]n|DIVISI[ÓO]N\s+DE\s+DESARROLLO", texto_bloque, re.IGNORECASE):
                     rect_cargo = b[:4]
 
-            scale_x = w / float(page.rect.width)
-            scale_y = h / float(page.rect.height)
+            page_rect: Any = getattr(page, "rect")
+            page_w: float = float(page_rect.width)
+            page_h: float = float(page_rect.height)
+            scale_x: float = float(w) / page_w
+            scale_y: float = float(h) / page_h
 
-            if rect_cargo:
-                y_top = float(rect_saludo[1] if rect_saludo else rect_cargo[1] - 80)
-                y_bot = float(rect_cargo[3] + 20)
-                x0 = max(0, int((float(rect_cargo[0]) - 100) * scale_x))
-                y0 = max(0, int((y_top - 20) * scale_y))
-                x1 = min(w, int((float(rect_cargo[2]) + 100) * scale_x))
-                y1 = min(h, int((y_bot + 20) * scale_y))
-                sig_crop = img.crop((x0, y0, x1, y1))
+            if rect_cargo is not None:
+                cargo_left: float = float(rect_cargo[0])
+                cargo_top: float = float(rect_cargo[1])
+                cargo_right: float = float(rect_cargo[2])
+                cargo_bot: float = float(rect_cargo[3])
+                saludo_top: float = float(rect_saludo[1]) if rect_saludo is not None else (cargo_top - 80.0)
+
+                y_top: float = saludo_top
+                y_bot: float = cargo_bot + 20.0
+                x0: int = max(0, int((cargo_left - 100.0) * scale_x))
+                y0: int = max(0, int((y_top - 20.0) * scale_y))
+                x1: int = min(w, int((cargo_right + 100.0) * scale_x))
+                y1: int = min(h, int((y_bot + 20.0) * scale_y))
+                sig_crop: Any = img.crop((x0, y0, x1, y1))
             else:
-                sig_crop = img.crop((int(w * 0.2), int(h * 0.35), int(w * 0.9), int(h * 0.75)))
+                crop_box = (int(float(w) * 0.2), int(float(h) * 0.35), int(float(w) * 0.9), int(float(h) * 0.75))
+                sig_crop: Any = img.crop(crop_box)
 
-            img_byte_arr = io.BytesIO()
             sig_crop.save(img_byte_arr, format="PNG")
+        finally:
+            doc.close()
 
-        engine = RapidOCR()
-        res, _ = engine(img_byte_arr.getvalue())
-        if not res:
+        rapid_ocr_cls: Any = getattr(rapidocr_mod, "RapidOCR")
+        engine: Any = rapid_ocr_cls()
+        ocr_res_tuple: Any = engine(img_byte_arr.getvalue())
+        res_list: Any = ocr_res_tuple[0] if (ocr_res_tuple and ocr_res_tuple[0]) else None
+        if not res_list:
             return None
 
+        res: List[Any] = list(res_list)
         # Buscar el nombre inmediatamente arriba del cargo
         for i, item in enumerate(res):
-            text = str(item[1]).strip()
+            text: str = str(item[1]).strip()
             if re.search(r"Jefe\s+Divisi|Desarrollo\s+Urbano|DIVISI[ÓO]N", text, re.IGNORECASE):
                 for prev_idx in range(i - 1, -1, -1):
-                    prev_text = str(res[prev_idx][1]).strip()
+                    prev_item: Any = res[prev_idx]
+                    prev_text: str = str(prev_item[1]).strip()
                     if len(prev_text) >= 5 and not re.search(r"Saluda|atentamente|Ud\.|DE\b", prev_text, re.IGNORECASE):
                         # Normalizar nombres pegados por OCR
                         prev_text = re.sub(r"\bENRIQUEMATUSCHKA\b", "ENRIQUE MATUSCHKA", prev_text, flags=re.IGNORECASE)
@@ -121,6 +144,7 @@ def _extraer_nombre_firma_ocr(pdf_path: Path) -> Optional[str]:
         print(f"Advertencia al ejecutar OCR de firma con RapidOCR: {e}")
 
     return None
+
 
 
 @register_extractor
