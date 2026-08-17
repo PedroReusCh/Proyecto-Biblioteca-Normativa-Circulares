@@ -64,3 +64,32 @@ def test_nota_al_pie_extractor_limpieza_palabras_divididas() -> None:
     assert "pañoles" in notas
     assert "herramientas" in notas
     assert "artículo 1.6.3." in notas
+
+
+def test_nota_al_pie_extractor_ddu_547_completa() -> None:
+    """Verifica que el extractor de notas al pie capture todas las notas de DDU 547 incluyendo la última (nota 31)."""
+    from pathlib import Path
+    import importlib
+    from typing import Any
+
+    pdf_path = Path("circulares/DDU 547.pdf")
+    if not pdf_path.exists():
+        return
+
+    pypdf_mod: Any = importlib.import_module("pypdf")
+    reader = pypdf_mod.PdfReader(pdf_path)
+    full_text = "\n".join(p.extract_text() or "" for p in reader.pages)
+    lines = [line.strip() for line in full_text.splitlines() if line.strip()]
+
+    extractor = NotaAlPieExtractor()
+    resultado = extractor.extract(full_text, lines)
+
+    assert resultado.exito is True
+    notas_texto = str(resultado.datos.get("notas_al_pie", ""))
+    assert "1 En el artículo 65 de la LGUC" in notas_texto
+    assert "30 Que obliga a que el terreno" in notas_texto
+    assert "31" in notas_texto
+    assert "Edificación existente" in notas_texto
+    assert "4.563" in notas_texto
+
+

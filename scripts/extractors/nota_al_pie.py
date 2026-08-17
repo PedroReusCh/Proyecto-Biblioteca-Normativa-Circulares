@@ -90,7 +90,7 @@ class NotaAlPieExtractor(BaseExtractor):
                 _guardar_nota_actual()
                 continue
 
-            match_nota = re.match(r"^(\d{1,2})\s+([A-ZÁÉÍÓÚÑ\"“'‘\(][a-záéíóúñA-ZÁÉÍÓÚÑ\s\.,\(\)\"\'\‘\’\-].+)$", line_clean)
+            match_nota = re.match(r"^(\d{1,2})\s+([A-ZÁÉÍÓÚÑ\"“'‘«\(\u201c\u201d\u2018\u2019].+)$", line_clean)
             if match_nota:
                 num_nota = match_nota.group(1)
                 texto_nota = match_nota.group(2).strip()
@@ -100,6 +100,7 @@ class NotaAlPieExtractor(BaseExtractor):
                         _guardar_nota_actual()
                         nota_actual_lines.append(f"{num_nota} {texto_nota}")
                         continue
+
 
             # Si hay una nota en curso, acumular las líneas continuas
             if nota_actual_lines:

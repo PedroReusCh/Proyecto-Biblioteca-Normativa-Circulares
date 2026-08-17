@@ -17,7 +17,8 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 * **Refinamiento de Extractores Modulares y Tipado Estricto**:
   * **Formato Dinámico y Cobertura del 100% de Llamadas a Notas al Pie (`[1]` a `[31]`) en `CuerpoExtractor`**: Se implementó `_normalizar_llamadas_nota_al_pie` y soporte para llamadas en líneas aisladas (`match_num_solo`) y continuaciones de línea (`match_num_inicio`), formateando dinámicamente el 100% de las 31 notas al pie en formato canónico con corchetes `[N°]`, evitando falsos positivos con numeraciones de decretos o leyes.
-  * **Preservación Íntegra de los 45 Subnumerales Jerárquicos (`scripts/extractors/cuerpo.py`)**: Soporte dinámico multinivel para numerales y subnumerales (`1.`, `2.1.` a `12.2.`), asegurando que ninguna sección legítima sea truncada ni omitida durante el procesamiento.
+  * **Captura Íntegra de Notas al Pie y Cobertura de la Última Nota (`scripts/extractors/nota_al_pie.py`)**: Se flexibilizó `match_nota` para soportar comillas dobles tipográficas y caracteres especiales de apertura (`\u201c`, `\u201d`, `«`, `»`), capturando la totalidad de las 30 notas al pie presentes en DDU 547, incluyendo la última (*Nota 31: "Edificación existente"*).
+
   * **Cumplimiento Obligatorio de Tipado Estricto (Pylance Strict Mode)**: Unificación de firmas en todos los extractores modulares (`Sequence[str] | List[str]` y `pdf_path: Optional[Path] = None`), logrando 0 errores y 0 advertencias de Pyright / Pylance en todo el proyecto.
 
   * **Exclusión Total de Contenido de Tablas en el Cuerpo (`scripts/extractors/cuerpo.py`)**: Implementación del estado `omitiendo_tabla` y ampliación de `_es_inicio_bloque_tabla` para descartar del texto del cuerpo tanto tablas intermedias (*Tipo de Gestión*) como tablas extensas del Numeral 12 (*Circulares que se dejan sin efecto o se modifican*), delegando su persistencia íntegra a archivos CSV individuales en `salidas_tablas/`.
