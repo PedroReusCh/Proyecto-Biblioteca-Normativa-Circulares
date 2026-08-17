@@ -269,14 +269,14 @@ def test_tablas_extractor_ddu_547_pdf(tmp_path: Path) -> None:
     t3 = tablas_manifest[2]
     assert t3["id"] == "DDU_547_tabla_3"
     assert t3["paginas"] == [21, 22, 23, 24]
-    assert t3["filas"] == 10
+    assert t3["filas"] == 11
     assert t3["columnas"] == 5
     assert "Modificadas" in t3["nombre"]
     csv3 = salidas_dir / "DDU_547_tabla_3.csv"
     assert csv3.exists()
     with open(csv3, "r", encoding="utf-8-sig") as f:
         reader = list(csv.reader(f, delimiter=";"))
-        assert len(reader) == 11  # 1 encabezado + 10 filas
+        assert len(reader) == 12  # 1 encabezado + 11 filas
         texto_t3 = " ".join([" ".join(r) for r in reader])
         assert "Específica 22-07" in texto_t3
         assert "Específica 89-07" in texto_t3
@@ -285,8 +285,10 @@ def test_tablas_extractor_ddu_547_pdf(tmp_path: Path) -> None:
         assert "241" in texto_t3
         assert "435" in texto_t3
         assert "449" in texto_t3
+        assert "455" in texto_t3
         assert "502" in texto_t3
         assert "528" in texto_t3
         assert "536" in texto_t3
+
 
 
