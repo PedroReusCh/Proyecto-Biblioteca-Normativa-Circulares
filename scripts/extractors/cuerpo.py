@@ -85,13 +85,29 @@ def _es_inicio_bloque_tabla(line: str) -> bool:
         return True
     if re.match(r"^\|\s*TIPO\s+DE\s+GESTI[ÓO]N\b", line_clean, re.IGNORECASE):
         return True
-    if re.search(r"\bTIPO\s+DE\s+GESTI[ÓO]N\s+CASOS\s+QUE\s+COMPRENDE\b", line_clean, re.IGNORECASE):
+    if re.match(r"^\|\s*DDU\s+N\b", line_clean, re.IGNORECASE):
         return True
-    if re.search(r"^N[°º\?]?\s*CIRCULAR\s+N[°º\?]?\s*ORD", line_clean, re.IGNORECASE):
+    if re.match(r"^TIPO\s+DE\s+GESTI[ÓO]N\b", line_clean, re.IGNORECASE):
         return True
-    if re.search(r"^N[°º\?]?\s+ORD\s+FECHA\s+MATERIA", line_clean, re.IGNORECASE):
+    if re.match(r"^CASOS\s+QUE\s+COMPRENDE\b", line_clean, re.IGNORECASE):
+        return True
+    if re.search(r"^N[°º\?]?\s*CIRCULAR", line_clean, re.IGNORECASE):
+        return True
+    if re.search(r"^N[°º\?]?\s+ORD", line_clean, re.IGNORECASE):
+        return True
+    if re.search(r"^DDU\s+N[°º\?]?\s+N[°º\?]?\s+ORD", line_clean, re.IGNORECASE):
+        return True
+    if re.match(r"^DDU\s+N[°º\?]?\s*$", line_clean, re.IGNORECASE):
+        return True
+    if re.match(r"^MATERIA\s+DE\s+LA\s+CIRCULAR\s*$", line_clean, re.IGNORECASE):
+        return True
+    if re.match(r"^MOTIVOS\s*/\s*CONSIDERACIONES\s*$", line_clean, re.IGNORECASE):
+        return True
+    if re.match(r"^MODIFICACIONES\s*$", line_clean, re.IGNORECASE):
         return True
     return False
+
+
 
 
 
@@ -164,6 +180,31 @@ def _limpiar_texto_cuerpo(texto: str) -> str:
 
     res = re.sub(r"\s+", " ", res).strip()
     return res
+
+
+def _descontaminar_parrafo_de_tablas(p: str) -> str:
+    """Elimina colas de tablas y encabezados adheridos al final de párrafos de transición."""
+    m_dej = re.search(r"(se\s+dejan\s+sin\s+efecto\s+las\s+siguientes\s+circulares\s*:?)", p, re.IGNORECASE)
+    if m_dej:
+        p = p[:m_dej.end()].strip()
+        if not p.endswith(":"):
+            p += ":"
+
+    m_mod = re.search(r"(se\s+modifican\s+las\s+siguientes\s+Circulares\s+en\s+la\s+forma\s+que\s+se\s+indica\s*:?)", p, re.IGNORECASE)
+    if m_mod:
+        p = p[:m_mod.end()].strip()
+        if not p.endswith(":"):
+            p += ":"
+
+    m_urb = re.search(r"(la\s+urbanizaci[óo]n\s+solo\s+comprende\s+los\s+siguientes\s+tipos\s+de\s+gesti[óo]n\s*:?)", p, re.IGNORECASE)
+    if m_urb:
+        p = p[:m_urb.end()].strip()
+        if not p.endswith(":"):
+            p += ":"
+
+    return p
+
+
 
 
 
@@ -470,7 +511,14 @@ class CuerpoExtractor(BaseExtractor):
                 if _es_linea_indice(line_clean):
                     curr_idx += 1
                     continue
-                elif re.match(r"^\d+\.\s+[A-ZÁÉÍÓÚÑ]", line_clean) and not re.search(r"\.{2,}", line_clean):
+                elif (
+                    (re.match(r"^\d+\.\s+[A-ZÁÉÍÓÚÑ]", line_clean) and not re.search(r"\.{2,}", line_clean))
+                    or (
+                        re.match(r"^\d+\.\s*$", line_clean)
+                        and curr_idx + 1 < total_lineas
+                        and not re.search(r"\.{2,}", lines_cuerpo[curr_idx + 1])
+                    )
+                ):
                     omitiendo_indice = False
                 elif _es_pie_de_pagina(line_clean):
                     curr_idx += 1
@@ -478,6 +526,7 @@ class CuerpoExtractor(BaseExtractor):
                 else:
                     curr_idx += 1
                     continue
+
 
             # Detectar e ignorar bloques de diagramas o esquemas técnicos dentro del cuerpo
             if _es_inicio_diagrama(line_clean):
@@ -511,16 +560,25 @@ class CuerpoExtractor(BaseExtractor):
             # Detectar e ignorar bloques de tablas normativas dentro del cuerpo
             if _es_inicio_bloque_tabla(line_clean):
                 if parrafo_actual:
-                    m_th = re.search(r"(?:Circular\s+)?Materia\(s\)\s+que\s+se\s+modifica\(n\).*", parrafo_actual, re.IGNORECASE)
-                    if m_th:
-                        parrafo_actual = parrafo_actual[:m_th.start()].strip()
+                    for pat in [
+                        r"(?:Circular\s+)?Materia\(s\)\s+que\s+se\s+modifica\(n\).*",
+                        r"TIPO\s+DE\s+GESTI[ÓO]N.*",
+                        r"CASOS\s+QUE\s+COMPRENDE.*",
+                        r"N[°º\?]?\s*CIRCULAR.*",
+                        r"DDU\s*N[°º\?]?.*",
+                    ]:
+                        m_th = re.search(pat, parrafo_actual, re.IGNORECASE)
+                        if m_th:
+                            parrafo_actual = parrafo_actual[:m_th.start()].strip()
                     if parrafo_actual.endswith(";"):
                         parrafo_actual = parrafo_actual[:-1] + ":"
-                    seccion_actual["parrafos"].append(parrafo_actual.strip())
+                    if parrafo_actual:
+                        seccion_actual["parrafos"].append(parrafo_actual.strip())
                     parrafo_actual = ""
                 omitiendo_tabla = True
                 curr_idx += 1
                 continue
+
 
             if omitiendo_tabla:
                 if (
@@ -530,7 +588,16 @@ class CuerpoExtractor(BaseExtractor):
                 ):
                     omitiendo_tabla = False
                 elif (
-                    re.match(r"^(?:5|6|7|8|9|10|11|12)\.\s+[A-ZÁÉÍÓÚÑ]", line_clean)
+                    (
+                        re.match(r"^(?:5|6|7|8|9|10|11|12)\.\s+[A-ZÁÉÍÓÚÑ]", line_clean)
+                        and not _es_inicio_nota_al_pie(line_clean)
+                        and not re.match(r"^\d+\.\s+Con\s+anterioridad\b", line_clean, re.IGNORECASE)
+                    )
+                    or (
+                        re.match(r"^(?:5|6|7|8|9|10|11|12)\.\s*$", line_clean)
+                        and curr_idx + 1 < total_lineas
+                        and not _es_inicio_nota_al_pie(lines_cuerpo[curr_idx + 1])
+                    )
                     or re.match(r"^12\.2\.\s+En\s+atenci[óo]n", line_clean, re.IGNORECASE)
                     or re.match(r"^[IVXLCDM]+\.\s+[A-ZÁÉÍÓÚÑ]", line_clean)
                 ):
@@ -538,6 +605,7 @@ class CuerpoExtractor(BaseExtractor):
                 else:
                     curr_idx += 1
                     continue
+
 
             # Aplicar normalización de numerales distorsionados por OCR (l. -> 1., S. -> 5., B. -> 8.)
             line_clean = _normalizar_prefijo_numeral_ocr(line_clean)
@@ -556,9 +624,14 @@ class CuerpoExtractor(BaseExtractor):
             if omitiendo_nota_al_pie:
                 if (
                     (
-                        re.match(r"^\d+\.\s+[A-ZÁÉÍÓÚÑ]", line_clean)
+                        re.match(r"^\d+(?:\.\d+)*\.\s+[A-ZÁÉÍÓÚÑ]", line_clean)
                         and not _es_inicio_nota_al_pie(line_clean)
                         and not re.match(r"^\d+\.\s+Con\s+anterioridad\b", line_clean, re.IGNORECASE)
+                    )
+                    or (
+                        re.match(r"^\d+\.\s*$", line_clean)
+                        and curr_idx + 1 < total_lineas
+                        and not _es_inicio_nota_al_pie(lines_cuerpo[curr_idx + 1])
                     )
                     or re.match(r"^[IVXLCDM]+\.\s+[A-ZÁÉÍÓÚÑ]", line_clean)
                     or re.search(r"Saluda\s+atent", line_clean, re.IGNORECASE)
@@ -568,6 +641,7 @@ class CuerpoExtractor(BaseExtractor):
                 else:
                     curr_idx += 1
                     continue
+
 
 
             # Detener extracción si llegamos a la firma o distribución
@@ -593,11 +667,25 @@ class CuerpoExtractor(BaseExtractor):
             match_num_solo = re.match(r"^(\d{1,2})\s*(\.?)\s*$", line_clean)
             if match_num_solo and 1 <= int(match_num_solo.group(1)) <= 35:
                 num_val = match_num_solo.group(1)
+                # Verificar si la siguiente línea es un título de sección (ej. "MARCO NORMATIVO:", "¿QUÉ ES LA URBANIZACIÓN?", "HIPÓTESIS...")
+                sig_line = lines_cuerpo[curr_idx + 1].strip() if curr_idx + 1 < total_lineas else ""
+                if sig_line and (
+                    sig_line.isupper()
+                    or any(k in sig_line.upper() for k in ["MARCO", "URBANIZACIÓN", "HIPÓTESIS", "OBRAS", "PERMISOS", "RECEPCIÓN", "CIRCULARES", "OTRAS"])
+                ):
+                    if parrafo_actual:
+                        seccion_actual["parrafos"].append(parrafo_actual)
+                        parrafo_actual = ""
+                    parrafo_actual = f"{num_val}. {sig_line}"
+                    curr_idx += 2
+                    continue
+
                 tiene_pto = match_num_solo.group(2) == "."
                 if parrafo_actual:
                     parrafo_actual += f" [{num_val}]." if tiene_pto else f" [{num_val}]"
                 curr_idx += 1
                 continue
+
 
             # Si la línea inicia con número de llamada seguido de continuación (ej. "10, de acuerdo...", "12 para todas...", "13. En esos casos...", "20 y cumplan...")
             match_num_inicio = re.match(r"^(\d{1,2})([\,\.\;\:])?\s+(.+)$", line_clean)
@@ -688,6 +776,68 @@ class CuerpoExtractor(BaseExtractor):
         if seccion_actual["titulo"] or seccion_actual["parrafos"]:
             secciones.append(seccion_actual)
 
+        def _es_parrafo_de_tabla(p_cand: str) -> bool:
+            p_strip = p_cand.strip()
+            if not p_strip:
+                return False
+            # Encabezados de tabla
+            if re.match(r"^N[°º\?]?\s*CIRCULAR\b", p_strip, re.IGNORECASE):
+                return True
+            if re.match(r"^N[°º\?]?\s+ORD\s+FECHA", p_strip, re.IGNORECASE):
+                return True
+            if re.match(r"^DDU\s*N[°º\?]?\s*N[°º\?]?\s*ORD", p_strip, re.IGNORECASE):
+                return True
+            if re.match(r"^TIPO\s+DE\s+GESTI[ÓO]N\b", p_strip, re.IGNORECASE):
+                return True
+            if re.match(r"^CASOS\s+QUE\s+COMPRENDE\b", p_strip, re.IGNORECASE):
+                return True
+            if re.match(r"^MATERIA\s+DE\s+LA\s+CIRCULAR\b", p_strip, re.IGNORECASE):
+                return True
+            if re.match(r"^MOTIVOS\s*/\s*CONSIDERACIONES\b", p_strip, re.IGNORECASE):
+                return True
+            if re.match(r"^MODIFICACIONES\b", p_strip, re.IGNORECASE):
+                return True
+
+            # Celdas de Tabla 1
+            if p_strip.startswith("1. Loteos (Art. 2.2.4."):
+                return True
+            if p_strip.startswith("2. Proyectos que se acojan al régimen de copropiedad"):
+                return True
+            if p_strip.startswith("3. División afecta a declaratoria de utilidad"):
+                return True
+            if p_strip.startswith("1. Obras de urbanización voluntarias en el espacio"):
+                return True
+            if p_strip.startswith("2. Obras de urbanización voluntarias al interior"):
+                return True
+            if p_strip.startswith("La ejecución de obras de urbanización") and "Art. 2.2.1." in p_strip:
+                return True
+            if p_strip.startswith("Cualquiera de las obras de urbanización contempladas en el artículo 134"):
+                return True
+
+            # Celdas de Tabla 2 y Tabla 3
+            if p_strip.startswith("Específica "):
+                return True
+            if re.match(r"^\d{3}\s+\d+\s+\d{2}[-\.]\d{2}[-\.]\d{2}", p_strip):
+                return True
+            if re.match(r"^(?:2\.6\.19\.|2\.2\.4\.|2\.6\.4\.|2\.3\.2\.)\s+(?:mediante|N[°º\?]|y\s+2\.6\.15\.|y\s+3\.2\.11\.|y\s+2\.3\.2\.)", p_strip):
+                return True
+            if p_strip.startswith("Se aborda esta materia en la presente circular"):
+                return True
+            if p_strip.startswith("Expiró el plazo que se informaba"):
+                return True
+            if p_strip.startswith("1. En el punto 2") or p_strip.startswith("2. En el punto 2"):
+                return True
+            if p_strip.startswith("1. Se reemplaza el punto") or p_strip.startswith("2. Se reemplaza el punto"):
+                return True
+            if p_strip.startswith("3. En el punto 4") or p_strip.startswith("2. En el punto 3"):
+                return True
+            if p_strip.startswith("Se deja sin efecto por completo la Circular"):
+                return True
+            if re.search(r"\b435\s+228\s+20-05-20\b", p_strip):
+                return True
+
+            return False
+
         # Filtrar secciones espurias de índice / tabla de contenidos y notas al pie o filas residuales de tabla
         secciones_filtradas: List[SeccionDDU] = []
         for sec in secciones:
@@ -700,29 +850,24 @@ class CuerpoExtractor(BaseExtractor):
                 and not re.search(r"\.{3,}\s*\d+$", p)
                 and not re.search(r"\b[IÍ]NDICE\b\s*:", p, re.IGNORECASE)
                 and not _es_inicio_nota_al_pie(p)
-                and not p.startswith("Se deja sin efecto por completo la Circular")
-                and not re.match(r"^N[°º\?]?\s+ORD\s+FECHA", p, re.IGNORECASE)
-                and not re.match(r"^\d+\s+\d+\s+\d{2}-\d{2}-\d{2}", p)
-                and not p.startswith("1. En el punto 2")
-                and not p.startswith("2. En el punto 2")
-                and not p.startswith("2. Se reemplaza el punto")
-                and not p.startswith("1. Se reemplaza el punto")
-                and not p.startswith("3. En el punto 4")
-                and not p.startswith("2. En el punto 3")
+                and not _es_parrafo_de_tabla(p)
                 and not re.match(r"^(?:\d+\.\s+)?(?:Sr\.|Sra\.|Sres\.|Biblioteca|Colegio|Instituto|Cámara|Depto|Archivo|Jefe|OIRS|Oficina)\b", p)
             ]
+
             if pars or tit:
                 sec["parrafos"] = pars
                 secciones_filtradas.append(sec)
+
 
 
         secciones = secciones_filtradas
 
 
 
-        # Aplicar reparación de palabras OCR a cada párrafo de las secciones
+        # Aplicar reparación de palabras OCR y descontaminación de tablas a cada párrafo de las secciones
         for sec in secciones:
-            sec["parrafos"] = [_limpiar_texto_cuerpo(p) for p in sec.get("parrafos", [])]
+            sec["parrafos"] = [_descontaminar_parrafo_de_tablas(_limpiar_texto_cuerpo(p)) for p in sec.get("parrafos", [])]
+
 
 
         exito = len(secciones) > 0 and any(len(s["parrafos"]) > 0 for s in secciones)

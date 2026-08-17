@@ -107,10 +107,12 @@ class DDUOrchestrator:
         for nombre_bloque, extractor_cls in extractores_dict.items():
             try:
                 instancia = extractor_cls()
-                if pdf_path is not None and nombre_bloque in ("tablas", "imagenes", "modificaciones_posteriores", "firma"):
+                if pdf_path is not None:
                     resultado = instancia.extract(raw_text, lines, pdf_path=pdf_path)
                 else:
                     resultado = instancia.extract(raw_text, lines)
+
+
 
                 if resultado.datos:
                     if nombre_bloque == "modificaciones_posteriores":

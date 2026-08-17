@@ -533,6 +533,52 @@ def test_cuerpo_extractor_ddu_456_exclusion_tablas_e_imagenes() -> None:
     assert "DDU 168" not in parrafos[6]
 
 
+def test_cuerpo_extractor_ddu_547_exclusion_tablas() -> None:
+    """Verifica que el cuerpo de DDU 547 contenga todas sus secciones normativas y excluya las 3 tablas."""
+    pdf_path = Path("circulares/DDU 547.pdf")
+    if not pdf_path.exists():
+        pytest.skip(f"No se encontró el archivo PDF en {pdf_path}")
+
+    pypdf_mod: Any = importlib.import_module("pypdf")
+    reader = pypdf_mod.PdfReader(pdf_path)
+    raw_text = "\n".join([str(p.extract_text() or "") for p in reader.pages])
+    lines = [line.strip() for line in raw_text.splitlines() if line.strip()]
+
+    extractor = CuerpoExtractor()
+    resultado: ResultadoBloque = extractor.extract(raw_text, lines, pdf_path=pdf_path)
+
+    assert resultado.exito is True
+    cuerpo = str(resultado.datos.get("cuerpo", ""))
+
+    # Verificar presencia de secciones y numerales del cuerpo
+    assert "1. De conformidad" in cuerpo
+    assert "2. MARCO NORMATIVO:" in cuerpo
+    assert "3. ¿QUÉ ES LA URBANIZACIÓN?" in cuerpo
+    assert "4. HIPÓTESIS Y TIPOS DE GESTIÓN" in cuerpo
+    assert "5. OBRAS DE URBANIZACIÓN" in cuerpo
+    assert "6. OBRAS DE URBANIZACIÓN" in cuerpo
+    assert "7. OBRAS DE URBANIZACIÓN" in cuerpo
+    assert "8. PERMISOS DE URBANIZACIÓN" in cuerpo
+    assert "9. EXIGENCIA DE ACCEDER" in cuerpo
+    assert "10. RECEPCIÓN DEFINITIVA" in cuerpo
+    assert "OTRAS MODIFICACIONES" in cuerpo
+    assert "12. CIRCULARES QUE SE DEJAN SIN EFECTO O SE MODIFICAN:" in cuerpo
+    assert "12.1. Considerando las modificaciones" in cuerpo
+    assert "12.2. En atención a los cambios normativos" in cuerpo
+
+
+    # Verificar exclusión total de encabezados y celdas de las 3 tablas
+    assert "TIPO DE GESTIÓN" not in cuerpo
+    assert "CASOS QUE COMPRENDE" not in cuerpo
+    assert "1. Loteos (Art. 2.2.4." not in cuerpo
+    assert "DDU Nº Nº ORD" not in cuerpo
+    assert "MATERIA DE LA CIRCULAR" not in cuerpo
+    assert "Específica 78-07" not in cuerpo
+    assert "Específica 22-07" not in cuerpo
+    assert "435 228 20-05-20" not in cuerpo
+
+
+
 
 
 

@@ -322,9 +322,10 @@ def test_orchestrator_process_pdf_ddu_547() -> None:
     # 3.2. Presencia íntegra de subnumerales
     for subnum in ["1.", "2.1.", "2.2.", "3.1.", "4.1.", "5.1.", "6.1.", "7.1.", "8.1.", "8.3.", "9.1.", "10.1.", "11.1.", "12.1.", "12.2."]:
         assert subnum in cuerpo, f"Falta el subnumeral {subnum} en el cuerpo de DDU 547"
-    assert len(cuerpo) > 50000, f"El cuerpo es demasiado corto ({len(cuerpo)} chars)"
+    assert len(cuerpo) > 45000, f"El cuerpo es demasiado corto ({len(cuerpo)} chars)"
 
     # 3.3. Exclusión total de texto de notas al pie en el cuerpo
+
     assert "En estos términos se indica" not in cuerpo
     assert "Tal como se señaló anteriormente" not in cuerpo
     assert "Que excedan el porcentaje calculado" not in cuerpo
