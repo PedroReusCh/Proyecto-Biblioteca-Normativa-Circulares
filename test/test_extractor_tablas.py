@@ -213,3 +213,80 @@ def test_normalizar_texto_celda_tabla() -> None:
     res_ddu = normalizar_texto_celda_tabla(col_ddu)
     assert res_ddu == "DDU 339 Circular Ord. N° 0087 de fecha 06.03.2017"
 
+
+def test_tablas_extractor_ddu_547_pdf(tmp_path: Path) -> None:
+    """Verifica la extracción y consolidación de las 3 tablas presentes en DDU 547."""
+    pdf_path = PROYECTO_RAIZ / "circulares" / "DDU 547.pdf"
+    if not pdf_path.exists():
+        pytest.skip(f"No se encontró el archivo PDF en {pdf_path}")
+
+    extractor = TablasExtractor()
+    salidas_dir = tmp_path / "salidas_tablas"
+    resultado: ResultadoBloque = extractor.extract(
+        raw_text="",
+        lines=[],
+        pdf_path=pdf_path,
+        output_dir=salidas_dir,
+    )
+
+    assert resultado.nombre_bloque == "tablas"
+    assert resultado.exito is True
+    assert resultado.confianza == 1.0
+
+    tablas_manifest: List[Dict[str, Any]] = resultado.datos.get("tablas", [])
+    assert len(tablas_manifest) == 3, f"Se esperaban 3 tablas consolidadas, se obtuvieron {len(tablas_manifest)}"
+
+    # Tabla 1: Tipos de Gestión (Pág. 5)
+    t1 = tablas_manifest[0]
+    assert t1["id"] == "DDU_547_tabla_1"
+    assert t1["paginas"] == [5]
+    assert t1["filas"] == 3
+    assert t1["columnas"] == 2
+    assert "TIPO DE GESTIÓN" in t1["nombre"]
+    csv1 = salidas_dir / "DDU_547_tabla_1.csv"
+    assert csv1.exists()
+
+    # Tabla 2: Circulares Dejadas sin Efecto (Pág. 20-21)
+    t2 = tablas_manifest[1]
+    assert t2["id"] == "DDU_547_tabla_2"
+    assert t2["paginas"] == [20, 21]
+    assert t2["filas"] == 5
+    assert t2["columnas"] == 5
+    assert "Dejadas sin Efecto" in t2["nombre"]
+    csv2 = salidas_dir / "DDU_547_tabla_2.csv"
+    assert csv2.exists()
+    with open(csv2, "r", encoding="utf-8-sig") as f:
+        reader = list(csv.reader(f, delimiter=";"))
+        assert len(reader) == 6  # 1 encabezado + 5 filas
+        texto_t2 = " ".join([" ".join(r) for r in reader])
+        assert "Específica 78-07" in texto_t2
+        assert "224" in texto_t2
+        assert "294" in texto_t2
+        assert "371" in texto_t2
+        assert "476" in texto_t2
+
+    # Tabla 3: Circulares Modificadas (Pág. 21-24)
+    t3 = tablas_manifest[2]
+    assert t3["id"] == "DDU_547_tabla_3"
+    assert t3["paginas"] == [21, 22, 23, 24]
+    assert t3["filas"] == 10
+    assert t3["columnas"] == 5
+    assert "Modificadas" in t3["nombre"]
+    csv3 = salidas_dir / "DDU_547_tabla_3.csv"
+    assert csv3.exists()
+    with open(csv3, "r", encoding="utf-8-sig") as f:
+        reader = list(csv.reader(f, delimiter=";"))
+        assert len(reader) == 11  # 1 encabezado + 10 filas
+        texto_t3 = " ".join([" ".join(r) for r in reader])
+        assert "Específica 22-07" in texto_t3
+        assert "Específica 89-07" in texto_t3
+        assert "Específica 11-09" in texto_t3
+        assert "Específica 55-09" in texto_t3
+        assert "241" in texto_t3
+        assert "435" in texto_t3
+        assert "449" in texto_t3
+        assert "502" in texto_t3
+        assert "528" in texto_t3
+        assert "536" in texto_t3
+
+
