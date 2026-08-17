@@ -2,8 +2,6 @@
 
 Este repositorio implementa un sistema para el procesamiento, análisis y enriquecimiento semántico de **Circulares DDU** (División de Desarrollo Urbano del Ministerio de Vivienda y Urbanismo, Chile), transformándolas a formatos abiertos compatibles con la Biblioteca del Congreso Nacional (BCN).
 
----
-
 ## Organización del Repositorio
 
 El proyecto se estructura en los siguientes directorios clave:
@@ -28,8 +26,6 @@ El proyecto se estructura en los siguientes directorios clave:
   * [`leychile_api.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/leychile_api.py): Integración oficial con la API de Ley Chile de la BCN.
 * [`test/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/test): Suite plana de pruebas automatizadas locales (`test_csv_to_akoma_xml.py`, `test_csv_to_rdf.py`, `test_extractor_base.py`, `test_extractor_metadata.py`, `test_extractor_body.py`, `test_extractor_nota_al_pie.py`, `test_orchestrator.py`, `test_csv_integrity.py`, `test_spec_coverage.py`, `test_xml_generation.py`, `test_rdf_generation.py`, `test_xsd_structural_validation.py`) ejecutables con `pytest`.
 
----
-
 ## Modelo de Datos de Dominio y Extensibilidad Evolutiva
 
 El proyecto adopta una **arquitectura en capas con separación clara de responsabilidades**:
@@ -40,8 +36,6 @@ El proyecto adopta una **arquitectura en capas con separación clara de responsa
    Los módulos [`scripts/ddu_to_xml.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_xml.py) y [`scripts/ddu_to_rdf.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_rdf.py) actúan como traductores que mapean automáticamente los campos de dominio a la taxonomía XML Akoma Ntoso v2.0 BCN (`FRBRWork`, `FRBRnumber`, `docDate`, `mainBody`, `authorialNote`) y a grafos semánticos RDF/Turtle.
 3. **Extensibilidad Evolutiva del Pipeline ETL**:
    A medida que las circulares DDU evolucionen o incorporen nuevos bloques normativos en el futuro, es posible registrar nuevos extractores en [`scripts/extractors/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors) mediante el decorador `@register_extractor`. El orquestador [`scripts/ddu_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_orchestrator.py) incorporará las nuevas columnas al CSV sin alterar el código existente ni romper la generación Akoma Ntoso.
-
----
 
 ## Mapeo Estandarizado de la Estructura (CSV -> ETLs)
 
@@ -61,8 +55,6 @@ La suite de los 12 ETLs modulares deriva exactamente del contrato de especificac
 | **Nota al Pie** | `notas_al_pie` | `nota_al_pie.py` | Notas aclaratorias o referencias normativas al pie de página |
 | **Firma** | `firmante` | `firma.py` | Firma del Jefe de División |
 | **Distribución** | `lista_distribucion` | `distribucion.py` | Nómina de receptores al cierre del documento |
-
----
 
 ## Arquitectura de Procesamiento Modular (ETLs y Orquestador)
 
@@ -99,8 +91,6 @@ graph TD
     end
 ```
 
----
-
 ## Guía de Ejecución y Visualización de Resultados
 
 ### 1. Ejecución de ETLs de Forma Independiente (CLI)
@@ -123,8 +113,6 @@ py -3 scripts/ddu_orchestrator.py --pdf "circulares/DDU 531.pdf" --export-csv
 
 * **Salida / Visualización**: Genera un archivo CSV codificado en UTF-8 con BOM y delimitado por punto y coma (`;`) listo para MS Excel en la carpeta `salidas_csv/` (ej. [`salidas_csv/DDU_531_extraido.csv`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/salidas_csv/DDU_531_extraido.csv)).
 
----
-
 ## Dependencias e Instalación
 
 Este proyecto utiliza módulos estándar de Python 3 y requiere la siguiente dependencia externa:
@@ -136,9 +124,6 @@ Para verificar o instalar dependencias, ejecute:
 ```powershell
 pip install pypdf
 ```
-
----
-
 ## Ejecución de la Suite de Pruebas
 
 Para garantizar que el sistema y sus modelos semánticos de datos cumplen al 100% con los contratos estructurales definidos por el XSD, los CSV de la BCN y la suite de extractores, ejecute en la raíz del repositorio:
@@ -148,4 +133,3 @@ pytest -v
 ```
 
 Actualmente, **81 de 81 pruebas pasan exitosamente** (100% de cobertura de la suite en estructura modular y plana).
-

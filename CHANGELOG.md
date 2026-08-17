@@ -25,12 +25,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
     * **Imágenes**: Inyección de etiquetas inline `<img>` (`src`, `alt`, `width`, `height`, `id`) dentro de los párrafos que introducen esquemas o figuras técnicas.
     * **Modificaciones Posteriores**: Incorporación de metadatos `<lifecycle>` (`<eventRef type="amendment"/>`), análisis de modificaciones pasivas `<analysis>` (`<passiveModifications>` con `<textualMod type="substitution">`) y referencia `<TLCReference>` en XML, junto con la tripleta semántica `minvu-ddu:modificadaPor` en el grafo RDF Turtle, validado al 100% contra el XSD oficial de la BCN con `lxml.etree.XMLSchema`.
 
-
-
----
-
 ## [0.10.0] - 2026-08-14
-
 
 ### Added
 
@@ -50,8 +45,6 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
   * [`scripts/ddu_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_orchestrator.py): Actualización de `export_individual_csv()` para emitir los 14 bloques normativos estructurados.
   * Regeneración de salidas para la circular DDU 456 (`salidas_csv/DDU_456_extraido.csv`, `salidas_xml/DDU_456_akoma.xml`, `salidas_rdf/DDU_456_rdf.ttl`).
 
----
-
 ## [0.9.0] - 2026-08-14
 
 ### Added
@@ -69,10 +62,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
   * [`scripts/extractors/materia.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/materia.py) y [`scripts/extractors/descriptores.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/descriptores.py): Detección y separación exacta de descriptores en mayúsculas sin prefijo explícito (ej. `NORMAS URBANISTICAS`).
   * [`scripts/ddu_to_xml.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_xml.py): Normalización de `docNumber` para prevenir duplicación de prefijos `DDU`.
 
----
-
 ## [0.8.0] - 2026-08-14
-
 
 ### Added
 
@@ -95,10 +85,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 * **Limpieza de Archivos Obsoletos**:
   * Remoción definitiva de `.github/copilot-instructions.md` y unificación de directrices en `GEMINI.md`.
 
----
-
 ## [0.7.1] - 2026-08-06
-
 
 ### Added
 
@@ -106,10 +93,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
   * Integración formal de la regla de diagramación y modelos visuales basada en [`.github/instructions/mermaid.instructions.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/.github/instructions/mermaid.instructions.md) y [`.github/copilot-instructions.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/.github/copilot-instructions.md) en [`AGENTS.md`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/AGENTS.md).
   * Exigencia de persistencia en archivos `.mmd` y validación sintáctica obligatoria para diagramas de secuencia, arquitectura y flujos del proyecto.
 
----
-
 ## [0.7.0] - 2026-07-31
-
 
 ### Added
 
@@ -129,10 +113,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
   * Reemplazada la etiqueta no estándar `<br/>` por la etiqueta nativa Akoma Ntoso `<eol/>`.
   * Ajustada la lectura en `DDUToXML` para renderizar completamente la nómina de distribución desde `distribucion_texto` y `lista_distribucion`.
 
----
-
 ## [0.6.0] - 2026-07-30
-
 
 ### Added
 
@@ -160,8 +141,6 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 * **Estrategia Arquitectónica: Modelo de Datos de Dominio y Extensibilidad Evolutiva**:
   * Adopción del modelo de datos de dominio plano en CSV (`numero_ddu`, `fecha_emision`, `cuerpo`, `firmante`) para preservar la legibilidad humana e intuitiva del negocio, delegando la traducción a Akoma Ntoso XML (`FRBRWork`, `docDate`, `mainBody`) a los transformadores [`scripts/ddu_to_xml.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_xml.py) y [`scripts/ddu_to_rdf.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_to_rdf.py).
   * Formalización de la extensibilidad del pipeline de ETLs modulares ([`scripts/extractors/`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/extractors/)): ante la evolución o mutación futura de las circulares DDU, es posible incorporar dinámicamente nuevos extractores mediante `@register_extractor` e integrarlos automáticamente en el orquestador central ([`scripts/ddu_orchestrator.py`](file:///C:/Users/preusc/Documents/Proyecto%20Biblioteca%20Normativa%20Ciculares/scripts/ddu_orchestrator.py)).
-
----
 
 ## [0.5.0] - 2026-07-28
 
