@@ -231,30 +231,62 @@ def _es_pie_de_pagina(line: str) -> bool:
     return re.match(r"^!+$", line_norm) is not None
 
 
+def _es_inicio_indice(line: str) -> bool:
+
+    """Detecta el inicio del índice o tabla de contenidos."""
+    line_clean = line.strip()
+    if not line_clean:
+        return False
+    return bool(re.match(r"^(?:[IVXLCDM\d\.\s]*\b(?:[IÍ]NDICE|TABLA\s+DE\s+CONTENIDO[S]?|CONTENIDO[S]?)\b\s*:?)", line_clean, re.IGNORECASE))
+
+
+def _es_linea_indice(line: str) -> bool:
+    """Detecta si una línea pertenece al índice / tabla de contenidos (incluyendo líneas con guías de puntos)."""
+    line_clean = line.strip()
+    if not line_clean:
+        return False
+    if _es_inicio_indice(line_clean):
+        return True
+    if re.search(r"\.{4,}", line_clean) or re.search(r"\.{3,}\s*\d+$", line_clean):
+        return True
+    return False
+
+
 def _normalizar_romano_ocr(prefix: str, texto_titulo: str) -> str | None:
     """Diferencia entre números arábigos y romanos detectando errores de OCR (ej. 11. -> II. o l. -> I.)."""
     prefix_clean = prefix.lower().strip()
+
+    # Si es parte del índice o contiene puntos de tabla de contenidos, no es macro-sección
+    if re.search(r"\b(?:[IÍ]NDICE|TABLA\s+DE\s+CONTENIDO)\b", texto_titulo, re.IGNORECASE):
+        return None
+    if re.search(r"\.{4,}", texto_titulo):
+        return None
+
+
+    # Analizar si el texto del título es principalmente mayúsculas
+    letras = [c for c in texto_titulo if c.isalpha()]
+    if not letras:
+        return None
+    es_mayusculas = (sum(1 for c in letras if c.isupper()) / len(letras)) >= 0.65
+
+    if not es_mayusculas:
+        return None
 
     # Si es número romano directo estricto (ej. I, II, III, IV, V, VI, VII, VIII, IX, X)
     if re.match(r"^(?:I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII)$", prefix, re.IGNORECASE):
         return f"{prefix.upper()}."
 
-    # Analizar si el texto del título es principalmente mayúsculas
-    letras = [c for c in texto_titulo if c.isalpha()]
-    es_mayusculas = len(letras) > 0 and (sum(1 for c in letras if c.isupper()) / len(letras) >= 0.65)
-
-    if es_mayusculas:
-        if prefix_clean in ("l", "i", "1"):
-            return "I."
-
-        elif prefix_clean in ("11", "ll", "1l", "l1", "ii"):
-            return "II."
-        elif prefix_clean in ("111", "lll", "iii"):
-            return "III."
-        elif prefix_clean in ("iv", "v", "vi", "vii", "viii", "ix", "x"):
-            return f"{prefix_clean.upper()}."
+    if prefix_clean in ("l", "i", "1"):
+        return "I."
+    elif prefix_clean in ("11", "ll", "1l", "l1", "ii"):
+        return "II."
+    elif prefix_clean in ("111", "lll", "iii"):
+        return "III."
+    elif prefix_clean in ("iv", "v", "vi", "vii", "viii", "ix", "x"):
+        return f"{prefix_clean.upper()}."
 
     return None
+
 
 
 def _es_continuacion_titulo_seccion(line: str) -> bool:
@@ -341,7 +373,7 @@ class CuerpoExtractor(BaseExtractor):
         omitiendo_nota_al_pie = False
         omitiendo_tabla = False
         omitiendo_diagrama = False
-
+        omitiendo_indice = False
 
         lines_cuerpo = lines[inicio_cuerpo:]
         total_lineas = len(lines_cuerpo)
@@ -359,6 +391,28 @@ class CuerpoExtractor(BaseExtractor):
                 curr_idx += 1
                 continue
 
+            # Detectar e ignorar completamente el bloque de Índice / Tabla de Contenidos
+            if _es_inicio_indice(line_clean):
+                if parrafo_actual:
+                    seccion_actual["parrafos"].append(parrafo_actual.strip())
+                    parrafo_actual = ""
+                omitiendo_indice = True
+                curr_idx += 1
+                continue
+
+            if omitiendo_indice:
+                if _es_linea_indice(line_clean):
+                    curr_idx += 1
+                    continue
+                elif re.match(r"^\d+\.\s+[A-ZÁÉÍÓÚÑ]", line_clean) and not re.search(r"\.{2,}", line_clean):
+                    omitiendo_indice = False
+                elif _es_pie_de_pagina(line_clean):
+                    curr_idx += 1
+                    continue
+                else:
+                    curr_idx += 1
+                    continue
+
             # Detectar e ignorar bloques de diagramas o esquemas técnicos dentro del cuerpo
             if _es_inicio_diagrama(line_clean):
                 if parrafo_actual:
@@ -367,6 +421,7 @@ class CuerpoExtractor(BaseExtractor):
                 omitiendo_diagrama = True
                 curr_idx += 1
                 continue
+
 
             if omitiendo_diagrama:
                 if re.match(r"^\d+\.\s+", line_clean) or re.match(r"^[IVXLCDM]+\.\s+", line_clean, re.IGNORECASE) or re.search(r"Saluda\s+atent", line_clean, re.IGNORECASE):
@@ -529,12 +584,29 @@ class CuerpoExtractor(BaseExtractor):
                 seccion_actual["parrafos"].append(parrafo_actual)
 
         if seccion_actual["titulo"] or seccion_actual["parrafos"]:
-
             secciones.append(seccion_actual)
+
+        # Filtrar secciones espurias de índice / tabla de contenidos
+        secciones_filtradas: List[SeccionDDU] = []
+        for sec in secciones:
+            tit = str(sec.get("titulo", "")).strip()
+            if re.search(r"\b(?:[IÍ]NDICE|TABLA\s+DE\s+CONTENIDO)\b", tit, re.IGNORECASE) or re.search(r"\.{4,}", tit):
+                continue
+            pars = [
+                p for p in sec.get("parrafos", [])
+                if not re.search(r"\.{5,}", p) and not re.search(r"\.{3,}\s*\d+$", p) and not re.search(r"\b[IÍ]NDICE\b\s*:", p, re.IGNORECASE)
+            ]
+            if pars or tit:
+                sec["parrafos"] = pars
+                secciones_filtradas.append(sec)
+
+        secciones = secciones_filtradas
+
 
         # Aplicar reparación de palabras OCR a cada párrafo de las secciones
         for sec in secciones:
             sec["parrafos"] = [_limpiar_texto_cuerpo(p) for p in sec.get("parrafos", [])]
+
 
         exito = len(secciones) > 0 and any(len(s["parrafos"]) > 0 for s in secciones)
 

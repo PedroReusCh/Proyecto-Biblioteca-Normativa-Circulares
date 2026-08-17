@@ -1,7 +1,9 @@
 import csv
 from pathlib import Path
+import re
 from typing import Any, Dict, List
 import pytest
+
 
 from scripts.ddu_orchestrator import DDUOrchestrator, formatear_manifiesto_plano
 from scripts.ddu_types import DatosCircularDDU
@@ -303,15 +305,28 @@ def test_orchestrator_process_pdf_ddu_547() -> None:
     assert "JUAN DIEGO IZQUIERDO HEVIA" in str(datos.get("firmante", ""))
     assert "JUAN DIEGO IZQUIERDO HEVIA" in str(datos.get("nombre_firmante", ""))
 
-    # 3. Estructura y secciones
+    # 3. Estructura y secciones sin índice o tabla de contenidos
     secciones = datos.get("secciones", [])
     assert isinstance(secciones, list)
     assert len(secciones) > 0
+    cuerpo = str(datos.get("cuerpo", ""))
+    assert "1. De conformidad" in cuerpo
+    assert "2. MARCO NORMATIVO:" in cuerpo
+    assert "ÍNDICE" not in cuerpo.upper()
+    assert not re.search(r"\.{4,}", cuerpo)
 
-    # 4. Tablas e imágenes
+    # 4. Distribución completa
+    dist_list = datos.get("lista_distribucion", [])
+    assert isinstance(dist_list, list)
+    assert len(dist_list) == 33
+    assert "Ministro de Vivienda y Urbanismo" in dist_list[0]
+    assert "Oficina de Partes MINVU" in dist_list[-1]
+
+    # 5. Tablas e imágenes
     tablas = datos.get("tablas") or []
     assert isinstance(tablas, list)
     assert len(tablas) > 0
+
 
 
 def test_export_individual_csv_ddu_547(tmp_path: Path) -> None:

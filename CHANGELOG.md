@@ -16,11 +16,14 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 ### Changed
 
 * **Refinamiento de Extractores Modulares y Generador XML**:
-  * **Materia (`scripts/extractors/materia.py`)**: Coincidencia estricta de prefijos (`MAT.:`, `MAT:`, `MATERIA:`) previniendo capturas espurias en párrafos que contienen la palabra *materia*.
+  * **Exclusión Total de Índices y Tablas de Contenido (`scripts/extractors/cuerpo.py`)**: Implementación del estado `omitiendo_indice` y funciones `_es_inicio_indice`, `_es_linea_indice` y post-filtrado para omitir completamente los bloques de índices (`I. ÍNDICE:` y guías de puntos `........ 19`), preservando exclusivamente el cuerpo normativo ordenado y secuencial.
+  * **Captura Completa y Desinfección de Distribución (`scripts/extractors/distribucion.py`)**: Activación robusta en encabezados formales y soporte de líneas continuas partidas por OCR (ej. *Ministerio de Economía, Fomento y Turismo*), desinfección de *fa Construcción* ➔ *la Construcción*, garantizando la captura de los 33 destinatarios institucionales en DDU 547.
   * **Acto Administrativo (`scripts/extractors/acto_administrativo.py`)**: Extracción flexible de dígitos en números ordinarios con caracteres intermedios de ruido OCR (`CIRCULAR ORD. N° 362`).
+  * **Materia (`scripts/extractors/materia.py`)**: Coincidencia estricta de prefijos (`MAT.:`, `MAT:`, `MATERIA:`) previniendo capturas espurias en párrafos que contienen la palabra *materia*.
   * **Firma (`scripts/extractors/firma.py`)**: Búsqueda en el bloque de cierre previo a la lista de distribución final en documentos multi-página y normalización precisa del nombre de persona (*JUAN DIEGO IZQUIERDO HEVIA*).
   * **Limpieza Tipográfica OCR (`scripts/extractors/utils_cleaner.py`)**: Incorporación de reglas directas para variantes de *Decreto Supremo N° 5*.
   * **Unicidad de Atributos `xs:ID` en XML Akoma Ntoso (`scripts/ddu_to_xml.py`)**: Control estricto de inyección única por imagen técnica para garantizar el cumplimiento del tipo `xs:ID` del esquema XSD de la BCN.
+
 
 ## [0.11.0] - 2026-08-14
 
