@@ -147,3 +147,40 @@ def test_imagenes_extractor_texto_markdown() -> None:
     assert img["formato"] == "png"
     assert img["pagina"] == 1
     assert "archivo_anexo" in img
+
+
+def test_imagenes_extractor_ddu_547_pdf(tmp_path: Path) -> None:
+    """Verifica la extracción acotada y precisa del organigrama en página 10 de DDU 547 sin incluir texto circundante."""
+    pdf_path = PROYECTO_RAIZ / "circulares" / "DDU 547.pdf"
+    if not pdf_path.exists():
+        pytest.skip(f"No se encontró {pdf_path}")
+
+    extractor = ImagenesExtractor()
+    salidas_dir = tmp_path / "salidas_imagenes"
+    resultado: ResultadoBloque = extractor.extract(
+        raw_text="",
+        lines=[],
+        pdf_path=pdf_path,
+        output_dir=salidas_dir,
+    )
+
+    assert resultado.nombre_bloque == "imagenes"
+    assert resultado.exito is True
+    imagenes: List[Dict[str, Any]] = resultado.datos.get("imagenes", [])
+    assert len(imagenes) == 1, f"Se esperaba exactamente 1 esquema técnico en DDU 547, se obtuvieron {len(imagenes)}"
+
+    img_p10 = imagenes[0]
+    assert img_p10["id"] == "DDU_547_img_1"
+    assert img_p10["pagina"] == 10
+    assert img_p10["formato"] == "png"
+    assert "Urbanizaciones voluntarias desvinculadas" in img_p10["descripcion"]
+    assert img_p10["archivo_anexo"] == "salidas_imagenes/DDU_547_img_1.png"
+
+    # Verificar que el recorte es ajustado al diagrama y no incluye la página completa
+    assert img_p10["alto"] < 800, f"El alto de la imagen ({img_p10['alto']}px) es excesivo y contiene texto de la página"
+    assert img_p10["ancho"] >= 1500
+
+    img_file = salidas_dir / "DDU_547_img_1.png"
+    assert img_file.exists(), f"No se encontró el archivo {img_file}"
+    assert img_file.stat().st_size > 1000
+

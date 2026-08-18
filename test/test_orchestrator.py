@@ -350,6 +350,16 @@ def test_orchestrator_process_pdf_ddu_547() -> None:
         assert anexo != ""
         assert (PROYECTO_RAIZ / anexo).exists()
 
+    # 6. Imágenes/esquemas técnicos desacoplados exportados en salidas_imagenes/
+    imagenes = datos.get("imagenes") or []
+    assert isinstance(imagenes, list)
+    assert len(imagenes) == 1
+    assert "DDU_547_img_1" == imagenes[0].get("id")
+    anexo_img = imagenes[0].get("archivo_anexo", "")
+    assert anexo_img != ""
+    assert (PROYECTO_RAIZ / anexo_img).exists()
+
+
 
 
 

@@ -128,8 +128,9 @@ def test_xml_generation_ddu_456_with_tables_images_and_lifecycle() -> None:
     img_elem = root.find(".//akn:mainBody//akn:img", ns)
     assert img_elem is not None, "Falta el elemento <img> en el cuerpo de la circular"
     assert "salidas_imagenes/DDU_456_img_1.png" in img_elem.attrib.get("src", "")
-    assert img_elem.attrib.get("width") == "2131"
-    assert img_elem.attrib.get("height") == "1906"
+    assert img_elem.attrib.get("width") == "2001"
+    assert img_elem.attrib.get("height") == "1748"
+
 
     # 4. Bloque <attachments> con <componentRef> para tablas
     attachments = root.find(".//akn:attachments", ns)

@@ -27,6 +27,9 @@ def _generar_descripcion_tecnica(page_text: str, pagina: int, ancho: int, alto: 
     texto_lower = texto_limpio.lower()
 
     # Detección específica de esquemas de arquitectura / urbanismo frecuentes en circulares DDU
+    if "urbanizaciones voluntarias desvinculadas" in texto_lower:
+        return "Esquema ilustrativo: Urbanizaciones voluntarias desvinculadas del proceso de división del suelo"
+
     if "planta azotea" in texto_lower and ("corte esquemático" in texto_lower or "corte esquematico" in texto_lower):
         return "Esquema ilustrativo: Planta azotea y corte esquemático"
 
@@ -66,7 +69,6 @@ def _extraer_imagenes_lineas(
     num_str: str = "desconocido",
     dir_imagenes: Optional[Path] = None,
 ) -> List[Dict[str, Any]]:
-
     """Extrae metadatos de imágenes definidas en formato Markdown dentro del texto plano."""
     imagenes_manifest: List[Dict[str, Any]] = []
     patron_md_img = re.compile(r"!\[([^\]]*)\]\(([^)]+)\)")
@@ -97,43 +99,74 @@ def _extraer_imagenes_lineas(
     return imagenes_manifest
 
 
-
 def _calcular_clip_diagrama(page: Any, r: Any, p_w: float, p_h: float) -> Any:
-
-    """Calcula el rectángulo envolvente ampliado para capturar el diagrama técnico completo con etiquetas y cotas."""
+    """Calcula el rectángulo envolvente ajustado para capturar el diagrama técnico o esquema sin incluir párrafos del cuerpo normativo."""
     import importlib
     fitz_mod: Any = importlib.import_module("fitz")
 
     if r is None:
         return None
 
-    x0 = float(r.x0)
-    y0 = float(r.y0)
-    x1 = float(r.x1)
-    y1 = float(r.y1)
+    # 1. Obtener todos los rectángulos de imágenes relevantes en la página (para esquemas compuestos de varios elementos/cajas)
+    page_img_rects: List[Any] = []
+    try:
+        doc = getattr(page, "parent", None)
+        if doc is not None:
+            for img_info in page.get_images():
+                x = int(img_info[0])
+                base_img = doc.extract_image(x)
+                if not base_img or int(base_img.get("height", 0)) < 60 or int(base_img.get("width", 0)) < 60:
+                    continue
+                rects = page.get_image_rects(x)
+                for img_r in rects:
+                    if float(img_r.y1) < (p_h - 50.0) and float(img_r.y0) > 100.0:
+                        page_img_rects.append(img_r)
+    except Exception:
+        pass
 
-    # Revisar bloques de texto en la vecindad del diagrama (para incluir etiquetas, cotas y títulos)
+    if not page_img_rects:
+        page_img_rects = [r]
+
+    x0 = min(float(img_r.x0) for img_r in page_img_rects)
+    y0 = min(float(img_r.y0) for img_r in page_img_rects)
+    x1 = max(float(img_r.x1) for img_r in page_img_rects)
+    y1 = max(float(img_r.y1) for img_r in page_img_rects)
+
+    # 2. Revisar bloques de texto que correspondan a etiquetas internas o cotas del esquema técnico
+    # Excluyendo estrictamente párrafos del cuerpo normativo y encabezados de sección
     blocks = page.get_text("blocks")
     for b in blocks:
-        by0, by1 = float(b[1]), float(b[3])
-        # Excluir encabezado institucional superior y pie de página
-        if by0 < 120.0 or by1 > (p_h - 40.0):
+        bx0, by0, bx1, by1, btext = float(b[0]), float(b[1]), float(b[2]), float(b[3]), str(b[4]).strip()
+        if not btext:
             continue
-        # Si el bloque de texto está en la franja vertical o contexto del esquema
-        if (by1 >= y0 - 70.0 and by0 <= y1 + 70.0):
-            bx0, bx1 = float(b[0]), float(b[2])
-            x0 = min(x0, bx0)
-            y0 = min(y0, by0)
-            x1 = max(x1, bx1)
-            y1 = max(y1, by1)
+        # Excluir encabezado institucional y pie de página
+        if by0 < 60.0 or by1 > (p_h - 40.0):
+            continue
+        # Excluir numerales de sección (ej. "7.", "7.1.", "4.", "5.")
+        if re.match(r"^\d+(?:\.\d+)*\.\s+[A-ZÁÉÍÓÚÑ]", btext):
+            continue
+        # Excluir párrafos continuos normativos que inician con fórmulas narrativas
+        if re.match(r"^(?:En el artículo|Es importante destacar|Se trata de obras|De conformidad|Por otra parte|Asimismo)\b", btext, re.IGNORECASE):
+            continue
+        if len(btext) > 180:
+            continue
 
-    # Margen de seguridad
-    x0 = max(40.0, x0 - 10.0)
-    y0 = max(140.0, y0 - 10.0)
-    x1 = min(p_w - 40.0, x1 + 10.0)
-    y1 = min(p_h - 40.0, y1 + 10.0)
+        # El bloque debe estar acotado dentro o inmediatamente adyacente a la franja del diagrama
+        if by0 >= (y0 - 25.0) and by1 <= (y1 + 25.0):
+            if bx0 >= (x0 - 60.0) and bx1 <= (x1 + 60.0):
+                x0 = min(x0, bx0)
+                y0 = min(y0, by0)
+                x1 = max(x1, bx1)
+                y1 = max(y1, by1)
 
-    return fitz_mod.Rect(x0, y0, x1, y1)
+    # Margen de seguridad estricto y ajustado (8pt)
+    final_x0 = max(20.0, x0 - 8.0)
+    final_y0 = max(40.0, y0 - 8.0)
+    final_x1 = min(p_w - 20.0, x1 + 8.0)
+    final_y1 = min(p_h - 20.0, y1 + 8.0)
+
+    return fitz_mod.Rect(final_x0, final_y0, final_x1, final_y1)
+
 
 
 @register_extractor
