@@ -439,11 +439,13 @@ class DDUToXML:
                     imgs_a_inyectar: List[Dict[str, Any]] = []
                     for img in list(imagenes_pendientes):
                         es_ddu_456 = "ddu 456" in numero.lower()
+                        es_ddu_547 = "ddu 547" in numero.lower()
                         if (
                             "esquema ilustrativo" in texto_lower
                             or "siguiente esquema" in texto_lower
                             or "siguiente figura" in texto_lower
                             or (es_ddu_456 and num_par in ["4.", "4"])
+                            or (es_ddu_547 and ("urbanizaciones voluntarias desvinculadas" in texto_lower or num_par in ["7.", "7"]))
                         ):
                             imgs_a_inyectar.append(img)
                             imagenes_pendientes.remove(img)
@@ -452,9 +454,10 @@ class DDUToXML:
                         img_id = self._xml_escape(str(img.get("id", f"img_{idx_sec}_{idx_par}")))
                         img_src = self._xml_escape(str(img.get("archivo_anexo", "salidas_imagenes/DDU_456_img_1.png")))
                         img_alt = self._xml_escape(str(img.get("descripcion", img.get("nombre", "Esquema ilustrativo"))))
-                        img_w = str(img.get("ancho", "2131"))
-                        img_h = str(img.get("alto", "1906"))
+                        img_w = str(img.get("ancho", "1761"))
+                        img_h = str(img.get("alto", "543"))
                         builder.add(f'<p><img id="{img_id}" src="{img_src}" alt="{img_alt}" width="{img_w}" height="{img_h}"/></p>')
+
 
                 builder.dedent()
                 builder.add('</content>')
