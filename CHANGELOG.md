@@ -38,7 +38,10 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
   * **Materia (`scripts/extractors/materia.py`)**: Coincidencia estricta de prefijos (`MAT.:`, `MAT:`, `MATERIA:`) previniendo capturas espurias en párrafos que contienen la palabra *materia*.
   * **Firma (`scripts/extractors/firma.py`)**: Búsqueda en el bloque de cierre previo a la lista de distribución final en documentos multi-página y normalización precisa del nombre de persona (*JUAN DIEGO IZQUIERDO HEVIA*).
   * **Limpieza Tipográfica OCR (`scripts/extractors/utils_cleaner.py`)**: Incorporación de reglas directas para variantes de *Decreto Supremo N° 5*.
+  * **Recorte Ajustado de Imágenes y Esquemas Técnicos (`scripts/extractors/imagenes.py`)**: Rediseño de `_calcular_clip_diagrama` para delimitar estrictamente el área vectorial y cajas de organigramas/esquemas (`1761x543 px` en DDU 547), eliminando la absorción indebida de párrafos normativos superiores o inferiores de la página.
+  * **Inyección Canónica y Homogénea en XML Akoma Ntoso (`scripts/ddu_to_xml.py`)**: Inserción del elemento `<img>` con metadatos contextuales y dimensiones exactas en el numeral normativo correspondiente y referencias a tablas anexas mediante `<componentRef>` en `<attachments>`, validado homogéneamente en las 6 circulares del repositorio.
   * **Unicidad de Atributos `xs:ID` en XML Akoma Ntoso (`scripts/ddu_to_xml.py`)**: Control estricto de inyección única por imagen técnica para garantizar el cumplimiento del tipo `xs:ID` del esquema XSD de la BCN.
+
 
 
 
